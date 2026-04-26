@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Gym at Home™ — Sales CRM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  /* ── Base ─────────────────────────────────────── */
+  *{box-sizing:border-box;font-family:'Inter',system-ui,sans-serif}
+  body{background:#f8fafc;color:#0f172a;margin:0}
+  ::-webkit-scrollbar{width:5px;height:5px}
+  ::-webkit-scrollbar-track{background:#f1f5f9}
+  ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:99px}
+  /* ── Utilities ───────────────────────────────── */
+  .card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .card-hover:hover{box-shadow:0 4px 16px rgba(0,0,0,.08);border-color:#cbd5e1;transform:translateY(-1px);transition:all .2s}
+  .input{width:100%;background:#fff;border:1px solid #e2e8f0;color:#0f172a;border-radius:8px;padding:9px 12px;font-size:13px;outline:none;transition:all .15s;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.12)}
+  .input::placeholder{color:#94a3b8}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;white-space:nowrap}
+  .btn:active{transform:scale(.97)}
+  .btn-primary{background:#2563eb;color:#fff;box-shadow:0 1px 3px rgba(37,99,235,.3)}
+  .btn-primary:hover{background:#1d4ed8}
+  .btn-secondary{background:#fff;color:#374151;border:1px solid #e2e8f0;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .btn-secondary:hover{background:#f9fafb;border-color:#d1d5db}
+  .btn-danger{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+  .btn-danger:hover{background:#fee2e2}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:700;border:1px solid}
+  /* ── Status colours ──────────────────────────── */
+  .s-new{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
+  .s-contacted{background:#fffbeb;color:#b45309;border-color:#fde68a}
+  .s-interested{background:#f5f3ff;color:#6d28d9;border-color:#ddd6fe}
+  .s-followup{background:#fff7ed;color:#c2410c;border-color:#fed7aa}
+  .s-converted{background:#f0fdf4;color:#15803d;border-color:#bbf7d0}
+  .s-lost{background:#fef2f2;color:#b91c1c;border-color:#fecaca}
+  /* ── Sidebar ─────────────────────────────────── */
+  .sidebar{position:fixed;top:0;left:0;width:220px;height:100vh;background:#fff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;z-index:40;transition:transform .3s}
+  @media(max-width:1023px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}}
+  .nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;font-size:12.5px;font-weight:500;color:#64748b;cursor:pointer;transition:all .15s;margin-bottom:1px}
+  .nav-item:hover{background:#f8fafc;color:#1e293b}
+  .nav-item.active{background:#eff6ff;color:#1e40af;font-weight:700}
+  .nav-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+  .nav-item.active .nav-icon{background:#dbeafe}
+  .nav-item:not(.active) .nav-icon{background:#f1f5f9}
+  /* ── Stat card ───────────────────────────────── */
+  .stat-card{background:#fff;border-radius:13px;border:1px solid #e2e8f0;box-shadow:0 1px 3px rgba(0,0,0,.04);overflow:hidden;transition:all .2s}
+  .stat-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+  /* ── Modal ───────────────────────────────────── */
+  .overlay{position:fixed;inset:0;background:rgba(15,23,42,.4);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px}
+  .modal{background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.15);width:100%;overflow:hidden;display:flex;flex-direction:column;animation:fadeUp .22s ease-out}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  /* ── Kanban ──────────────────────────────────── */
+  .kcol{flex-shrink:0;width:260px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:13px;display:flex;flex-direction:column}
+  .kcol.drag-over{border-style:dashed;border-width:2px;transform:scale(1.01)}
+  .kcard{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px;cursor:grab;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:all .15s}
+  .kcard:hover{box-shadow:0 4px 12px rgba(0,0,0,.08);border-color:#cbd5e1}
+  .kcard.dragging{opacity:.35;transform:scale(.95)}
+  /* ── Table ───────────────────────────────────── */
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;padding:10px 14px;font-size:10.5px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #f1f5f9;background:#f8fafc;white-space:nowrap}
+  td{padding:11px 14px;font-size:12.5px;color:#374151;border-bottom:1px solid #f8fafc}
+  tr:hover td{background:#fafbfc}
+  /* ── Toast ───────────────────────────────────── */
+  #toast{position:fixed;top:18px;right:18px;z-index:100;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+  .toast-item{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 16px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.1);animation:fadeUp .2s ease-out;display:flex;align-items:center;gap:8px}
+  /* ── Misc ────────────────────────────────────── */
+  select.input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;appearance:none;padding-right:30px}
+  .page{display:none;animation:fadeUp .25s ease-out}
+  .page.active{display:block}
+  .chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;border:1px solid;font-size:11px;font-weight:700}
+  .divider{border:none;border-top:1px solid #f1f5f9;margin:12px 0}
+</style>
+</head>
+<body>
+
+<!-- ═══ Toast ══════════════════════════════════════ -->
+<div id="toast"></div>
+
+<!-- ═══ APP ROOT ════════════════════════════════════ -->
+<div id="app"></div>
+
+<script>
+/* ══════════════════════════════════════════════════
+   ██████╗ ██████╗ ███╗   ███╗
+  ██╔════╝ ██╔══██╗████╗ ████║
+  ██║      ██████╔╝██╔████╔██║
+  ██║      ██╔══██╗██║╚██╔╝██║
+  ╚██████╗ ██║  ██║██║ ╚═╝ ██║
+   ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝
+   GYM AT HOME™ — SALES CRM
+   Single-file edition v2.0
+══════════════════════════════════════════════════ */
+
+/* ── CONFIG (override in config.js or window.ENV) ─
+   To use your own backend instead of localStorage:
+   1. Create config.js (add to .gitignore)
+   2. Set: window.ENV = { API_URL: 'https://your-api.com/api', SECRET: '...' }
+   3. Include <script src="config.js"></script> BEFORE this file
+────────────────────────────────────────────────── */
+const CFG = {
+  APP:     'Gym at Home™',
+  API_URL: (window.ENV||{}).API_URL || '',          // '' = localStorage mode
+  USE_API: !!((window.ENV||{}).API_URL),
+};
+
+/* ══════════════════════════════════════════════
+   CONSTANTS
+══════════════════════════════════════════════ */
+const STAGES  = ['New Lead','Contacted','Interested','Follow-up','Converted','Lost'];
+const SOURCES = ['Instagram','Website','Referral','Ads','Facebook','WhatsApp','Other'];
+const PKGS    = ['Basic','Standard','Premium','Custom'];
+const SRC_ICON= {Instagram:'📸',Website:'🌐',Referral:'🤝',Ads:'📢',Facebook:'👥',WhatsApp:'💬',Other:'📋'};
+
+const STATUS_STYLE = {
+  'New Lead':  {cls:'s-new',  dot:'#3b82f6'},
+  'Contacted': {cls:'s-contacted', dot:'#f59e0b'},
+  'Interested':{cls:'s-interested',dot:'#8b5cf6'},
+  'Follow-up': {cls:'s-followup',  dot:'#f97316'},
+  'Converted': {cls:'s-converted', dot:'#22c55e'},
+  'Lost':      {cls:'s-lost',      dot:'#ef4444'},
+};
+
+/* ══════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════ */
+const S = {
+  page: 'login',
+  user: null,
+  leads: [], users: [], activities: [],
+  leadFilters: {search:'',status:'',source:'',agent:''},
+  viewMode: 'table',
+  editLead: null, editUser: null,
+  modal: null,
+  dragLead: null, dragFrom: null,
+  chartObjs: {},
+};
+
+/* ══════════════════════════════════════════════
+   STORAGE / DB LAYER
+══════════════════════════════════════════════ */
+const DB = {
+  _k: k => `gymcrm_${k}`,
+  get(k)    { try{ return JSON.parse(localStorage.getItem(DB._k(k)))||[] }catch{return []} },
+  set(k,v)  { localStorage.setItem(DB._k(k), JSON.stringify(v)) },
+  getObj(k) { try{ return JSON.parse(localStorage.getItem(DB._k(k)))||null }catch{return null} },
+  setObj(k,v){ localStorage.setItem(DB._k(k), JSON.stringify(v)) },
+
+  init() {
+    if (DB.get('seeded')[0]) return;
+    // Seed admin user (password hashed as base64 for demo)
+    const users = [
+      {id:'u1',name:'Admin User',  email:'admin@gymathome.com',passwordHash:btoa('admin123'),role:'admin',phone:'+971501234567',isActive:true,createdAt:daysAgo(90)},
+      {id:'u2',name:'Ahmed Al-Rashid',email:'ahmed@gymathome.com',passwordHash:btoa('sales123'),role:'sales',phone:'+971502345678',isActive:true,createdAt:daysAgo(80)},
+      {id:'u3',name:'Sara Johnson',   email:'sara@gymathome.com', passwordHash:btoa('sales123'),role:'sales',phone:'+971503456789',isActive:true,createdAt:daysAgo(75)},
+      {id:'u4',name:'Mohammed Hassan',email:'mohammed@gymathome.com',passwordHash:btoa('sales123'),role:'sales',phone:'+971504567890',isActive:true,createdAt:daysAgo(70)},
+      {id:'u5',name:'Layla Ibrahim',  email:'layla@gymathome.com', passwordHash:btoa('sales123'),role:'sales',phone:'+971505678901',isActive:true,createdAt:daysAgo(65)},
+    ];
+    DB.set('users', users);
+
+    const names=['Omar Abdullah','Fatima Al-Zahra','Khalid Mansour','Nora Al-Ahmed','Tariq Hassan','Mariam Yousef','Abdullah Al-Farsi','Hessa Al-Marri','Saeed Butti','Amira Zayed','Rashid Al-Maktoum','Latifa Hamdan','Faisal Al-Qasimi','Shaikha Obaid','Hamdan Al-Nahyan','Maitha Khalid','Sultan Saif','Noura Juma','Mansour Rashed','Aisha Mohammed'];
+    const locs=['Dubai','Abu Dhabi','Sharjah','Riyadh','Doha','Kuwait City','Cairo','Muscat'];
+    const agentIds=['u2','u3','u4','u5'];
+    const leads=[];
+    for(let i=0;i<36;i++){
+      const aId=agentIds[i%agentIds.length];
+      const st=STAGES[Math.floor(Math.random()*STAGES.length)];
+      const cr=daysAgo(Math.floor(Math.random()*60));
+      leads.push({
+        id:'l'+(i+1), name:names[i%names.length]+(i>=names.length?' '+(Math.floor(i/names.length)+2):''),
+        phone:`+9715${Math.floor(10000000+Math.random()*90000000)}`,
+        email:`lead${i+1}@example.com`, location:locs[i%locs.length],
+        source:SOURCES[i%SOURCES.length], status:st,
+        assignedTo:aId, package:PKGS[i%PKGS.length],
+        budget:`AED ${(Math.floor(Math.random()*10)+3)*1000}`,
+        followUpDate: Math.random()>.5 ? daysAgo(Math.floor(Math.random()*5)-2) : null,
+        convertedAt: st==='Converted' ? daysAgo(Math.floor(Math.random()*20)) : null,
+        notes: Math.random()>.5?[{id:'n1',text:'Initial contact made. Client interested in home gym setup.',addedBy:aId,addedAt:cr}]:[],
+        createdAt:cr
+      });
+    }
+    DB.set('leads',leads);
+    DB.set('activities',[
+      {id:'a1',type:'lead_created',desc:'New lead "Omar Abdullah" was added',by:'u2',at:daysAgo(1)},
+      {id:'a2',type:'status_changed',desc:'Lead "Fatima Al-Zahra" moved to Interested',by:'u3',at:daysAgo(2)},
+      {id:'a3',type:'note_added',desc:'Note added to lead "Khalid Mansour"',by:'u2',at:daysAgo(3)},
+      {id:'a4',type:'lead_created',desc:'New lead "Tariq Hassan" was added',by:'u4',at:daysAgo(4)},
+      {id:'a5',type:'status_changed',desc:'Lead "Amira Zayed" moved to Converted',by:'u3',at:daysAgo(5)},
+    ]);
+    DB.set('seeded',[true]);
+  },
+
+  loadAll() {
+    S.leads     = DB.get('leads');
+    S.users     = DB.get('users');
+    S.activities= DB.get('activities');
+  },
+
+  saveLeads()  { DB.set('leads',  S.leads) },
+  saveUsers()  { DB.set('users',  S.users) },
+  saveActivities(){ DB.set('activities', S.activities) },
+
+  addActivity(type,desc,by){
+    S.activities.unshift({id:'a'+Date.now(),type,desc,by,at:new Date().toISOString()});
+    if(S.activities.length>50) S.activities=S.activities.slice(0,50);
+    DB.saveActivities();
+  },
+};
+
+/* ══════════════════════════════════════════════
+   AUTH
+══════════════════════════════════════════════ */
+const Auth = {
+  login(email,pass){
+    const u=S.users.find(x=>x.email===email&&x.isActive);
+    if(!u||atob(u.passwordHash)!==pass) return {ok:false,err:'Invalid email or password.'};
+    S.user=u;
+    DB.setObj('session',{userId:u.id});
+    return {ok:true};
+  },
+  logout(){ S.user=null; DB.setObj('session',null); navigate('login'); },
+  restore(){
+    const sess=DB.getObj('session');
+    if(!sess) return false;
+    const u=S.users.find(x=>x.id===sess.userId&&x.isActive);
+    if(!u) return false;
+    S.user=u; return true;
+  },
+  isAdmin(){ return S.user?.role==='admin'; },
+};
+
+/* ══════════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════════ */
+function uid(){ return 'x'+Math.random().toString(36).slice(2,10)+Date.now().toString(36) }
+function daysAgo(n){ const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString() }
+function fmtDate(s){ if(!s)return'—'; return new Date(s).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) }
+function timeAgo(s){
+  if(!s)return'—';
+  const d=Math.floor((Date.now()-new Date(s))/1000);
+  if(d<60)return'just now'; if(d<3600)return Math.floor(d/60)+'m ago';
+  if(d<86400)return Math.floor(d/3600)+'h ago'; return Math.floor(d/86400)+'d ago';
+}
+function isOverdue(s){ if(!s)return false; const d=new Date(s); d.setHours(23,59,59); return d<new Date() }
+function isToday(s){
+  if(!s)return false;
+  const d=new Date(s),t=new Date();
+  return d.toDateString()===t.toDateString();
+}
+function initials(name){ return (name||'?').split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase() }
+function getUserName(id){ return S.users.find(u=>u.id===id)?.name||'—' }
+function statusBadge(st){
+  const c=STATUS_STYLE[st]||{cls:'',dot:'#94a3b8'};
+  return `<span class="badge ${c.cls}"><span style="width:6px;height:6px;border-radius:50%;background:${c.dot};display:inline-block;flex-shrink:0"></span>${st}</span>`;
+}
+function avatar(name,color='bg-blue-100 text-blue-700',size=8){
+  return `<div class="w-${size} h-${size} rounded-full ${color} flex items-center justify-center font-bold text-xs flex-shrink-0">${initials(name)}</div>`;
+}
+function toast(msg,type='success'){
+  const el=document.createElement('div');
+  const icons={success:'✅',error:'❌',info:'ℹ️'};
+  el.className='toast-item';
+  el.innerHTML=`<span>${icons[type]||'ℹ️'}</span><span>${msg}</span>`;
+  document.getElementById('toast').appendChild(el);
+  setTimeout(()=>el.remove(),3200);
+}
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+
+/* ══════════════════════════════════════════════
+   ROUTER
+══════════════════════════════════════════════ */
+function navigate(page){
+  if(page!=='login'&&!S.user){ navigate('login'); return; }
+  if(page==='login'&&S.user){ page='dashboard'; }
+  S.page=page;
+  render();
+  window.scrollTo(0,0);
+}
+
+/* ══════════════════════════════════════════════
+   MASTER RENDER
+══════════════════════════════════════════════ */
+function render(){
+  const app=document.getElementById('app');
+  if(S.page==='login'){ app.innerHTML=renderLogin(); bindLogin(); return; }
+  app.innerHTML=`
+    ${renderSidebar()}
+    <div class="lg:ml-[220px] flex flex-col min-h-screen">
+      ${renderHeader()}
+      <main class="flex-1 p-4 md:p-6">${renderPage()}</main>
+    </div>
+    ${S.modal ? renderModal() : ''}
+  `;
+  bindNav();
+  bindPage();
+  if(S.modal) bindModal();
+}
+
+/* ══════════════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════════════ */
+function renderSidebar(){
+  const navs=[
+    {id:'dashboard',icon:'▦',label:'Dashboard'},
+    {id:'leads',    icon:'◎',label:'All Leads'},
+    {id:'kanban',   icon:'⊞',label:'Pipeline'},
+    ...(Auth.isAdmin()?[
+      {id:'users',  icon:'◑',label:'Team'},
+      {id:'reports',icon:'◈',label:'Reports'},
+    ]:[]),
+  ];
+  return `
+  <aside class="sidebar" id="sidebar">
+    <div class="p-4 border-b border-slate-100 flex items-center gap-2.5">
+      <div class="w-9 h-9 bg-slate-900 rounded-xl p-1 flex-shrink-0 flex items-center justify-center">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+          <rect width="200" height="200" fill="#000"/>
+          <path d="M28 108 L100 42 L172 108 L162 108 L162 96 L38 96 L38 108 Z" fill="white"/>
+          <rect x="74" y="124" width="52" height="12" rx="6" fill="white"/>
+          <rect x="34" y="114" width="16" height="42" rx="6" fill="white"/>
+          <rect x="52" y="108" width="20" height="54" rx="7" fill="white"/>
+          <rect x="128" y="108" width="20" height="54" rx="7" fill="white"/>
+          <rect x="150" y="114" width="16" height="42" rx="6" fill="white"/>
+          <circle cx="148" cy="62" r="13" stroke="white" stroke-width="1.5" fill="none"/>
+          <text x="148" y="67" text-anchor="middle" fill="white" font-size="9.5" font-family="Arial" font-weight="700">TM</text>
+        </svg>
+      </div>
+      <div>
+        <p class="text-slate-900 font-bold text-sm leading-tight">Gym at Home™</p>
+        <p class="text-slate-400 text-xs">Sales CRM</p>
+      </div>
+    </div>
+    <div class="mx-3 my-2.5">
+      <div class="bg-slate-50 border border-slate-100 rounded-xl p-2 flex items-center gap-2">
+        ${avatar(S.user?.name,'w-8 h-8 rounded-full bg-blue-600 text-white font-bold text-xs flex items-center justify-center')}
+        <div class="min-w-0">
+          <p class="text-slate-800 text-xs font-bold truncate">${esc(S.user?.name)}</p>
+          <p class="text-xs ${Auth.isAdmin()?'text-blue-600':'text-violet-600'} font-semibold">${Auth.isAdmin()?'Administrator':'Sales Agent'}</p>
+        </div>
+      </div>
+    </div>
+    <nav class="flex-1 px-3 py-2 overflow-y-auto">
+      <p class="text-[9px] text-slate-400 uppercase tracking-widest font-bold px-2 pb-2 pt-1">Navigation</p>
+      ${navs.map(n=>`
+        <div class="nav-item ${S.page===n.id?'active':''}" onclick="navigate('${n.id}')">
+          <div class="nav-icon">${n.icon}</div>
+          <span>${n.label}</span>
+          ${S.page===n.id?'<div class="ml-auto w-1.5 h-1.5 rounded-full bg-blue-500"></div>':''}
+        </div>
+      `).join('')}
+    </nav>
+    <div class="px-3 pb-4 border-t border-slate-100 pt-3">
+      <div class="nav-item hover:bg-red-50 hover:text-red-600 group" onclick="Auth.logout()">
+        <div class="nav-icon bg-slate-100 group-hover:bg-red-100">⇠</div>
+        <span>Sign Out</span>
+      </div>
+    </div>
+  </aside>`;
+}
+
+/* ══════════════════════════════════════════════
+   HEADER
+══════════════════════════════════════════════ */
+function renderHeader(){
+  const titles={dashboard:'Dashboard',leads:'All Leads',kanban:'Pipeline',users:'Team',reports:'Reports'};
+  const subs={dashboard:'Overview & performance',leads:'Manage all leads',kanban:'Drag & drop pipeline',users:'Manage your team',reports:'Analytics & exports'};
+  const overdue=S.leads.filter(l=>isOverdue(l.followUpDate)&&!['Converted','Lost'].includes(l.status)).length;
+  const todayFU=S.leads.filter(l=>isToday(l.followUpDate)).length;
+  return `
+  <header class="bg-white border-b border-slate-200 px-4 md:px-6 py-3.5 flex items-center gap-3 sticky top-0 z-30 shadow-sm">
+    <button class="lg:hidden text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100"
+      onclick="document.getElementById('sidebar').classList.toggle('open')">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+    <div class="flex-1">
+      <h1 class="text-base font-bold text-slate-900">${titles[S.page]||''}</h1>
+      <p class="text-slate-400 text-xs hidden sm:block">${subs[S.page]||''}</p>
+    </div>
+    <div class="flex items-center gap-2">
+      ${overdue>0?`<span class="chip bg-red-50 text-red-700 border-red-200 hidden sm:inline-flex">
+        <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>${overdue} Overdue</span>`:''}
+      ${todayFU>0?`<span class="chip bg-amber-50 text-amber-700 border-amber-200 hidden sm:inline-flex">
+        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>${todayFU} Today</span>`:''}
+      <div class="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs ring-2 ring-blue-100 flex-shrink-0">
+        ${initials(S.user?.name)}
+      </div>
+    </div>
+  </header>`;
+}
+
+/* ══════════════════════════════════════════════
+   PAGE ROUTER
+══════════════════════════════════════════════ */
+function renderPage(){
+  if(S.page==='dashboard') return renderDashboard();
+  if(S.page==='leads')     return renderLeads();
+  if(S.page==='kanban')    return renderKanban();
+  if(S.page==='users')     return renderUsers();
+  if(S.page==='reports')   return renderReports();
+  return '';
+}
+
+/* ══════════════════════════════════════════════
+   LOGIN
+══════════════════════════════════════════════ */
+function renderLogin(){
+  return `
+  <div class="min-h-screen flex">
+    <div class="hidden lg:flex lg:w-5/12 bg-slate-900 flex-col items-center justify-center relative overflow-hidden">
+      <div class="absolute inset-0 opacity-[0.04]" style="background-image:radial-gradient(circle at 1px 1px,white 1px,transparent 0);background-size:36px 36px"></div>
+      <div class="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 bg-blue-600 opacity-10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="relative z-10 px-10 text-center max-w-xs">
+        <div class="mb-8 flex justify-center">
+          <div class="w-24 h-24 bg-white rounded-3xl shadow-2xl flex items-center justify-center p-2">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width="80" height="80">
+              <rect width="200" height="200" fill="#000"/>
+              <path d="M28 108 L100 42 L172 108 L162 108 L162 96 L38 96 L38 108 Z" fill="white"/>
+              <rect x="74" y="124" width="52" height="12" rx="6" fill="white"/>
+              <rect x="34" y="114" width="16" height="42" rx="6" fill="white"/>
+              <rect x="52" y="108" width="20" height="54" rx="7" fill="white"/>
+              <rect x="128" y="108" width="20" height="54" rx="7" fill="white"/>
+              <rect x="150" y="114" width="16" height="42" rx="6" fill="white"/>
+              <circle cx="148" cy="62" r="13" stroke="white" stroke-width="1.5" fill="none"/>
+              <text x="148" y="67" text-anchor="middle" fill="white" font-size="9.5" font-family="Arial" font-weight="700">TM</text>
+            </svg>
+          </div>
+        </div>
+        <h1 class="text-3xl font-bold text-white mb-2">Gym at Home™</h1>
+        <p class="text-slate-400 text-sm mb-8">The all-in-one CRM for your home-fitness sales team</p>
+        <div class="space-y-2.5 text-left">
+          ${[['🎯','Lead Pipeline','Track every prospect end-to-end'],['📊','Live Analytics','Charts, dashboards & leaderboards'],['🔔','Follow-up Alerts','Never miss a hot lead']]
+            .map(([ic,t,d])=>`<div class="bg-white/5 border border-white/10 rounded-xl p-3 flex gap-3"><span class="text-xl">${ic}</span><div><p class="text-white text-xs font-bold">${t}</p><p class="text-slate-400 text-xs">${d}</p></div></div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="w-full lg:w-7/12 flex items-center justify-center p-6 sm:p-12 bg-slate-50">
+      <div class="w-full max-w-[380px]">
+        <div class="lg:hidden flex justify-center mb-8">
+          <div class="w-14 h-14 bg-slate-900 rounded-2xl p-1.5 flex items-center justify-center shadow-lg">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width="44" height="44">
+              <rect width="200" height="200" fill="#000"/>
+              <path d="M28 108 L100 42 L172 108 L162 108 L162 96 L38 96 L38 108 Z" fill="white"/>
+              <rect x="74" y="124" width="52" height="12" rx="6" fill="white"/>
+              <rect x="34" y="114" width="16" height="42" rx="6" fill="white"/>
+              <rect x="52" y="108" width="20" height="54" rx="7" fill="white"/>
+              <rect x="128" y="108" width="20" height="54" rx="7" fill="white"/>
+              <rect x="150" y="114" width="16" height="42" rx="6" fill="white"/>
+            </svg>
+          </div>
+        </div>
+        <p class="text-xs font-bold text-blue-600 uppercase tracking-widest mb-2">Sales CRM</p>
+        <h2 class="text-2xl font-bold text-slate-900 mb-1">Sign in to your account</h2>
+        <p class="text-slate-400 text-sm mb-7">Enter your credentials to continue</p>
+        <div id="login-err" class="hidden bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm mb-4 flex items-center gap-2"></div>
+        <form id="login-form" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Email Address</label>
+            <input id="login-email" class="input" type="email" placeholder="you@gymathome.com" required/>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Password</label>
+            <div class="relative">
+              <input id="login-pass" class="input pr-10" type="password" placeholder="Enter your password" required/>
+              <button type="button" onclick="togglePass()" id="eye-btn" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm">👁️</button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary w-full justify-center py-2.5 text-sm" id="login-btn">
+            Sign In →
+          </button>
+        </form>
+        <div class="mt-7 p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center mb-3">Demo Credentials</p>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="fillDemo('admin')" class="text-left p-3 rounded-lg border border-blue-100 bg-blue-50 hover:bg-blue-100 transition-colors">
+              <p class="text-blue-700 text-xs font-bold">Admin</p>
+              <p class="text-blue-500 text-[10px] mt-0.5">Full access</p>
+            </button>
+            <button onclick="fillDemo('sales')" class="text-left p-3 rounded-lg border border-violet-100 bg-violet-50 hover:bg-violet-100 transition-colors">
+              <p class="text-violet-700 text-xs font-bold">Sales Agent</p>
+              <p class="text-violet-500 text-[10px] mt-0.5">Assigned leads</p>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+function togglePass(){
+  const i=document.getElementById('login-pass');
+  i.type=i.type==='password'?'text':'password';
+}
+function fillDemo(role){
+  document.getElementById('login-email').value=role==='admin'?'admin@gymathome.com':'ahmed@gymathome.com';
+  document.getElementById('login-pass').value=role==='admin'?'admin123':'sales123';
+}
+function bindLogin(){
+  document.getElementById('login-form').onsubmit=e=>{
+    e.preventDefault();
+    const em=document.getElementById('login-email').value.trim();
+    const pw=document.getElementById('login-pass').value;
+    const res=Auth.login(em,pw);
+    if(res.ok){ toast('Welcome back, '+S.user.name.split(' ')[0]+'!'); navigate('dashboard'); }
+    else {
+      const el=document.getElementById('login-err');
+      el.innerHTML='⚠ '+res.err; el.classList.remove('hidden');
+    }
+  };
+}
+
+/* ══════════════════════════════════════════════
+   DASHBOARD
+══════════════════════════════════════════════ */
+function renderDashboard(){
+  const myLeads=Auth.isAdmin()?S.leads:S.leads.filter(l=>l.assignedTo===S.user.id);
+  const total=myLeads.length;
+  const converted=myLeads.filter(l=>l.status==='Converted').length;
+  const rate=total>0?Math.round(converted/total*100):0;
+  const today=new Date(); today.setHours(0,0,0,0);
+  const newToday=myLeads.filter(l=>new Date(l.createdAt)>=today).length;
+  const fuToday=myLeads.filter(l=>isToday(l.followUpDate)).length;
+  const overdue=myLeads.filter(l=>isOverdue(l.followUpDate)&&!['Converted','Lost'].includes(l.status)).length;
+
+  const byStatus={};
+  STAGES.forEach(s=>{ byStatus[s]=myLeads.filter(l=>l.status===s).length });
+  const bySrc={};
+  SOURCES.forEach(s=>{ const n=myLeads.filter(l=>l.source===s).length; if(n) bySrc[s]=n });
+
+  const recent=[...myLeads].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,5);
+
+  // Leaderboard (admin)
+  let lbHtml='';
+  if(Auth.isAdmin()){
+    const lb=S.users.filter(u=>u.role==='sales').map(u=>{
+      const ul=S.leads.filter(l=>l.assignedTo===u.id);
+      const conv=ul.filter(l=>l.status==='Converted').length;
+      return{...u,total:ul.length,conv,rate:ul.length>0?Math.round(conv/ul.length*100):0};
+    }).sort((a,b)=>b.conv-a.conv);
+    lbHtml=`<div class="card p-5 mt-5">
+      <p class="text-sm font-bold text-slate-800 mb-4">🏆 Sales Leaderboard</p>
+      <div class="space-y-2">
+        ${lb.map((a,i)=>`
+          <div class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 ${i===0?'bg-yellow-100 text-yellow-700':i===1?'bg-slate-200 text-slate-600':i===2?'bg-orange-100 text-orange-700':'bg-slate-100 text-slate-500'}">
+              ${i<3?['🥇','🥈','🥉'][i]:i+1}
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-slate-800 text-sm font-semibold truncate">${esc(a.name)}</p>
+              <p class="text-slate-400 text-xs">${a.total} leads · ${a.rate}% rate</p>
+            </div>
+            <div class="text-right">
+              <p class="text-green-600 font-bold text-sm">${a.conv}</p>
+              <p class="text-slate-400 text-xs">converted</p>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  return `<div class="max-w-7xl mx-auto space-y-5">
+    <!-- Banner -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <p class="text-xs font-bold text-blue-600 uppercase tracking-widest mb-0.5">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</p>
+        <h2 class="text-xl font-bold text-slate-900">${Auth.isAdmin()?'Admin Overview':'My Performance'}</h2>
+        <p class="text-slate-400 text-sm mt-0.5">Here's what's happening with your leads today.</p>
+      </div>
+      <div class="flex gap-2 flex-wrap">
+        ${overdue>0?`<span class="chip bg-red-50 text-red-700 border-red-200"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>${overdue} Overdue</span>`:''}
+        ${fuToday>0?`<span class="chip bg-amber-50 text-amber-700 border-amber-200"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>${fuToday} Follow-ups Today</span>`:''}
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      ${[
+        {label:'Total Leads',val:total,sub:`+${newToday} today`,icon:'👥',top:'#3b82f6',ibg:'#eff6ff'},
+        {label:'Converted',  val:converted,sub:`${rate}% rate`,icon:'✅',top:'#22c55e',ibg:'#f0fdf4'},
+        {label:'Follow-ups', val:fuToday,  sub:`${overdue} overdue`,icon:'🔔',top:'#f59e0b',ibg:'#fffbeb'},
+        {label:'Win Rate',   val:rate+'%', sub:'overall',icon:'📈',top:'#8b5cf6',ibg:'#f5f3ff'},
+      ].map(s=>`
+        <div class="stat-card">
+          <div style="height:3px;background:${s.top}"></div>
+          <div class="p-5">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg mb-4" style="background:${s.ibg}">${s.icon}</div>
+            <p class="text-3xl font-bold text-slate-900 mb-1">${s.val}</p>
+            <p class="text-sm font-semibold text-slate-600">${s.label}</p>
+            <p class="text-xs text-slate-400 mt-0.5">${s.sub}</p>
+          </div>
+        </div>`).join('')}
+    </div>
+
+    <!-- Middle row -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <!-- Pipeline bars -->
+      <div class="card p-5">
+        <p class="text-sm font-bold text-slate-800 mb-4">📊 Pipeline Breakdown</p>
+        <div class="space-y-3">
+          ${STAGES.map(st=>{
+            const c=byStatus[st]||0; const pct=total>0?Math.round(c/total*100):0;
+            const col=STATUS_STYLE[st]?.dot||'#94a3b8';
+            return `<div>
+              <div class="flex justify-between text-xs mb-1.5">
+                <span class="font-semibold" style="color:${col}">${st}</span>
+                <span class="text-slate-400">${c} (${pct}%)</span>
+              </div>
+              <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                <div class="h-full rounded-full" style="width:${pct}%;background:${col}"></div>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <!-- Lead sources -->
+      <div class="card p-5">
+        <p class="text-sm font-bold text-slate-800 mb-4">🎯 Lead Sources</p>
+        <div class="space-y-3">
+          ${Object.entries(bySrc).sort(([,a],[,b])=>b-a).map(([src,cnt])=>{
+            const pct=total>0?Math.round(cnt/total*100):0;
+            return `<div class="flex items-center gap-3">
+              <span class="text-base w-6 text-center">${SRC_ICON[src]||'📋'}</span>
+              <span class="text-slate-600 text-sm font-medium flex-1">${src}</span>
+              <div class="w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                <div class="h-full bg-blue-500 rounded-full" style="width:${pct}%"></div>
+              </div>
+              <span class="text-slate-900 text-sm font-bold w-5 text-right">${cnt}</span>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <!-- Activity feed -->
+      <div class="card p-5">
+        <p class="text-sm font-bold text-slate-800 mb-4">⚡ Recent Activity</p>
+        <div class="space-y-3 max-h-64 overflow-y-auto">
+          ${S.activities.slice(0,8).map(a=>{
+            const icons={lead_created:'➕',status_changed:'🔄',note_added:'📝'};
+            return `<div class="flex gap-3 items-start">
+              <div class="w-7 h-7 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-xs flex-shrink-0">${icons[a.type]||'✏️'}</div>
+              <div class="min-w-0">
+                <p class="text-slate-700 text-xs leading-relaxed">${esc(a.desc)}</p>
+                <p class="text-slate-400 text-xs mt-0.5">${timeAgo(a.at)}</p>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent leads + leaderboard -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div class="card p-5">
+        <div class="flex items-center justify-between mb-4">
+          <p class="text-sm font-bold text-slate-800">🆕 Recent Leads</p>
+          <button onclick="navigate('leads')" class="text-blue-600 text-xs font-semibold hover:underline">View all →</button>
+        </div>
+        <div class="space-y-2">
+          ${recent.map(lead=>`
+            <div class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:bg-slate-50 hover:border-slate-200 transition-all cursor-pointer" onclick="openLeadDetail('${lead.id}')">
+              <div class="w-9 h-9 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-xs font-bold text-blue-700 flex-shrink-0">${initials(lead.name)}</div>
+              <div class="flex-1 min-w-0">
+                <p class="text-slate-800 text-sm font-semibold truncate hover:text-blue-600">${esc(lead.name)}</p>
+                <p class="text-slate-400 text-xs">${SRC_ICON[lead.source]} ${lead.source} · ${timeAgo(lead.createdAt)}</p>
+              </div>
+              ${statusBadge(lead.status)}
+            </div>`).join('')}
+        </div>
+      </div>
+      <div>${lbHtml}</div>
+    </div>
+  </div>`;
+}
+
+/* ══════════════════════════════════════════════
+   LEADS PAGE
+══════════════════════════════════════════════ */
+function getFilteredLeads(){
+  let leads=Auth.isAdmin()?S.leads:S.leads.filter(l=>l.assignedTo===S.user.id);
+  const f=S.leadFilters;
+  if(f.search){ const q=f.search.toLowerCase(); leads=leads.filter(l=>l.name.toLowerCase().includes(q)||l.phone.includes(q)||(l.email||'').toLowerCase().includes(q)) }
+  if(f.status) leads=leads.filter(l=>l.status===f.status);
+  if(f.source) leads=leads.filter(l=>l.source===f.source);
+  if(f.agent && Auth.isAdmin()) leads=leads.filter(l=>l.assignedTo===f.agent);
+  return leads.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+}
+
+function renderLeads(){
+  const leads=getFilteredLeads();
+  const salesAgents=S.users.filter(u=>u.role==='sales');
+  return `<div class="max-w-7xl mx-auto space-y-5">
+    <!-- Top bar -->
+    <div class="flex flex-wrap gap-3 items-center justify-between">
+      <div>
+        <h2 class="text-slate-900 font-bold text-lg">All Leads</h2>
+        <p class="text-slate-400 text-sm">${leads.length} records</p>
+      </div>
+      <div class="flex gap-2 flex-wrap">
+        ${Auth.isAdmin()?`<button onclick="exportCSV()" class="btn btn-secondary text-xs py-2">📥 Export CSV</button>`:''}
+        <button onclick="S.viewMode=S.viewMode==='table'?'cards':'table';render()" class="btn btn-secondary text-xs py-2">${S.viewMode==='table'?'📇 Cards':'📋 Table'}</button>
+        <button onclick="openLeadModal(null)" class="btn btn-primary text-xs py-2">+ Add Lead</button>
+      </div>
+    </div>
+    <!-- Filters -->
+    <div class="card p-4">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div class="lg:col-span-2">
+          <input class="input text-xs py-2" placeholder="🔍 Search name, phone, email..."
+            value="${esc(S.leadFilters.search)}"
+            oninput="S.leadFilters.search=this.value;updateLeadList()"/>
+        </div>
+        <select class="input text-xs py-2" onchange="S.leadFilters.status=this.value;updateLeadList()">
+          <option value="">All Statuses</option>
+          ${STAGES.map(s=>`<option ${S.leadFilters.status===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+        <select class="input text-xs py-2" onchange="S.leadFilters.source=this.value;updateLeadList()">
+          <option value="">All Sources</option>
+          ${SOURCES.map(s=>`<option ${S.leadFilters.source===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+        ${Auth.isAdmin()?`<select class="input text-xs py-2" onchange="S.leadFilters.agent=this.value;updateLeadList()">
+          <option value="">All Agents</option>
+          ${salesAgents.map(a=>`<option value="${a.id}" ${S.leadFilters.agent===a.id?'selected':''}>${esc(a.name)}</option>`).join('')}
+        </select>`:'<div></div>'}
+        <button onclick="S.leadFilters={search:'',status:'',source:'',agent:''};render()" class="btn btn-secondary text-xs py-2">✕ Clear</button>
+      </div>
+    </div>
+    <!-- Content -->
+    <div id="lead-list">${renderLeadContent(leads)}</div>
+  </div>`;
+}
+
+function renderLeadContent(leads){
+  if(!leads.length) return `<div class="card p-16 text-center"><p class="text-4xl mb-3">🎯</p><p class="text-slate-700 font-semibold">No leads found</p><p class="text-slate-400 text-sm mt-1">Adjust filters or add a new lead</p></div>`;
+  if(S.viewMode==='table') return renderLeadTable(leads);
+  return renderLeadCards(leads);
+}
+
+function renderLeadTable(leads){
+  return `<div class="card overflow-hidden">
+    <div class="overflow-x-auto">
+      <table>
+        <thead><tr>${['Lead','Phone','Source','Status','Assigned To','Follow-up',''].map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+        <tbody>
+          ${leads.map(l=>{
+            const ov=isOverdue(l.followUpDate),td=isToday(l.followUpDate);
+            return `<tr class="group">
+              <td>
+                <div class="flex items-center gap-3 cursor-pointer" onclick="openLeadDetail('${l.id}')">
+                  <div class="w-8 h-8 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-xs font-bold text-blue-700 flex-shrink-0">${initials(l.name)}</div>
+                  <div>
+                    <p class="text-slate-800 font-semibold text-sm hover:text-blue-600">${esc(l.name)}</p>
+                    <p class="text-slate-400 text-xs">${esc(l.location||'—')}</p>
+                  </div>
+                </div>
+              </td>
+              <td class="text-slate-600">${esc(l.phone)}</td>
+              <td class="text-slate-600 whitespace-nowrap">${SRC_ICON[l.source]} ${l.source}</td>
+              <td>
+                <select class="text-xs border-0 bg-transparent outline-none font-semibold cursor-pointer p-0"
+                  onchange="quickStatus('${l.id}',this.value)">
+                  ${STAGES.map(s=>`<option${l.status===s?' selected':''}>${s}</option>`).join('')}
+                </select>
+              </td>
+              <td>
+                ${l.assignedTo?`<div class="flex items-center gap-1.5">
+                  <div class="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center text-[9px] font-bold text-blue-700">${initials(getUserName(l.assignedTo))}</div>
+                  <span class="text-xs text-slate-600 truncate max-w-[80px]">${getUserName(l.assignedTo).split(' ')[0]}</span>
+                </div>`:'<span class="text-slate-300 text-xs">Unassigned</span>'}
+              </td>
+              <td class="whitespace-nowrap text-xs ${ov?'text-red-600 font-semibold':td?'text-amber-600 font-semibold':'text-slate-400'}">
+                ${l.followUpDate?`<span class="flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full ${ov?'bg-red-500':td?'bg-amber-500':'bg-slate-300'} flex-shrink-0"></span>
+                  ${fmtDate(l.followUpDate)}</span>`:'—'}
+              </td>
+              <td>
+                <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button onclick="openLeadModal('${l.id}')" class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors">✏️</button>
+                  ${Auth.isAdmin()?`<button onclick="confirmDelete('${l.id}','lead')" class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500">🗑️</button>`:''}
+                </div>
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function renderLeadCards(leads){
+  return `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    ${leads.map(l=>{
+      const ov=isOverdue(l.followUpDate),td=isToday(l.followUpDate);
+      return `<div class="card card-hover p-4 flex flex-col gap-3">
+        <div class="flex items-start justify-between">
+          <div class="flex items-center gap-2 min-w-0 cursor-pointer" onclick="openLeadDetail('${l.id}')">
+            <div class="w-9 h-9 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-sm font-bold text-blue-700 flex-shrink-0">${initials(l.name)}</div>
+            <div class="min-w-0"><p class="text-slate-800 font-semibold text-sm truncate hover:text-blue-600">${esc(l.name)}</p><p class="text-slate-400 text-xs">${esc(l.phone)}</p></div>
+          </div>
+          ${statusBadge(l.status)}
+        </div>
+        <div class="grid grid-cols-2 gap-1.5 text-xs">
+          <div class="bg-slate-50 border border-slate-100 rounded-lg p-2"><span class="text-slate-400">Source</span><p class="text-slate-700 font-semibold mt-0.5">${SRC_ICON[l.source]} ${l.source}</p></div>
+          <div class="bg-slate-50 border border-slate-100 rounded-lg p-2"><span class="text-slate-400">Agent</span><p class="text-slate-700 font-semibold mt-0.5 truncate">${getUserName(l.assignedTo).split(' ')[0]||'—'}</p></div>
+        </div>
+        ${l.followUpDate?`<div class="text-xs flex items-center gap-1.5 font-semibold ${ov?'text-red-600':td?'text-amber-600':'text-slate-400'}">
+          <span class="w-1.5 h-1.5 rounded-full flex-shrink-0 ${ov?'bg-red-500':td?'bg-amber-500':'bg-slate-300'}"></span>
+          ${ov?'Overdue:':td?'Today:':'Follow-up:'} ${fmtDate(l.followUpDate)}</div>`:''}
+        <div class="flex gap-2 pt-1 border-t border-slate-100">
+          <button onclick="openLeadModal('${l.id}')" class="btn btn-secondary flex-1 text-xs py-1.5">✏️ Edit</button>
+          <button onclick="openLeadDetail('${l.id}')" class="btn btn-primary flex-1 text-xs py-1.5">View</button>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function updateLeadList(){
+  const leads=getFilteredLeads();
+  document.getElementById('lead-list').innerHTML=renderLeadContent(leads);
+}
+
+function quickStatus(id,st){
+  const l=S.leads.find(x=>x.id===id); if(!l)return;
+  const old=l.status; l.status=st;
+  if(st==='Converted'&&!l.convertedAt) l.convertedAt=new Date().toISOString();
+  DB.saveLeads();
+  DB.addActivity('status_changed',`Lead "${l.name}" moved to "${st}"`,S.user.id);
+  toast(`Status → ${st}`);
+}
+
+function exportCSV(){
+  const rows=[['Name','Phone','Email','Location','Source','Status','Assigned To','Follow-up Date','Created At']];
+  getFilteredLeads().forEach(l=>{
+    rows.push([l.name,l.phone,l.email||'',l.location||'',l.source,l.status,getUserName(l.assignedTo),l.followUpDate?fmtDate(l.followUpDate):'',fmtDate(l.createdAt)]);
+  });
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download=`leads-${Date.now()}.csv`; a.click();
+  toast('CSV exported!');
+}
+
+/* ══════════════════════════════════════════════
+   LEAD DETAIL MODAL
+══════════════════════════════════════════════ */
+function openLeadDetail(id){
+  S.modal={type:'detail',id}; render();
+}
+
+/* ══════════════════════════════════════════════
+   KANBAN
+══════════════════════════════════════════════ */
+function renderKanban(){
+  const allLeads=Auth.isAdmin()?S.leads:S.leads.filter(l=>l.assignedTo===S.user.id);
+  const search=(document.getElementById('kb-search')||{}).value||'';
+  const filtered=search?allLeads.filter(l=>l.name.toLowerCase().includes(search.toLowerCase())):allLeads;
+  const cols={};
+  STAGES.forEach(s=>{cols[s]=filtered.filter(l=>l.status===s)});
+
+  return `<div class="space-y-4">
+    <div class="flex flex-wrap gap-3 items-center justify-between">
+      <input id="kb-search" class="input text-sm py-2 w-64" placeholder="🔍 Search leads..."
+        oninput="document.getElementById('kb-board').innerHTML=renderKanbanBoard(this.value)"/>
+      <button onclick="openLeadModal(null)" class="btn btn-primary text-sm">+ Add Lead</button>
+    </div>
+    <div class="flex gap-2 flex-wrap">
+      ${STAGES.map(s=>{
+        const c=STATUS_STYLE[s];
+        return `<span class="chip" style="background:${c.dot}15;color:${c.dot};border-color:${c.dot}40">
+          <span style="width:5px;height:5px;border-radius:50%;background:${c.dot}"></span>${s} (${cols[s].length})</span>`;
+      }).join('')}
+    </div>
+    <div id="kb-board" class="flex gap-4 overflow-x-auto pb-4" style="min-height:calc(100vh - 320px)">
+      ${renderKanbanBoard('')}
+    </div>
+  </div>`;
+}
+
+function renderKanbanBoard(search){
+  const allLeads=Auth.isAdmin()?S.leads:S.leads.filter(l=>l.assignedTo===S.user.id);
+  const filtered=search?allLeads.filter(l=>l.name.toLowerCase().includes(search.toLowerCase())):allLeads;
+  const cols={};
+  STAGES.forEach(s=>{cols[s]=filtered.filter(l=>l.status===s)});
+  return STAGES.map(st=>{
+    const c=STATUS_STYLE[st]; const leads=cols[st];
+    return `<div class="kcol" id="col-${st.replace(/\s/g,'-')}"
+      ondragover="event.preventDefault();this.classList.add('drag-over')"
+      ondragleave="this.classList.remove('drag-over')"
+      ondrop="dropLead(event,'${st}')">
+      <div class="px-4 py-3 rounded-t-[12px] border-b border-slate-200 bg-white flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span style="width:10px;height:10px;border-radius:50%;background:${c.dot}" class="flex-shrink-0"></span>
+          <span class="font-bold text-sm" style="color:${c.dot}">${st}</span>
+        </div>
+        <span class="text-xs font-bold px-2 py-0.5 rounded-full border" style="background:${c.dot}15;color:${c.dot};border-color:${c.dot}40">${leads.length}</span>
+      </div>
+      <div class="flex-1 p-2.5 space-y-2.5 overflow-y-auto" style="max-height:calc(100vh - 380px)">
+        ${leads.length===0?`<div class="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center"><p class="text-slate-400 text-xs">Drop leads here</p></div>`:''}
+        ${leads.map(l=>{
+          const ov=isOverdue(l.followUpDate),td=isToday(l.followUpDate);
+          return `<div class="kcard" draggable="true"
+            ondragstart="S.dragLead='${l.id}';S.dragFrom='${st}';this.classList.add('dragging')"
+            ondragend="this.classList.remove('dragging')">
+            <div class="flex items-start gap-2.5 mb-2">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 border" style="background:${c.dot}15;color:${c.dot};border-color:${c.dot}40">${initials(l.name)}</div>
+              <div class="min-w-0 flex-1">
+                <p class="text-slate-800 text-sm font-semibold hover:text-blue-600 cursor-pointer line-clamp-1" onclick="openLeadDetail('${l.id}')">${esc(l.name)}</p>
+                <p class="text-slate-400 text-xs">${l.phone}</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-1 mb-2">
+              <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md border border-slate-200 font-medium">${SRC_ICON[l.source]} ${l.source}</span>
+              ${l.package?`<span class="text-xs bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded-md font-medium">📦 ${l.package}</span>`:''}
+            </div>
+            ${l.followUpDate?`<div class="flex items-center gap-1 text-xs font-semibold ${ov?'text-red-600':td?'text-amber-600':'text-slate-400'}">
+              <span class="w-1.5 h-1.5 rounded-full flex-shrink-0 ${ov?'bg-red-500':td?'bg-amber-400':'bg-slate-300'}"></span>
+              ${fmtDate(l.followUpDate)}</div>`:''}
+            ${l.notes?.length?`<div class="mt-2 pt-2 border-t border-slate-100 text-xs text-slate-400">📝 ${l.notes.length} note${l.notes.length>1?'s':''}</div>`:''}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function dropLead(e,toStatus){
+  e.preventDefault();
+  document.querySelectorAll('.kcol').forEach(c=>c.classList.remove('drag-over'));
+  if(!S.dragLead||S.dragFrom===toStatus){S.dragLead=null;return;}
+  const l=S.leads.find(x=>x.id===S.dragLead);
+  if(!l){S.dragLead=null;return;}
+  const old=l.status; l.status=toStatus;
+  if(toStatus==='Converted'&&!l.convertedAt) l.convertedAt=new Date().toISOString();
+  DB.saveLeads();
+  DB.addActivity('status_changed',`Lead "${l.name}" moved from "${old}" to "${toStatus}"`,S.user.id);
+  toast(`${l.name} → ${toStatus}`);
+  S.dragLead=null;
+  if(S.page==='kanban') document.getElementById('kb-board').innerHTML=renderKanbanBoard('');
+}
+
+/* ══════════════════════════════════════════════
+   USERS PAGE
+══════════════════════════════════════════════ */
+function renderUsers(){
+  const salesUsers=S.users.filter(u=>u.role==='sales');
+  return `<div class="max-w-5xl mx-auto space-y-5">
+    <div class="flex items-center justify-between">
+      <div><h2 class="text-slate-900 font-bold text-lg">Sales Team</h2><p class="text-slate-400 text-sm">${S.users.length} members</p></div>
+      <button onclick="openUserModal(null)" class="btn btn-primary">+ Add Member</button>
+    </div>
+    <div class="grid grid-cols-3 gap-4">
+      ${[
+        {label:'Total',val:S.users.length,  color:'text-blue-600',  bg:'border-blue-100'},
+        {label:'Active',val:S.users.filter(u=>u.isActive).length, color:'text-green-600',bg:'border-green-100'},
+        {label:'Sales',val:salesUsers.length,color:'text-violet-600',bg:'border-violet-100'},
+      ].map(s=>`<div class="bg-white rounded-xl p-4 text-center border ${s.bg} shadow-sm">
+        <p class="${s.color} text-2xl font-bold">${s.val}</p>
+        <p class="text-slate-500 text-xs mt-1 font-semibold">${s.label}</p>
+      </div>`).join('')}
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      ${S.users.map(u=>{
+        const ul=S.leads.filter(l=>l.assignedTo===u.id);
+        const conv=ul.filter(l=>l.status==='Converted').length;
+        const rate=ul.length>0?Math.round(conv/ul.length*100):0;
+        return `<div class="card card-hover p-5">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-bold flex-shrink-0 border-2 ${u.role==='admin'?'bg-blue-50 border-blue-200 text-blue-700':'bg-violet-50 border-violet-200 text-violet-700'}">${initials(u.name)}</div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-2 mb-1">
+                <div>
+                  <p class="text-slate-900 font-bold">${esc(u.name)}</p>
+                  <p class="text-slate-400 text-sm">${esc(u.email)}</p>
+                  ${u.phone?`<p class="text-slate-400 text-xs mt-0.5">📞 ${u.phone}</p>`:''}
+                </div>
+                <div class="flex flex-col items-end gap-1.5">
+                  <span class="text-xs px-2 py-0.5 rounded-full font-bold border ${u.role==='admin'?'bg-blue-50 text-blue-700 border-blue-200':'bg-violet-50 text-violet-700 border-violet-200'}">${u.role==='admin'?'Admin':'Sales'}</span>
+                  <span class="text-xs px-2 py-0.5 rounded-full font-bold border ${u.isActive?'bg-green-50 text-green-700 border-green-200':'bg-red-50 text-red-600 border-red-200'}">${u.isActive?'Active':'Inactive'}</span>
+                </div>
+              </div>
+              ${u.role==='sales'?`<div class="flex gap-3 my-3 p-2.5 bg-slate-50 rounded-xl border border-slate-100 text-center">
+                <div class="flex-1"><p class="text-slate-900 font-bold">${ul.length}</p><p class="text-slate-400 text-xs">Leads</p></div>
+                <div class="w-px bg-slate-200"></div>
+                <div class="flex-1"><p class="text-green-600 font-bold">${conv}</p><p class="text-slate-400 text-xs">Converted</p></div>
+                <div class="w-px bg-slate-200"></div>
+                <div class="flex-1"><p class="text-blue-600 font-bold">${rate}%</p><p class="text-slate-400 text-xs">Rate</p></div>
+              </div>`:'<div class="my-3"></div>'}
+              <div class="flex gap-2">
+                <button onclick="openUserModal('${u.id}')" class="btn btn-secondary flex-1 text-xs py-1.5">✏️ Edit</button>
+                <button onclick="toggleUserActive('${u.id}')" class="flex-1 text-xs py-1.5 rounded-lg border transition-all font-semibold ${u.isActive?'bg-red-50 text-red-600 border-red-200 hover:bg-red-100':'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'}">${u.isActive?'Deactivate':'Activate'}</button>
+                <button onclick="confirmDelete('${u.id}','user')" class="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 hover:bg-red-50 hover:border-red-200 text-slate-400 hover:text-red-500 transition-all text-sm">🗑️</button>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function toggleUserActive(id){
+  const u=S.users.find(x=>x.id===id); if(!u)return;
+  u.isActive=!u.isActive; DB.saveUsers();
+  toast(u.isActive?'User activated':'User deactivated');
+  render();
+}
+
+/* ══════════════════════════════════════════════
+   REPORTS
+══════════════════════════════════════════════ */
+function renderReports(){
+  const leads=S.leads;
+  const total=leads.length;
+  const conv=leads.filter(l=>l.status==='Converted').length;
+  const rate=total>0?Math.round(conv/total*100):0;
+  const overdue=leads.filter(l=>isOverdue(l.followUpDate)&&!['Converted','Lost'].includes(l.status)).length;
+  const lb=S.users.filter(u=>u.role==='sales').map(u=>{
+    const ul=leads.filter(l=>l.assignedTo===u.id);
+    const c=ul.filter(l=>l.status==='Converted').length;
+    return{...u,total:ul.length,conv:c,rate:ul.length>0?Math.round(c/ul.length*100):0};
+  }).sort((a,b)=>b.conv-a.conv);
+  return `<div class="max-w-7xl mx-auto space-y-6">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div><h2 class="text-slate-900 font-bold text-lg">Analytics & Reports</h2></div>
+      <button onclick="exportCSV()" class="btn btn-primary text-sm">📥 Export CSV</button>
+    </div>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      ${[
+        {label:'Total Leads',val:total,   icon:'👥',top:'#3b82f6',ibg:'#eff6ff'},
+        {label:'Converted',  val:conv,    icon:'✅',top:'#22c55e',ibg:'#f0fdf4'},
+        {label:'Win Rate',   val:rate+'%',icon:'📈',top:'#8b5cf6',ibg:'#f5f3ff'},
+        {label:'Overdue',    val:overdue, icon:'⚠️',top:'#ef4444',ibg:'#fef2f2'},
+      ].map(s=>`<div class="stat-card"><div style="height:3px;background:${s.top}"></div><div class="p-4">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center text-base mb-3" style="background:${s.ibg}">${s.icon}</div>
+        <p class="text-2xl font-bold text-slate-900">${s.val}</p><p class="text-sm text-slate-600 font-semibold">${s.label}</p></div></div>`).join('')}
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="card p-5"><p class="text-sm font-bold text-slate-800 mb-4">Pipeline Breakdown</p><canvas id="bar-chart" height="200"></canvas></div>
+      <div class="card p-5"><p class="text-sm font-bold text-slate-800 mb-4">Lead Sources</p><canvas id="pie-chart" height="200"></canvas></div>
+    </div>
+    <div class="card overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-100"><p class="text-sm font-bold text-slate-800">🏆 Sales Leaderboard</p></div>
+      <div class="overflow-x-auto">
+        <table>
+          <thead><tr>${['Rank','Agent','Total','Converted','Rate'].map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+          <tbody>
+            ${lb.map((a,i)=>`<tr>
+              <td><span class="font-bold text-base">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</span></td>
+              <td><div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-xs font-bold text-blue-700">${initials(a.name)}</div>
+                <div><p class="text-slate-800 font-semibold text-sm">${esc(a.name)}</p><p class="text-slate-400 text-xs">${esc(a.email)}</p></div>
+              </div></td>
+              <td class="font-semibold">${a.total}</td>
+              <td><span class="text-xs bg-green-50 text-green-700 border border-green-200 font-bold px-2 py-0.5 rounded-full">${a.conv}</span></td>
+              <td>
+                <div class="flex items-center gap-2">
+                  <div class="w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full rounded-full" style="width:${a.rate}%;background:${a.rate>=50?'#16a34a':a.rate>=25?'#d97706':'#dc2626'}"></div>
+                  </div>
+                  <span class="font-bold text-sm" style="color:${a.rate>=50?'#16a34a':a.rate>=25?'#d97706':'#dc2626'}">${a.rate}%</span>
+                </div>
+              </td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>`;
+}
+
+function bindReportCharts(){
+  if(S.page!=='reports') return;
+  const leads=S.leads;
+  const COLORS=['#3b82f6','#f59e0b','#8b5cf6','#f97316','#22c55e','#ef4444'];
+  const barData=STAGES.map((s,i)=>({label:s.replace('New Lead','New'),count:leads.filter(l=>l.status===s).length,color:COLORS[i]}));
+  const srcData=SOURCES.map((s,i)=>({src:s,count:leads.filter(l=>l.source===s).length,color:COLORS[i%COLORS.length]})).filter(x=>x.count>0);
+
+  const barCtx=document.getElementById('bar-chart');
+  if(barCtx){
+    if(S.chartObjs.bar) S.chartObjs.bar.destroy();
+    S.chartObjs.bar=new Chart(barCtx,{type:'bar',data:{labels:barData.map(d=>d.label),datasets:[{data:barData.map(d=>d.count),backgroundColor:barData.map(d=>d.color),borderRadius:6,borderSkipped:false}]},options:{plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{grid:{color:'#f1f5f9'},ticks:{font:{size:10}}}}}});
+  }
+  const pieCtx=document.getElementById('pie-chart');
+  if(pieCtx){
+    if(S.chartObjs.pie) S.chartObjs.pie.destroy();
+    S.chartObjs.pie=new Chart(pieCtx,{type:'doughnut',data:{labels:srcData.map(d=>d.src),datasets:[{data:srcData.map(d=>d.count),backgroundColor:srcData.map(d=>d.color),borderWidth:2,borderColor:'#fff'}]},options:{plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:10}}},cutout:'60%'}});
+  }
+}
+
+/* ══════════════════════════════════════════════
+   MODALS
+══════════════════════════════════════════════ */
+function renderModal(){
+  const m=S.modal;
+  let content='';
+  if(m.type==='lead')    content=renderLeadForm(m.id);
+  if(m.type==='detail')  content=renderLeadDetailModal(m.id);
+  if(m.type==='user')    content=renderUserForm(m.id);
+  if(m.type==='confirm') content=renderConfirmModal(m);
+  return `<div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal" style="max-width:${m.type==='detail'?'680px':m.type==='confirm'?'420px':'620px'};max-height:90vh">${content}</div>
+  </div>`;
+}
+function closeModal(){ S.modal=null; render(); }
+function modalHeader(title){ return `<div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 flex-shrink-0"><h3 class="text-slate-900 font-bold text-base">${title}</h3><button onclick="closeModal()" class="text-slate-400 hover:text-slate-700 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-lg font-light transition-colors">×</button></div>`; }
+
+/* Lead Form Modal */
+function openLeadModal(id){ S.modal={type:'lead',id}; render(); }
+function renderLeadForm(id){
+  const l=id?S.leads.find(x=>x.id===id):null;
+  const agents=S.users.filter(u=>u.role==='sales');
+  const v=n=>l?esc(l[n]||''):'';
+  return `${modalHeader(l?'Edit Lead':'Add New Lead')}
+  <div class="overflow-y-auto flex-1">
+  <form id="lead-form" class="p-6 space-y-4" onsubmit="saveLead(event,'${id||''}')">
+    <div class="grid grid-cols-2 gap-4">
+      ${[
+        {n:'name',  label:'Full Name',    ph:'John Doe',         req:true},
+        {n:'phone', label:'Phone Number', ph:'+971 50 000 0000', req:true},
+        {n:'email', label:'Email Address',ph:'john@example.com'},
+        {n:'location',label:'Location',  ph:'Dubai, UAE'},
+        {n:'budget',label:'Budget',       ph:'AED 5,000'},
+      ].map(f=>`<div${f.n==='name'||f.n==='email'?'':''}>
+        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">${f.label}${f.req?'<span class="text-red-500 ml-0.5">*</span>':''}</label>
+        <input name="${f.n}" class="input" placeholder="${f.ph}" value="${l?esc(l[f.n]||''):''}" ${f.req?'required':''}/>
+      </div>`).join('')}
+      <div>
+        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Source <span class="text-red-500">*</span></label>
+        <select name="source" class="input" required>${SOURCES.map(s=>`<option${(l?.source||'Instagram')===s?' selected':''}>${s}</option>`).join('')}</select>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Status</label>
+        <select name="status" class="input">${STAGES.map(s=>`<option${(l?.status||'New Lead')===s?' selected':''}>${s}</option>`).join('')}</select>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Package</label>
+        <select name="package" class="input"><option value="">—</option>${PKGS.map(p=>`<option${l?.package===p?' selected':''}>${p}</option>`).join('')}</select>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Follow-up Date</label>
+        <input type="date" name="followUpDate" class="input" value="${l?.followUpDate?l.followUpDate.split('T')[0]:''}"/>
+      </div>
+      ${Auth.isAdmin()?`<div>
+        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Assign To</label>
+        <select name="assignedTo" class="input"><option value="">Unassigned</option>${agents.map(a=>`<option value="${a.id}"${l?.assignedTo===a.id?' selected':''}>${esc(a.name)}</option>`).join('')}</select>
+      </div>`:'<div></div>'}
+    </div>
+    <div>
+      <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">${l?'Add Note':'Initial Note'}</label>
+      <textarea name="note" class="input resize-none" rows="3" placeholder="Call log, follow-up note..."></textarea>
+    </div>
+    <div id="lead-form-err" class="hidden bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-2.5 text-sm"></div>
+    <div class="flex gap-3 pt-2 border-t border-slate-100">
+      <button type="button" onclick="closeModal()" class="btn btn-secondary flex-1">Cancel</button>
+      <button type="submit" class="btn btn-primary flex-1">${l?'Update Lead':'Add Lead'}</button>
+    </div>
+  </form></div>`;
+}
+function saveLead(e,id){
+  e.preventDefault();
+  const fd=new FormData(e.target);
+  const get=n=>fd.get(n)||'';
+  if(!get('name')||!get('phone')){ document.getElementById('lead-form-err').innerHTML='Name and phone are required.'; document.getElementById('lead-form-err').classList.remove('hidden'); return; }
+  if(id){
+    const l=S.leads.find(x=>x.id===id);
+    if(!l)return;
+    const old=l.status;
+    Object.assign(l,{name:get('name'),phone:get('phone'),email:get('email'),location:get('location'),source:get('source'),status:get('status'),package:get('package')||null,budget:get('budget'),followUpDate:get('followUpDate')||null});
+    if(Auth.isAdmin()) l.assignedTo=get('assignedTo')||null;
+    if(get('status')==='Converted'&&!l.convertedAt) l.convertedAt=new Date().toISOString();
+    if(get('note').trim()) l.notes.push({id:uid(),text:get('note'),addedBy:S.user.id,addedAt:new Date().toISOString()});
+    DB.saveLeads();
+    DB.addActivity('lead_updated',`Lead "${l.name}" was updated`,S.user.id);
+    if(old!==l.status) DB.addActivity('status_changed',`Lead "${l.name}" moved to "${l.status}"`,S.user.id);
+    toast('Lead updated!');
+  } else {
+    const l={
+      id:uid(), name:get('name'), phone:get('phone'), email:get('email'), location:get('location'),
+      source:get('source'), status:get('status')||'New Lead', package:get('package')||null,
+      budget:get('budget'), followUpDate:get('followUpDate')||null,
+      assignedTo:Auth.isAdmin()?get('assignedTo')||null:S.user.id,
+      convertedAt:get('status')==='Converted'?new Date().toISOString():null,
+      notes:[], createdAt:new Date().toISOString()
+    };
+    if(get('note').trim()) l.notes.push({id:uid(),text:get('note'),addedBy:S.user.id,addedAt:new Date().toISOString()});
+    S.leads.unshift(l);
+    DB.saveLeads();
+    DB.addActivity('lead_created',`New lead "${l.name}" was added`,S.user.id);
+    toast('Lead added!');
+  }
+  closeModal();
+}
+
+/* Lead Detail Modal */
+function renderLeadDetailModal(id){
+  const l=S.leads.find(x=>x.id===id);
+  if(!l) return `${modalHeader('Lead Not Found')}<div class="p-6 text-slate-400 text-sm">Lead not found.</div>`;
+  const ov=isOverdue(l.followUpDate),td=isToday(l.followUpDate);
+  const notes=[...(l.notes||[])].reverse();
+  return `${modalHeader(esc(l.name))}
+  <div class="overflow-y-auto flex-1 p-6 space-y-5">
+    <!-- Lead info -->
+    <div class="flex flex-col sm:flex-row items-start gap-4 pb-4 border-b border-slate-100">
+      <div class="w-14 h-14 rounded-2xl bg-blue-50 border-2 border-blue-100 flex items-center justify-center text-xl font-bold text-blue-700 flex-shrink-0">${initials(l.name)}</div>
+      <div class="flex-1 min-w-0">
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+          <h3 class="text-xl font-bold text-slate-900">${esc(l.name)}</h3>
+          ${statusBadge(l.status)}
+        </div>
+        <div class="flex flex-wrap gap-3 text-sm text-slate-500">
+          <span>📞 ${esc(l.phone)}</span>
+          ${l.email?`<span>✉️ ${esc(l.email)}</span>`:''}
+          ${l.location?`<span>📍 ${esc(l.location)}</span>`:''}
+          <span>${SRC_ICON[l.source]} ${l.source}</span>
+          ${l.package?`<span>📦 ${l.package}</span>`:''}
+          ${l.budget?`<span>💰 ${l.budget}</span>`:''}
+        </div>
+        ${l.followUpDate?`<div class="mt-2 inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full border font-medium ${ov?'bg-red-50 text-red-700 border-red-200':td?'bg-amber-50 text-amber-700 border-amber-200':'bg-slate-50 text-slate-600 border-slate-200'}">
+          <span class="w-1.5 h-1.5 rounded-full ${ov?'bg-red-500':td?'bg-amber-500':'bg-slate-400'} flex-shrink-0"></span>
+          ${ov?'Overdue:':td?'Today:':'Follow-up:'} ${fmtDate(l.followUpDate)}</div>`:''}
+      </div>
+    </div>
+    <!-- Status pipeline -->
+    <div>
+      <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Change Status</p>
+      <div class="flex flex-wrap gap-2">
+        ${STAGES.map(st=>{
+          const c=STATUS_STYLE[st]; const active=l.status===st;
+          return `<button onclick="updateLeadStatusDetail('${id}','${st}')"
+            class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold border transition-all ${active?'ring-2 ring-offset-1':'hover:border-slate-300'}"
+            style="${active?`background:${c.dot}15;color:${c.dot};border-color:${c.dot}40`:'background:#fff;color:#64748b;border-color:#e2e8f0'}">
+            <span style="width:7px;height:7px;border-radius:50%;background:${c.dot}" class="flex-shrink-0"></span>${st}${active?' ✓':''}
+          </button>`;
+        }).join('')}
+      </div>
+    </div>
+    <!-- Assignment -->
+    <div class="pb-4 border-b border-slate-100">
+      <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Assigned To</p>
+      ${l.assignedTo?`<div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700">${initials(getUserName(l.assignedTo))}</div>
+        <p class="text-slate-700 text-sm font-semibold">${getUserName(l.assignedTo)}</p>
+      </div>`:'<p class="text-slate-400 text-sm">Unassigned</p>'}
+    </div>
+    <!-- Notes -->
+    <div>
+      <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Call Logs & Notes</p>
+      <div class="flex gap-2 mb-4">
+        <input id="note-input-${id}" class="input text-sm flex-1" placeholder="Add a call log or note..."/>
+        <button onclick="addNoteToLead('${id}')" class="btn btn-primary px-4 text-sm">Add</button>
+      </div>
+      <div class="space-y-3 max-h-64 overflow-y-auto">
+        ${notes.length===0?`<div class="text-center py-8 bg-slate-50 rounded-xl border border-slate-100"><p class="text-2xl mb-2">📝</p><p class="text-slate-400 text-sm">No notes yet.</p></div>`
+          :notes.map(n=>`<div class="bg-slate-50 border border-slate-100 rounded-xl p-4">
+            <p class="text-slate-700 text-sm leading-relaxed">${esc(n.text)}</p>
+            <div class="flex items-center gap-2 mt-3 pt-2.5 border-t border-slate-100">
+              <div class="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center text-[9px] font-bold text-blue-700">${initials(getUserName(n.addedBy))}</div>
+              <p class="text-slate-400 text-xs">${getUserName(n.addedBy)} · ${timeAgo(n.addedAt)}</p>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="flex gap-3 pt-2 border-t border-slate-100">
+      <button onclick="closeModal()" class="btn btn-secondary flex-1">Close</button>
+      <button onclick="closeModal();openLeadModal('${id}')" class="btn btn-primary flex-1">✏️ Edit Lead</button>
+    </div>
+  </div>`;
+}
+
+function updateLeadStatusDetail(id,st){
+  const l=S.leads.find(x=>x.id===id); if(!l)return;
+  const old=l.status; l.status=st;
+  if(st==='Converted'&&!l.convertedAt) l.convertedAt=new Date().toISOString();
+  DB.saveLeads();
+  DB.addActivity('status_changed',`Lead "${l.name}" moved from "${old}" to "${st}"`,S.user.id);
+  toast(`Status → ${st}`);
+  S.modal={type:'detail',id}; render();
+}
+
+function addNoteToLead(id){
+  const input=document.getElementById('note-input-'+id);
+  const txt=(input?.value||'').trim(); if(!txt)return;
+  const l=S.leads.find(x=>x.id===id); if(!l)return;
+  l.notes.push({id:uid(),text:txt,addedBy:S.user.id,addedAt:new Date().toISOString()});
+  DB.saveLeads();
+  DB.addActivity('note_added',`Note added to lead "${l.name}"`,S.user.id);
+  toast('Note added!');
+  S.modal={type:'detail',id}; render();
+}
+
+/* User Form Modal */
+function openUserModal(id){ S.modal={type:'user',id}; render(); }
+function renderUserForm(id){
+  const u=id?S.users.find(x=>x.id===id):null;
+  return `${modalHeader(u?'Edit Team Member':'Add Team Member')}
+  <div class="overflow-y-auto flex-1">
+  <form id="user-form" class="p-6 space-y-4" onsubmit="saveUser(event,'${id||''}')">
+    <div class="grid grid-cols-2 gap-4">
+      <div><label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Full Name <span class="text-red-500">*</span></label>
+        <input name="name" class="input" placeholder="Ahmed Al-Rashid" value="${u?esc(u.name):''}" required/></div>
+      <div><label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Phone</label>
+        <input name="phone" class="input" placeholder="+971 50 000 0000" value="${u?esc(u.phone||''):''}"/></div>
+      <div><label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Email <span class="text-red-500">*</span></label>
+        <input name="email" class="input" type="email" placeholder="ahmed@gymathome.com" value="${u?esc(u.email):''}" required/></div>
+      <div><label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Role <span class="text-red-500">*</span></label>
+        <select name="role" class="input"><option value="sales"${u?.role!=='admin'?' selected':''}>Sales Agent</option><option value="admin"${u?.role==='admin'?' selected':''}>Admin</option></select></div>
+    </div>
+    <div><label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Password ${u?'<span class="text-slate-400 normal-case font-normal text-xs">(leave blank to keep)</span>':'<span class="text-red-500">*</span>'}</label>
+      <input name="password" class="input" type="password" placeholder="${u?'••••••••':'Min 6 characters'}" ${u?'':'required minlength="6"'}/></div>
+    <div id="user-form-err" class="hidden bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-2.5 text-sm"></div>
+    <div class="flex gap-3 pt-2 border-t border-slate-100">
+      <button type="button" onclick="closeModal()" class="btn btn-secondary flex-1">Cancel</button>
+      <button type="submit" class="btn btn-primary flex-1">${u?'Update Member':'Add Member'}</button>
+    </div>
+  </form></div>`;
+}
+function saveUser(e,id){
+  e.preventDefault();
+  const fd=new FormData(e.target);
+  const get=n=>fd.get(n)||'';
+  const email=get('email').toLowerCase();
+  if(S.users.find(u=>u.email===email&&u.id!==id)){
+    document.getElementById('user-form-err').innerHTML='Email already in use.'; document.getElementById('user-form-err').classList.remove('hidden'); return;
+  }
+  if(id){
+    const u=S.users.find(x=>x.id===id); if(!u)return;
+    u.name=get('name'); u.email=email; u.role=get('role'); u.phone=get('phone');
+    if(get('password')) u.passwordHash=btoa(get('password'));
+    DB.saveUsers(); toast('Member updated!');
+  } else {
+    if(!get('password')){ document.getElementById('user-form-err').innerHTML='Password is required.'; document.getElementById('user-form-err').classList.remove('hidden'); return; }
+    S.users.push({id:uid(),name:get('name'),email,passwordHash:btoa(get('password')),role:get('role'),phone:get('phone'),isActive:true,createdAt:new Date().toISOString()});
+    DB.saveUsers(); toast('Member added!');
+  }
+  closeModal();
+}
+
+/* Confirm Modal */
+function confirmDelete(id,type){
+  const label=type==='lead'?S.leads.find(x=>x.id===id)?.name:S.users.find(x=>x.id===id)?.name;
+  S.modal={type:'confirm',id,itemType:type,label}; render();
+}
+function renderConfirmModal(m){
+  return `${modalHeader('Confirm Delete')}
+  <div class="p-6">
+    <p class="text-slate-600 text-sm mb-6 leading-relaxed">Are you sure you want to delete <strong>${esc(m.label)}</strong>? This action cannot be undone.</p>
+    <div class="flex gap-3 justify-end">
+      <button onclick="closeModal()" class="btn btn-secondary">Cancel</button>
+      <button onclick="doDelete('${m.id}','${m.itemType}')" class="btn btn-danger">Delete</button>
+    </div>
+  </div>`;
+}
+function doDelete(id,type){
+  if(type==='lead'){
+    S.leads=S.leads.filter(x=>x.id!==id); DB.saveLeads(); toast('Lead deleted');
+  } else {
+    if(id===S.user?.id){ toast('Cannot delete your own account','error'); closeModal(); return; }
+    S.users=S.users.filter(x=>x.id!==id);
+    S.leads.forEach(l=>{ if(l.assignedTo===id) l.assignedTo=null });
+    DB.saveUsers(); DB.saveLeads(); toast('Member deleted');
+  }
+  closeModal();
+}
+
+/* ══════════════════════════════════════════════
+   BIND EVENTS
+══════════════════════════════════════════════ */
+function bindNav(){
+  // Close sidebar on outside click (mobile)
+  document.addEventListener('click',e=>{
+    const sb=document.getElementById('sidebar');
+    if(sb&&sb.classList.contains('open')&&!sb.contains(e.target)) sb.classList.remove('open');
+  },{once:true});
+}
+function bindPage(){
+  if(S.page==='reports') setTimeout(bindReportCharts,50);
+}
+function bindModal(){
+  if(S.modal?.type==='detail') {
+    // focus note input
+    setTimeout(()=>{ const ni=document.querySelector('[id^="note-input-"]'); if(ni) ni.focus(); },100);
+  }
+}
+
+/* ══════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════ */
+(function init(){
+  DB.init();
+  DB.loadAll();
+  if(Auth.restore()){
+    navigate('dashboard');
+  } else {
+    navigate('login');
+  }
+})();
+</script>
+</body>
+</html>
