@@ -2,306 +2,295 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
 <title>Sales Command Center — HomeGym™</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#060608;--surface:#0c0c14;--surface2:#12121e;--border:rgba(255,255,255,.07);
-  --text:rgba(255,255,255,.4);--text2:rgba(255,255,255,.65);--white:#fff;--rc:#6366f1;
-  --input-bg:rgba(255,255,255,.05);--input-border:rgba(255,255,255,.1);
-  --card-hover:rgba(255,255,255,.04);
-}
-body.light{
   --bg:#f0f2f5;--surface:#ffffff;--surface2:#f8f9fb;--border:rgba(0,0,0,.09);
   --text:rgba(0,0,0,.45);--text2:rgba(0,0,0,.7);--white:#111;
   --input-bg:rgba(0,0,0,.04);--input-border:rgba(0,0,0,.12);--card-hover:rgba(0,0,0,.03);
+  --rc:#222;--shadow:0 2px 16px rgba(0,0,0,.08);
 }
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--white);height:100vh;overflow:hidden;display:flex;flex-direction:column;transition:background .3s,color .3s}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--white);height:100dvh;overflow:hidden;display:flex;flex-direction:column}
 input,select,button,textarea{font-family:inherit}
-::-webkit-scrollbar{width:4px;height:4px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:rgba(128,128,128,.2);border-radius:99px}
-
-/* ── BLOBS ── */
-.blob{position:fixed;border-radius:50%;pointer-events:none;transition:opacity .3s}
-.blob1{top:-20%;left:-10%;width:600px;height:600px;background:radial-gradient(circle,rgba(99,102,241,.12),transparent 70%)}
-.blob2{bottom:-20%;right:-10%;width:500px;height:500px;background:radial-gradient(circle,rgba(16,185,129,.08),transparent 70%)}
-body.light .blob1{background:radial-gradient(circle,rgba(99,102,241,.06),transparent 70%)}
-body.light .blob2{background:radial-gradient(circle,rgba(16,185,129,.04),transparent 70%)}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:99px}
 
 /* ── LOGIN ── */
-#loginWrap{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:16px;z-index:100;transition:opacity .4s}
+#loginWrap{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:16px;z-index:100;transition:opacity .4s;overflow-y:auto}
 #loginWrap.hide{opacity:0;pointer-events:none}
-.login-card{width:100%;max-width:440px;position:relative;z-index:1}
-.login-header{text-align:center;margin-bottom:28px}
-.logo-wrap{display:inline-flex;align-items:center;justify-content:center;width:84px;height:84px;border-radius:22px;background:var(--input-bg);border:1px solid var(--border);margin-bottom:14px;box-shadow:0 0 40px rgba(99,102,241,.15)}
-.login-header h1{font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--white)}
-.login-header p{color:var(--text);font-size:12px;margin-top:5px}
-.glass{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:28px;backdrop-filter:blur(20px);box-shadow:0 20px 60px rgba(0,0,0,.3)}
-body.light .glass{box-shadow:0 8px 40px rgba(0,0,0,.1)}
-.step-label{color:var(--text);font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
-.role-card{display:flex;align-items:center;gap:13px;padding:13px 15px;border-radius:13px;border:1.5px solid var(--border);background:var(--input-bg);cursor:pointer;margin-bottom:9px;transition:all .2s}
-.role-card:hover{background:var(--card-hover)}
+.login-card{width:100%;max-width:400px}
+.login-header{text-align:center;margin-bottom:24px}
+.logo-circle{display:inline-flex;align-items:center;justify-content:center;width:80px;height:80px;border-radius:20px;background:#111;margin-bottom:12px;box-shadow:0 4px 24px rgba(0,0,0,.15)}
+.login-header h1{font-size:20px;font-weight:800;letter-spacing:-.5px;color:var(--white)}
+.login-header p{color:var(--text);font-size:12px;margin-top:4px}
+.glass{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px;box-shadow:var(--shadow)}
+.step-label{color:var(--text);font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px}
+.role-card{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--input-bg);cursor:pointer;margin-bottom:8px;transition:all .2s;touch-action:manipulation}
+.role-card:active{transform:scale(.98)}
 .role-card.active{border-color:var(--rc)}
-.role-icon-wrap{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.role-icon-wrap{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
 .role-name{font-weight:700;font-size:13px;color:var(--white)}
-.role-desc{color:var(--text);font-size:11px;margin-top:2px}
+.role-desc{color:var(--text);font-size:11px;margin-top:1px}
 .role-check{margin-left:auto;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;opacity:0;transition:opacity .2s}
 .role-card.active .role-check{opacity:1}
-.btn-main{width:100%;padding:12px;border-radius:11px;border:none;font-weight:700;font-size:14px;cursor:pointer;margin-top:14px;transition:all .2s;color:#fff}
+.btn-main{width:100%;padding:13px;border-radius:11px;border:none;font-weight:700;font-size:14px;cursor:pointer;margin-top:12px;transition:all .2s;color:#fff;touch-action:manipulation}
 .btn-main:disabled{background:var(--input-bg)!important;color:var(--text)!important;cursor:not-allowed}
-.field-label{color:var(--text);font-size:11px;font-weight:600;letter-spacing:.5px;display:block;margin-bottom:5px}
-.field-input{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;padding:10px 13px;color:var(--white);font-size:13px;outline:none;transition:border-color .2s}
+.field-input{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;padding:11px 13px;color:var(--white);font-size:14px;outline:none;transition:border-color .2s}
 .field-input:focus{border-color:var(--rc)}
 .field-wrap{margin-bottom:12px}
-.back-btn{background:none;border:none;color:var(--text);font-size:12px;cursor:pointer;margin-bottom:16px;padding:0;display:flex;align-items:center;gap:5px}
-.role-badge{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:11px;margin-bottom:18px}
-.err-msg{color:#f87171;font-size:11px;margin-bottom:8px;display:none}
+.back-btn{background:none;border:none;color:var(--text);font-size:12px;cursor:pointer;margin-bottom:14px;padding:0;display:flex;align-items:center;gap:5px}
+.role-badge{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:11px;margin-bottom:16px}
+.err-msg{color:#ef4444;font-size:11px;margin-bottom:8px;display:none}
 .forgot{color:var(--text);font-size:11px;text-align:center;margin-top:8px}
-.login-footer{color:var(--text);font-size:11px;text-align:center;margin-top:18px;opacity:.5}
-.theme-toggle-login{position:absolute;top:16px;right:16px;background:var(--input-bg);border:1px solid var(--border);border-radius:9px;padding:7px 12px;cursor:pointer;font-size:13px;color:var(--text);transition:all .2s}
+.login-footer{color:var(--text);font-size:11px;text-align:center;margin-top:16px;opacity:.5}
 
 /* ── APP SHELL ── */
-#app{display:flex;height:100vh;overflow:hidden;opacity:0;transition:opacity .4s}
+#app{display:flex;height:100dvh;overflow:hidden;opacity:0;transition:opacity .4s;flex-direction:column}
 #app.show{opacity:1}
-aside{width:216px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;transition:width .25s;overflow:hidden}
-aside.collapsed{width:62px}
-.sb-head{display:flex;align-items:center;gap:11px;padding:16px 13px;border-bottom:1px solid var(--border);cursor:pointer;flex-shrink:0}
-.sb-brand p{font-weight:800;font-size:13px;white-space:nowrap;color:var(--white)}
-.sb-brand small{color:var(--text);font-size:10px}
-nav{flex:1;padding:10px 7px;display:flex;flex-direction:column;gap:3px;overflow:hidden}
-.nav-btn{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:9px;border:none;background:transparent;color:var(--text);font-weight:400;font-size:13px;cursor:pointer;transition:all .18s;text-align:left;width:100%;white-space:nowrap;position:relative}
-.nav-btn:hover{background:var(--card-hover);color:var(--white)}
-.nav-btn.active{background:rgba(99,102,241,.13);color:var(--white);font-weight:700}
-body.light .nav-btn.active{background:rgba(99,102,241,.1)}
-.nav-dot{position:absolute;left:0;top:18%;bottom:18%;width:3px;border-radius:99px;background:var(--rc);display:none}
-.nav-btn.active .nav-dot{display:block}
-.nav-icon{font-size:15px;flex-shrink:0;width:20px;text-align:center}
-.sb-foot{padding:11px 9px;border-top:1px solid var(--border);display:flex;align-items:center;gap:9px}
-.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;flex-shrink:0}
-.logout-btn{margin-left:auto;background:none;border:none;color:var(--text);font-size:13px;cursor:pointer;flex-shrink:0}
 
 /* ── TOPBAR ── */
-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 22px;height:54px;display:flex;align-items:center;gap:14px;flex-shrink:0}
-.topbar-title p{font-weight:700;font-size:14px;color:var(--white)}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 14px;height:52px;display:flex;align-items:center;gap:10px;flex-shrink:0;box-shadow:var(--shadow);z-index:50}
+.logo-sm{width:34px;height:34px;border-radius:9px;background:#111;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.topbar-title{flex:1;min-width:0}
+.topbar-title p{font-weight:800;font-size:14px;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topbar-title small{color:var(--text);font-size:10px}
-.search-input{background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;padding:7px 13px;color:var(--white);font-size:12px;outline:none;width:180px}
-.icon-btn{background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;width:35px;height:35px;cursor:pointer;font-size:14px;position:relative;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--white)}
+.icon-btn{background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;width:36px;height:36px;cursor:pointer;font-size:15px;position:relative;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--white);touch-action:manipulation}
 .notif-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:#ef4444;border:1.5px solid var(--surface)}
-.theme-btn{font-size:16px}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;flex-shrink:0}
+.hamburger{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;gap:4px;padding:6px;touch-action:manipulation}
+.ham-line{width:20px;height:2px;background:var(--white);border-radius:99px;transition:all .3s}
+
+/* ── DRAWER ── */
+#drawer{position:fixed;inset:0;z-index:200;pointer-events:none}
+#drawerBg{position:absolute;inset:0;background:rgba(0,0,0,.4);opacity:0;transition:opacity .3s}
+#drawerPanel{position:absolute;left:0;top:0;bottom:0;width:260px;background:var(--surface);transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,.1)}
+#drawer.open{pointer-events:all}
+#drawer.open #drawerBg{opacity:1}
+#drawer.open #drawerPanel{transform:translateX(0)}
+.drawer-head{padding:16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.drawer-brand p{font-weight:800;font-size:14px;color:var(--white)}
+.drawer-brand small{color:var(--text);font-size:10px}
+.drawer-nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:3px;overflow-y:auto}
+.nav-btn{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:10px;border:none;background:transparent;color:var(--text);font-weight:500;font-size:13px;cursor:pointer;transition:all .18s;text-align:left;width:100%;touch-action:manipulation;position:relative}
+.nav-btn:active{transform:scale(.97)}
+.nav-btn.active{background:rgba(0,0,0,.07);color:var(--white);font-weight:700}
+.nav-dot{position:absolute;left:0;top:18%;bottom:18%;width:3px;border-radius:99px;background:var(--rc);display:none}
+.nav-btn.active .nav-dot{display:block}
+.nav-icon{font-size:16px;flex-shrink:0;width:22px;text-align:center}
+.drawer-foot{padding:12px 10px;border-top:1px solid var(--border);display:flex;align-items:center;gap:9px}
+.logout-btn{margin-left:auto;background:none;border:none;color:var(--text);font-size:13px;cursor:pointer;flex-shrink:0;touch-action:manipulation}
 
 /* ── MAIN ── */
-main{flex:1;overflow-y:auto;overflow-x:hidden}
-.page{padding:22px;animation:fadeUp .28s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.page{padding:14px;animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── UNIVERSAL CARD ── */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px}
-.card-title{font-weight:700;font-size:13px;margin-bottom:14px;color:var(--white)}
-.card+.card{margin-top:14px}
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:15px;box-shadow:var(--shadow)}
+.card-title{font-weight:700;font-size:13px;margin-bottom:12px;color:var(--white)}
+.card+.card{margin-top:12px}
 
-/* ── STAT CARDS ── */
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:18px}
-.stat-card{border-radius:16px;padding:18px;position:relative;overflow:hidden;cursor:default}
-.stat-card::before{content:'';position:absolute;top:-20px;right:-20px;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.09)}
-.stat-icon{font-size:24px;margin-bottom:7px}
-.stat-val{font-size:24px;font-weight:800;color:#fff}
-.stat-label{color:rgba(255,255,255,.7);font-size:12px;margin-top:1px}
-.stat-delta{display:inline-block;margin-top:7px;background:rgba(255,255,255,.2);border-radius:99px;padding:1px 8px;font-size:10px;color:#fff}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
-@media(max-width:700px){.two-col{grid-template-columns:1fr}}
-
-/* ── BAR ── */
-.bar-track{background:var(--border);border-radius:99px;height:4px;margin-top:5px}
-.bar-fill{height:4px;border-radius:99px;transition:width .9s ease}
+/* ── STAT GRID ── */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.stat-card{border-radius:14px;padding:14px;position:relative;overflow:hidden;cursor:default}
+.stat-card::before{content:'';position:absolute;top:-16px;right:-16px;width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.1)}
+.stat-icon{font-size:20px;margin-bottom:5px}
+.stat-val{font-size:20px;font-weight:800;color:#fff}
+.stat-label{color:rgba(255,255,255,.75);font-size:11px;margin-top:1px}
+.stat-delta{display:inline-block;margin-top:5px;background:rgba(255,255,255,.2);border-radius:99px;padding:1px 7px;font-size:10px;color:#fff}
 
 /* ── PILL ── */
 .pill{border-radius:99px;padding:2px 9px;font-size:10px;font-weight:600;white-space:nowrap}
 
+/* ── BAR ── */
+.bar-track{background:var(--border);border-radius:99px;height:3px;margin-top:4px}
+.bar-fill{height:3px;border-radius:99px;transition:width .9s ease}
+
 /* ── LB ROW ── */
-.lb-row{display:flex;align-items:center;gap:11px;margin-bottom:11px}
+.lb-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .lb-rank{font-weight:800;font-size:12px;width:16px;flex-shrink:0}
 .lb-info{flex:1}
 .lb-name{display:flex;justify-content:space-between;font-size:12px;color:var(--white)}
 
 /* ── LEAD ROW ── */
-.lead-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px;cursor:pointer;transition:background .15s;margin-bottom:3px}
-.lead-row:hover{background:var(--card-hover)}
-
-/* ── CHART ── */
-.chart-bars{display:flex;align-items:flex-end;gap:7px;height:72px}
-.chart-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
-.chart-bar{width:100%;border-radius:4px 4px 0 0}
-.chart-day{color:var(--text);font-size:9px}
+.lead-row{display:flex;align-items:center;gap:10px;padding:8px 9px;border-radius:9px;cursor:pointer;transition:background .15s;margin-bottom:2px;touch-action:manipulation}
+.lead-row:active{background:var(--card-hover)}
 
 /* ── INBOX ── */
-.inbox-wrap{display:flex;height:100%;overflow:hidden}
-.lead-list{width:250px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column}
-.lead-list-head{padding:11px;border-bottom:1px solid var(--border)}
-.list-search{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;padding:7px 11px;color:var(--white);font-size:12px;outline:none}
+.inbox-wrap{display:flex;flex-direction:column;height:100%;overflow:hidden}
+.lead-list-mobile{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.lead-list-head-m{padding:10px 14px;border-bottom:1px solid var(--border);background:var(--surface)}
+.list-search{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;padding:8px 12px;color:var(--white);font-size:14px;outline:none}
 .tab-row{display:flex;gap:5px;margin-top:7px}
-.tab-btn{flex:1;padding:5px 0;background:var(--input-bg);border:1px solid var(--input-border);border-radius:7px;color:var(--text);font-size:11px;cursor:pointer;transition:all .15s}
+.tab-btn{flex:1;padding:6px 0;background:var(--input-bg);border:1px solid var(--input-border);border-radius:7px;color:var(--text);font-size:11px;cursor:pointer;transition:all .15s;touch-action:manipulation}
 .tab-btn.active-tab{background:var(--rc);color:#fff;border-color:var(--rc)}
 .lead-items{flex:1;overflow-y:auto}
-.lead-item{display:flex;align-items:center;gap:9px;padding:10px 11px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
-.lead-item:hover,.lead-item.active{background:var(--card-hover)}
+.lead-item{display:flex;align-items:center;gap:9px;padding:11px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;touch-action:manipulation}
+.lead-item:active{background:var(--card-hover)}
 .plat-dot{position:absolute;bottom:0;right:0;font-size:8px}
-.unread-badge{width:17px;height:17px;border-radius:50%;color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.chat-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.chat-head{padding:10px 15px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px;background:var(--surface)}
+.unread-badge{width:18px;height:18px;border-radius:50%;color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ── CHAT VIEW ── */
+.chat-view{display:flex;flex-direction:column;height:100%;overflow:hidden}
+.chat-head{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--surface);flex-shrink:0}
+.chat-back{background:none;border:none;color:var(--white);font-size:20px;cursor:pointer;padding:4px;touch-action:manipulation}
 .chat-name{font-weight:700;font-size:13px;color:var(--white)}
 .chat-sub{color:var(--text);font-size:10px}
-.chat-actions{margin-left:auto;display:flex;gap:7px;align-items:center;flex-wrap:wrap}
-.action-btn{background:var(--input-bg);border:1px solid var(--input-border);border-radius:7px;padding:5px 11px;color:var(--text2);font-size:11px;cursor:pointer;transition:all .15s}
-.action-btn:hover{background:var(--card-hover)}
-.chat-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:9px}
-.msg-bubble{max-width:300px;padding:10px 13px;font-size:13px;line-height:1.5}
-.msg-time{font-size:9px;color:rgba(255,255,255,.4);text-align:right;margin-top:4px}
+.chat-hactions{margin-left:auto;display:flex;gap:6px;align-items:center}
+.action-btn{background:var(--input-bg);border:1px solid var(--input-border);border-radius:7px;padding:5px 10px;color:var(--text2);font-size:11px;cursor:pointer;touch-action:manipulation;white-space:nowrap}
+.chat-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;-webkit-overflow-scrolling:touch}
+.msg-bubble{max-width:75%;padding:9px 12px;font-size:13px;line-height:1.5;word-break:break-word}
+.msg-time{font-size:9px;color:rgba(0,0,0,.3);text-align:right;margin-top:3px}
+.msg-out .msg-time{color:rgba(255,255,255,.5)}
 .msg-out{border-radius:16px 16px 4px 16px;margin-left:auto;color:#fff}
 .msg-in{border-radius:16px 16px 16px 4px;background:var(--input-bg);color:var(--white)}
-body.light .msg-in{background:var(--surface2)}
-.chat-input-row{padding:11px;border-top:1px solid var(--border);display:flex;gap:7px}
-.emoji-btn{background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;width:35px;height:35px;cursor:pointer;font-size:14px;flex-shrink:0}
-.msg-input{flex:1;background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;padding:8px 13px;color:var(--white);font-size:13px;outline:none}
-.send-btn{border:none;border-radius:9px;padding:8px 18px;color:#fff;font-weight:700;font-size:13px;cursor:pointer}
-.lead-detail{width:210px;flex-shrink:0;border-left:1px solid var(--border);padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;background:var(--surface)}
-.detail-block{background:var(--input-bg);border-radius:9px;padding:9px 11px}
+.chat-input-row{padding:10px 12px;border-top:1px solid var(--border);display:flex;gap:7px;flex-shrink:0;background:var(--surface)}
+.emoji-btn{background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;width:36px;height:36px;cursor:pointer;font-size:14px;flex-shrink:0;touch-action:manipulation}
+.msg-input{flex:1;background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;padding:9px 12px;color:var(--white);font-size:14px;outline:none}
+.send-btn{border:none;border-radius:9px;padding:9px 16px;color:#fff;font-weight:700;font-size:13px;cursor:pointer;touch-action:manipulation;flex-shrink:0}
+
+/* ── LEAD DETAIL (bottom sheet) ── */
+.detail-sheet{position:fixed;inset:0;z-index:150;pointer-events:none}
+.detail-bg{position:absolute;inset:0;background:rgba(0,0,0,.4);opacity:0;transition:opacity .3s}
+.detail-panel{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:20px 20px 0 0;max-height:80dvh;overflow-y:auto;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);padding:20px 16px;padding-bottom:max(20px,env(safe-area-inset-bottom))}
+.detail-sheet.open{pointer-events:all}
+.detail-sheet.open .detail-bg{opacity:1}
+.detail-sheet.open .detail-panel{transform:translateY(0)}
+.detail-handle{width:36px;height:4px;border-radius:99px;background:var(--border);margin:0 auto 16px}
+.detail-block{background:var(--input-bg);border-radius:9px;padding:9px 11px;margin-bottom:7px}
 .detail-key{color:var(--text);font-size:10px;margin-bottom:2px}
 .detail-val{font-size:12px;font-weight:600;color:var(--white)}
-.ghost-btn{width:100%;padding:8px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
-.empty-chat{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text);gap:10px}
-.empty-icon{font-size:40px;opacity:.4}
+.ghost-btn{width:100%;padding:10px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;margin-bottom:7px;touch-action:manipulation}
 
 /* ── PIPELINE ── */
-.pipeline-wrap{padding:22px;overflow-x:auto;animation:fadeUp .28s ease}
-.kanban{display:flex;gap:12px;min-width:max-content}
-.col-wrap{width:195px;flex-shrink:0}
-.col-inner{border-radius:14px;border:1.5px solid var(--border);background:var(--surface);transition:all .2s;overflow:hidden}
-.col-inner.dragover{border-color:rgba(99,102,241,.5);background:var(--card-hover)}
-.col-head{padding:11px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.col-dot{width:7px;height:7px;border-radius:50%;margin-right:7px;flex-shrink:0}
-.col-title{font-weight:700;font-size:12px;display:flex;align-items:center;color:var(--white)}
+.pipeline-wrap{padding:14px;overflow-x:auto;animation:fadeUp .25s ease;-webkit-overflow-scrolling:touch}
+.kanban{display:flex;gap:10px;min-width:max-content}
+.col-wrap{width:180px;flex-shrink:0}
+.col-inner{border-radius:12px;border:1.5px solid var(--border);background:var(--surface);overflow:hidden}
+.col-inner.dragover{border-color:var(--rc);background:var(--card-hover)}
+.col-head{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.col-dot{width:7px;height:7px;border-radius:50%;margin-right:6px;flex-shrink:0}
+.col-title{font-weight:700;font-size:11px;display:flex;align-items:center;color:var(--white)}
 .col-count{background:var(--input-bg);border-radius:99px;padding:1px 7px;font-size:10px;color:var(--text)}
-.col-body{padding:9px;min-height:70px;display:flex;flex-direction:column;gap:7px}
-.k-card{background:var(--input-bg);border:1px solid var(--border);border-radius:11px;padding:11px;cursor:grab;transition:all .15s}
-.k-card:hover{background:var(--card-hover);transform:scale(1.02)}
-.k-card:active{cursor:grabbing}
+.col-body{padding:8px;min-height:60px;display:flex;flex-direction:column;gap:6px}
+.k-card{background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:10px;cursor:grab;transition:all .15s}
+.k-card:active{cursor:grabbing;transform:scale(.98)}
 .k-name{font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--white)}
-.k-val{color:#10b981;font-size:13px;font-weight:800;margin:4px 0}
+.k-val{color:#16a34a;font-size:13px;font-weight:800;margin:3px 0}
 .k-src{color:var(--text);font-size:10px}
-.drop-hint{color:var(--text);font-size:11px;text-align:center;padding:12px 0;opacity:.4}
+.drop-hint{color:var(--text);font-size:11px;text-align:center;padding:10px 0;opacity:.4}
 
 /* ── AGENTS ── */
-.agent-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px;padding:22px;animation:fadeUp .28s ease}
-.agent-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;transition:border-color .2s}
-.agent-card:hover{border-color:var(--rc)}
-.agent-head{display:flex;align-items:center;gap:13px;margin-bottom:14px}
+.agent-grid{display:grid;grid-template-columns:1fr;gap:12px;padding:14px;animation:fadeUp .25s ease}
+@media(min-width:500px){.agent-grid{grid-template-columns:1fr 1fr}}
+.agent-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.agent-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .agent-conv{margin-left:auto;text-align:right}
-.agent-conv-val{font-size:20px;font-weight:800;color:#10b981}
+.agent-conv-val{font-size:20px;font-weight:800;color:#16a34a}
 .agent-conv-lbl{font-size:10px;color:var(--text)}
-.agent-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
-.agent-stat{background:var(--input-bg);border-radius:9px;padding:9px 0;text-align:center}
-.agent-stat-val{font-weight:700;font-size:13px;color:var(--white)}
+.agent-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.agent-stat{background:var(--input-bg);border-radius:8px;padding:8px 0;text-align:center}
+.agent-stat-val{font-weight:700;font-size:12px;color:var(--white)}
 .agent-stat-key{color:var(--text);font-size:10px}
 
 /* ── FOLLOWUPS ── */
-.fu-counters{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:14px}
-.fu-counter{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center}
-.fu-num{font-size:32px;font-weight:800}
-.fu-lbl{color:var(--text);font-size:11px;margin-top:3px}
-.task-item{display:flex;align-items:center;gap:11px;padding:10px 11px;border-radius:11px;margin-bottom:5px;background:var(--input-bg);cursor:pointer;transition:background .15s}
-.task-item:hover{background:var(--card-hover)}
+.fu-counters{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px}
+.fu-counter{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;box-shadow:var(--shadow)}
+.fu-num{font-size:28px;font-weight:800}
+.fu-lbl{color:var(--text);font-size:10px;margin-top:2px}
+.task-item{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:10px;margin-bottom:5px;background:var(--input-bg);cursor:pointer;transition:background .15s;touch-action:manipulation}
 .task-prio{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .task-lead{font-size:12px;font-weight:600;color:var(--white)}
 .task-info{color:var(--text);font-size:10px;margin-top:1px}
-.done-btn{border-radius:7px;padding:4px 9px;font-size:10px;font-weight:600;cursor:pointer;border:none;margin-left:auto;white-space:nowrap}
+.done-btn{border-radius:7px;padding:4px 9px;font-size:10px;font-weight:600;cursor:pointer;border:none;margin-left:auto;white-space:nowrap;touch-action:manipulation}
 
 /* ── AUTOMATION ── */
-.auto-item{display:flex;align-items:center;gap:14px;padding:13px 15px;background:var(--input-bg);border-radius:11px;margin-bottom:7px;border:1px solid var(--border)}
+.auto-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--input-bg);border-radius:10px;margin-bottom:7px;border:1px solid var(--border)}
 .tag{padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700}
-.toggle{width:40px;height:21px;border-radius:99px;position:relative;cursor:pointer;transition:background .25s;flex-shrink:0}
-.toggle-knob{position:absolute;top:2.5px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .25s;box-shadow:0 1px 4px rgba(0,0,0,.4)}
-.rule-builder{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;margin-top:14px}
-.rule-sel{background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;padding:8px 13px;color:var(--text2);font-size:12px;outline:none;cursor:pointer}
-.rule-add{border:none;border-radius:9px;padding:9px 18px;color:#fff;font-weight:700;font-size:12px;cursor:pointer}
+.toggle{width:40px;height:21px;border-radius:99px;position:relative;cursor:pointer;transition:background .25s;flex-shrink:0;touch-action:manipulation}
+.toggle-knob{position:absolute;top:2.5px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .25s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
 
 /* ── CAMPAIGNS ── */
-.campaign-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:14px}
-.camp-stat{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center}
-.camp-stat-icon{font-size:22px}
-.camp-stat-val{font-size:20px;font-weight:800;margin:5px 0 2px;color:var(--white)}
-.camp-stat-key{color:var(--text);font-size:11px}
-.camp-row{display:flex;align-items:center;gap:14px;padding:12px 14px;background:var(--input-bg);border-radius:11px;margin-bottom:7px}
+.campaign-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.camp-stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px;text-align:center;box-shadow:var(--shadow)}
+.camp-stat-icon{font-size:20px}
+.camp-stat-val{font-size:18px;font-weight:800;margin:4px 0 2px;color:var(--white)}
+.camp-stat-key{color:var(--text);font-size:10px}
+.camp-row{display:flex;align-items:center;gap:10px;padding:11px 12px;background:var(--input-bg);border-radius:10px;margin-bottom:7px;flex-wrap:wrap}
 .camp-name{font-weight:600;font-size:13px;color:var(--white)}
 .camp-sub{color:var(--text);font-size:10px;margin-top:2px}
-.camp-metric{text-align:center;min-width:60px}
-.camp-metric-val{font-weight:700;font-size:13px;color:var(--white)}
+.camp-metric{text-align:center;min-width:50px}
+.camp-metric-val{font-weight:700;font-size:12px;color:var(--white)}
 .camp-metric-key{color:var(--text);font-size:10px}
 
 /* ── TEMPLATES ── */
-.tpl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;padding:22px;animation:fadeUp .28s ease}
-.tpl-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;cursor:pointer;transition:border-color .2s}
-.tpl-card:hover{border-color:var(--rc)}
-.tpl-head{display:flex;justify-content:space-between;margin-bottom:10px;align-items:center}
+.tpl-grid{display:grid;grid-template-columns:1fr;gap:12px;padding:14px;animation:fadeUp .25s ease}
+@media(min-width:500px){.tpl-grid{grid-template-columns:1fr 1fr}}
+.tpl-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;cursor:pointer;transition:border-color .2s;box-shadow:var(--shadow)}
+.tpl-head{display:flex;justify-content:space-between;margin-bottom:8px;align-items:center}
 .tpl-title{font-weight:700;font-size:13px;color:var(--white)}
 .tpl-body{color:var(--text2);font-size:12px;line-height:1.6;white-space:pre-line}
-.tpl-foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.tpl-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
 .tpl-uses{color:var(--text);font-size:11px}
-.tpl-use-btn{border:none;border-radius:7px;padding:5px 13px;font-size:11px;font-weight:600;cursor:pointer}
-.tpl-add{border:1.5px dashed var(--border);border-radius:16px;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;min-height:180px;transition:border-color .2s}
-.tpl-add:hover{border-color:var(--rc)}
+.tpl-use-btn{border:none;border-radius:7px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;touch-action:manipulation}
+.tpl-add{border:1.5px dashed var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;min-height:120px;transition:border-color .2s;touch-action:manipulation}
 
 /* ── MODAL ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;animation:fadeUp .2s ease}
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:26px;width:100%;max-width:460px;box-shadow:0 30px 80px rgba(0,0,0,.4)}
-.modal-title{font-weight:800;font-size:16px;margin-bottom:18px;color:var(--white)}
-.modal-footer{display:flex;gap:9px;margin-top:20px;justify-content:flex-end}
-.btn-cancel{background:var(--input-bg);border:1px solid var(--border);border-radius:9px;padding:9px 18px;color:var(--text2);font-size:13px;cursor:pointer}
-.btn-save{border:none;border-radius:9px;padding:9px 20px;color:#fff;font-weight:700;font-size:13px;cursor:pointer}
-.form-row{margin-bottom:13px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:flex;align-items:flex-end;justify-content:center;padding:0;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--surface);border-radius:20px 20px 0 0;padding:22px 20px;width:100%;max-width:100%;box-shadow:0 -8px 40px rgba(0,0,0,.15);max-height:90dvh;overflow-y:auto;padding-bottom:max(22px,env(safe-area-inset-bottom))}
+.modal-handle{width:36px;height:4px;border-radius:99px;background:var(--border);margin:0 auto 16px}
+.modal-title{font-weight:800;font-size:16px;margin-bottom:16px;color:var(--white)}
+.modal-footer{display:flex;gap:9px;margin-top:18px}
+.btn-cancel{flex:1;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text2);font-size:13px;cursor:pointer;touch-action:manipulation}
+.btn-save{flex:2;border:none;border-radius:10px;padding:12px;color:#fff;font-weight:700;font-size:13px;cursor:pointer;touch-action:manipulation}
+.form-row{margin-bottom:12px}
 .form-row label{display:block;font-size:11px;color:var(--text);font-weight:600;letter-spacing:.4px;margin-bottom:5px}
-.form-row input,.form-row select,.form-row textarea{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;padding:9px 12px;color:var(--white);font-size:13px;outline:none;transition:border-color .2s}
+.form-row input,.form-row select,.form-row textarea{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;padding:11px 12px;color:var(--white);font-size:14px;outline:none;transition:border-color .2s}
 .form-row input:focus,.form-row select:focus,.form-row textarea:focus{border-color:var(--rc)}
 .form-row textarea{resize:vertical;min-height:80px}
 
 /* ── ACCESS DENIED ── */
 .access-denied{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:10px;color:var(--text)}
 .access-denied .ad-icon{font-size:48px;opacity:.4}
-.access-denied p{font-size:13px}
 
-/* ── NOTIFICATION ── */
-.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 18px;font-size:13px;color:var(--white);z-index:300;box-shadow:0 8px 30px rgba(0,0,0,.3);animation:slideIn .3s ease;display:flex;align-items:center;gap:10px}
-@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+/* ── TOAST ── */
+.toast{position:fixed;bottom:max(80px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#111;border-radius:12px;padding:11px 18px;font-size:13px;color:#fff;z-index:400;box-shadow:0 8px 30px rgba(0,0,0,.2);animation:slideUp .3s ease;display:flex;align-items:center;gap:9px;white-space:nowrap;max-width:90vw}
+@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 
-/* ── STATUS INDICATOR ── */
+/* ── STATUS ── */
 .status-dot-inline{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px}
+.stage-btn{width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--border);background:var(--input-bg);color:var(--white);font-size:13px;text-align:left;cursor:pointer;margin-bottom:6px;transition:all .15s;display:flex;align-items:center;gap:9px;touch-action:manipulation}
+.stage-btn.current{border-color:var(--rc);background:rgba(0,0,0,.06)}
 
-/* ── SELECT STAGE ── */
-.stage-btn{width:100%;padding:8px 11px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--white);font-size:12px;text-align:left;cursor:pointer;margin-bottom:5px;transition:all .15s;display:flex;align-items:center;gap:8px}
-.stage-btn:hover{border-color:var(--rc)}
-.stage-btn.current{border-color:var(--rc);background:rgba(99,102,241,.1)}
+/* ── BOTTOM NAV ── */
+#bottomNav{display:flex;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;padding-bottom:max(6px,env(safe-area-inset-bottom));box-shadow:0 -2px 12px rgba(0,0,0,.06)}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;border:none;background:transparent;cursor:pointer;gap:3px;touch-action:manipulation;transition:all .15s;color:var(--text)}
+.bnav-btn.active{color:var(--rc)}
+.bnav-icon{font-size:18px}
+.bnav-label{font-size:9px;font-weight:600}
+
+/* Two-col for wider screens */
+.two-col{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:14px}
+@media(min-width:600px){.two-col{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
-<div class="blob blob1"></div>
-<div class="blob blob2"></div>
 
-<!-- ══════════════════════════════ LOGIN ══════════════════════════════ -->
+<!-- ══ LOGIN ══ -->
 <div id="loginWrap">
-  <button class="theme-toggle-login" onclick="toggleTheme()" id="loginThemeBtn">🌙</button>
   <div class="login-card">
     <div class="login-header">
-      <div class="logo-wrap">
-        <svg width="52" height="52" viewBox="0 0 120 110" fill="none">
-          <path d="M10 52 L60 8 L110 52" stroke="white" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
-          <rect x="14" y="62" width="13" height="34" rx="5" fill="white"/>
-          <rect x="27" y="68" width="10" height="22" rx="4" fill="white"/>
-          <rect x="37" y="76" width="46" height="8" rx="4" fill="white"/>
-          <rect x="83" y="68" width="10" height="22" rx="4" fill="white"/>
-          <rect x="93" y="62" width="13" height="34" rx="5" fill="white"/>
-          <circle cx="95" cy="28" r="9" stroke="white" stroke-width="1.8"/>
-          <text x="95" y="32" text-anchor="middle" font-size="7" fill="white" font-family="sans-serif" font-weight="600">TM</text>
+      <div class="logo-circle">
+        <svg width="52" height="48" viewBox="0 0 220 200" fill="none">
+          <path d="M20 95 L110 18 L200 95" stroke="white" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="22" y="112" width="26" height="65" rx="9" fill="white"/>
+          <rect x="48" y="125" width="20" height="42" rx="8" fill="white"/>
+          <rect x="68" y="142" width="84" height="14" rx="7" fill="white"/>
+          <rect x="152" y="125" width="20" height="42" rx="8" fill="white"/>
+          <rect x="172" y="112" width="26" height="65" rx="9" fill="white"/>
         </svg>
       </div>
       <h1>Sales Command Center</h1>
@@ -309,463 +298,438 @@ body.light .msg-in{background:var(--surface2)}
     </div>
     <div class="glass">
       <div id="step1">
-        <p class="step-label">Select your role to continue</p>
-        <div class="role-card" data-role="admin" data-color="#6366f1" onclick="selectRole(this)">
-          <div class="role-icon-wrap" style="background:rgba(99,102,241,.18);border:1px solid rgba(99,102,241,.3)">👑</div>
-          <div><div class="role-name">Admin / CSO</div><div class="role-desc">Full platform access &amp; all data</div></div>
-          <div class="role-check" style="background:#6366f1">✓</div>
+        <p class="step-label">Select your role</p>
+        <div class="role-card" data-role="admin" data-color="#222" onclick="selectRole(this)">
+          <div class="role-icon-wrap" style="background:rgba(0,0,0,.08);border:1px solid rgba(0,0,0,.1)">👑</div>
+          <div><div class="role-name">Admin / CSO</div><div class="role-desc">Full platform access & all data</div></div>
+          <div class="role-check" style="background:#222">✓</div>
         </div>
         <div class="role-card" data-role="manager" data-color="#0ea5e9" onclick="selectRole(this)">
-          <div class="role-icon-wrap" style="background:rgba(14,165,233,.18);border:1px solid rgba(14,165,233,.3)">🧑‍💼</div>
+          <div class="role-icon-wrap" style="background:rgba(14,165,233,.12);border:1px solid rgba(14,165,233,.2)">🧑‍💼</div>
           <div><div class="role-name">Manager</div><div class="role-desc">Team view, no financial data</div></div>
           <div class="role-check" style="background:#0ea5e9">✓</div>
         </div>
-        <div class="role-card" data-role="agent" data-color="#10b981" onclick="selectRole(this)">
-          <div class="role-icon-wrap" style="background:rgba(16,185,129,.18);border:1px solid rgba(16,185,129,.3)">💬</div>
-          <div><div class="role-name">Sales Agent</div><div class="role-desc">Own leads &amp; inbox only</div></div>
-          <div class="role-check" style="background:#10b981">✓</div>
+        <div class="role-card" data-role="agent" data-color="#16a34a" onclick="selectRole(this)">
+          <div class="role-icon-wrap" style="background:rgba(22,163,74,.12);border:1px solid rgba(22,163,74,.2)">💬</div>
+          <div><div class="role-name">Sales Agent</div><div class="role-desc">Own leads & inbox only</div></div>
+          <div class="role-check" style="background:#16a34a">✓</div>
         </div>
         <button class="btn-main" id="continueBtn" disabled onclick="goStep2()">Continue →</button>
       </div>
       <div id="step2" style="display:none">
         <button class="back-btn" onclick="goStep1()">← Back</button>
         <div class="role-badge" id="roleBadge"></div>
-        <div class="form-row"><label>EMAIL ADDRESS</label><input id="emailInput" class="field-input" type="email" placeholder="you@homegym.in"/></div>
-        <div class="form-row"><label>PASSWORD</label><input id="passInput" class="field-input" type="password" placeholder="••••••••"/></div>
+        <div class="field-wrap"><label style="font-size:11px;color:var(--text);font-weight:600;display:block;margin-bottom:5px">EMAIL</label><input id="emailInput" class="field-input" type="email" placeholder="you@homegym.in"/></div>
+        <div class="field-wrap"><label style="font-size:11px;color:var(--text);font-weight:600;display:block;margin-bottom:5px">PASSWORD</label><input id="passInput" class="field-input" type="password" placeholder="••••••••"/></div>
         <p class="err-msg" id="errMsg">Please fill all fields.</p>
         <button class="btn-main" id="signInBtn" onclick="doLogin()">Sign In →</button>
-        <p class="forgot">Forgot password? <span id="forgotLink" style="cursor:pointer">Reset here</span></p>
+        <p class="forgot" style="margin-top:10px">Forgot password? <span style="cursor:pointer;text-decoration:underline">Reset here</span></p>
       </div>
     </div>
     <p class="login-footer">© 2026 HomeGym™ · Sales Command Center v3.0</p>
   </div>
 </div>
 
-<!-- ══════════════════════════════ APP ══════════════════════════════ -->
+<!-- ══ APP ══ -->
 <div id="app">
-  <aside id="sidebar">
-    <div class="sb-head" onclick="toggleSidebar()">
-      <svg width="30" height="30" viewBox="0 0 120 110" fill="none" style="flex-shrink:0">
-        <path d="M10 52 L60 8 L110 52" stroke="white" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
-        <rect x="14" y="62" width="13" height="34" rx="5" fill="white"/>
-        <rect x="27" y="68" width="10" height="22" rx="4" fill="white"/>
-        <rect x="37" y="76" width="46" height="8" rx="4" fill="white"/>
-        <rect x="83" y="68" width="10" height="22" rx="4" fill="white"/>
-        <rect x="93" y="62" width="13" height="34" rx="5" fill="white"/>
-        <circle cx="95" cy="28" r="9" stroke="white" stroke-width="1.8"/>
-        <text x="95" y="32" text-anchor="middle" font-size="7" fill="white" font-family="sans-serif" font-weight="600">TM</text>
+  <!-- Topbar -->
+  <header>
+    <button class="hamburger" onclick="toggleDrawer()" aria-label="Menu">
+      <div class="ham-line"></div><div class="ham-line"></div><div class="ham-line"></div>
+    </button>
+    <div class="logo-sm">
+      <svg width="22" height="20" viewBox="0 0 220 200" fill="none">
+        <path d="M20 95 L110 18 L200 95" stroke="white" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="22" y="112" width="26" height="65" rx="9" fill="white"/>
+        <rect x="48" y="125" width="20" height="42" rx="8" fill="white"/>
+        <rect x="68" y="142" width="84" height="14" rx="7" fill="white"/>
+        <rect x="152" y="125" width="20" height="42" rx="8" fill="white"/>
+        <rect x="172" y="112" width="26" height="65" rx="9" fill="white"/>
       </svg>
-      <div class="sb-brand" id="sbBrand"><p>SalesCMD</p><small>HomeGym™</small></div>
     </div>
-    <nav id="navList"></nav>
-    <div class="sb-foot">
-      <div class="av" id="sbAv" style="width:32px;height:32px;font-size:14px"></div>
-      <div id="sbUserInfo" style="min-width:0;flex:1">
-        <p style="font-weight:700;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--white)" id="sbUserName"></p>
-        <p style="color:var(--text);font-size:10px">Active</p>
-      </div>
-      <button class="logout-btn" onclick="doLogout()" title="Logout">⏏</button>
+    <div class="topbar-title">
+      <p id="pageTitle">Dashboard</p>
+      <small id="pageDate"></small>
     </div>
-  </aside>
-  <div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
-    <header>
-      <div class="topbar-title" style="flex:1">
-        <p id="pageTitle">Dashboard</p>
-        <small id="pageDate"></small>
+    <button class="icon-btn" onclick="showToast('🔔 No new notifications')"><span>🔔</span><span class="notif-dot"></span></button>
+    <div class="av" id="topAv" style="width:32px;height:32px;font-size:13px"></div>
+  </header>
+
+  <!-- Drawer -->
+  <div id="drawer">
+    <div id="drawerBg" onclick="closeDrawer()"></div>
+    <div id="drawerPanel">
+      <div class="drawer-head">
+        <div class="logo-sm">
+          <svg width="22" height="20" viewBox="0 0 220 200" fill="none">
+            <path d="M20 95 L110 18 L200 95" stroke="white" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="22" y="112" width="26" height="65" rx="9" fill="white"/>
+            <rect x="48" y="125" width="20" height="42" rx="8" fill="white"/>
+            <rect x="68" y="142" width="84" height="14" rx="7" fill="white"/>
+            <rect x="152" y="125" width="20" height="42" rx="8" fill="white"/>
+            <rect x="172" y="112" width="26" height="65" rx="9" fill="white"/>
+          </svg>
+        </div>
+        <div class="drawer-brand"><p>SalesCMD</p><small>HomeGym™</small></div>
       </div>
-      <input class="search-input" placeholder="Search leads…" oninput="handleSearch(this.value)" id="globalSearch"/>
-      <button class="icon-btn notif-btn" onclick="showToast('🔔 No new notifications')"><span>🔔</span><span class="notif-dot"></span></button>
-      <button class="icon-btn theme-btn" onclick="toggleTheme()" id="appThemeBtn">🌙</button>
-      <div class="av" id="topAv" style="width:32px;height:32px;font-size:14px"></div>
-    </header>
-    <main id="mainContent"></main>
+      <div class="drawer-nav" id="drawerNav"></div>
+      <div class="drawer-foot">
+        <div class="av" id="drawerAv" style="width:32px;height:32px;font-size:13px"></div>
+        <div style="flex:1;min-width:0">
+          <p style="font-weight:700;font-size:12px;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="drawerUserName"></p>
+          <p style="color:var(--text);font-size:10px">Active</p>
+        </div>
+        <button class="logout-btn" onclick="doLogout()" title="Logout">⏏</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <main id="mainContent"></main>
+
+  <!-- Bottom Nav -->
+  <div id="bottomNav"></div>
+</div>
+
+<!-- Lead Detail Sheet -->
+<div id="detailSheet" class="detail-sheet">
+  <div class="detail-bg" onclick="closeDetailSheet()"></div>
+  <div class="detail-panel" id="detailPanel">
+    <div class="detail-handle"></div>
   </div>
 </div>
 
-<!-- ══ MODAL CONTAINER ══ -->
+<!-- Modal -->
 <div id="modalContainer"></div>
 
 <script>
-/* ════════════════════ DATA STORE ════════════════════ */
-let leads    = [];
-let agents   = [];
-let messages = {}; // leadId -> [{from,text,time}]
-let board    = {"New Lead":[],"Contacted":[],"Interested":[],"Payment Pending":[],"Closed":[]};
-let autos    = [];
-let templates= [];
-let campaigns= [];
-let tasks    = [];
-let nextId   = 1;
+/* ═══ DATA ═══ */
+let leads=[],agents=[],messages={},board={"New Lead":[],"Contacted":[],"Interested":[],"Payment Pending":[],"Closed":[]},autos=[],templates=[],campaigns=[],tasks=[],nextId=1;
+const STAGE_COLORS={"New Lead":"#3b82f6","Contacted":"#f59e0b","Interested":"#8b5cf6","Payment Pending":"#f97316","Closed":"#16a34a"};
+const PLATFORMS=["WhatsApp","Instagram"];
+const SOURCES=["Meta Ad","Organic","Referral","WhatsApp","Instagram","Google Ad"];
+const ROLES={admin:{label:"Admin / CSO",icon:"👑",color:"#222"},manager:{label:"Manager",icon:"🧑‍💼",color:"#0ea5e9"},agent:{label:"Sales Agent",icon:"💬",color:"#16a34a"}};
+const ROLE_NAV={admin:["dashboard","inbox","pipeline","agents","followups","automation","campaigns","templates"],manager:["dashboard","inbox","pipeline","agents","followups","templates"],agent:["inbox","followups","templates"]};
+const BOTTOM_NAV_PAGES={admin:["dashboard","inbox","pipeline","followups"],manager:["dashboard","inbox","pipeline","followups"],agent:["inbox","followups","templates"]};
+const MANAGER_RESTRICTIONS={canSeeRevenue:false,canDeleteLeads:false,canAccessAutomation:false,canAccessCampaigns:false,canManageAgents:false};
 
-const STAGE_COLORS = {"New Lead":"#3b82f6","Contacted":"#f59e0b","Interested":"#8b5cf6","Payment Pending":"#f97316","Closed":"#10b981"};
-const STATUS_COLORS= {"New Lead":"#3b82f6","Contacted":"#f59e0b","Interested":"#8b5cf6","Payment Pending":"#f97316","Closed":"#10b981"};
-const PLATFORMS    = ["WhatsApp","Instagram"];
-const SOURCES      = ["Meta Ad","Organic","Referral","WhatsApp","Instagram","Google Ad"];
+let selectedRole=null,curPage="dashboard",selectedLead=null,chatView=false,dragItem=null;
 
-/* ════════════════════ ROLES & ACCESS ════════════════════ */
-const ROLES = {
-  admin:   {label:"Admin / CSO", icon:"👑", color:"#6366f1"},
-  manager: {label:"Manager",     icon:"🧑‍💼",color:"#0ea5e9"},
-  agent:   {label:"Sales Agent", icon:"💬", color:"#10b981"},
-};
-// Pages each role can see
-const ROLE_NAV = {
-  admin:   ["dashboard","inbox","pipeline","agents","followups","automation","campaigns","templates"],
-  manager: ["dashboard","inbox","pipeline","agents","followups","templates"],
-  agent:   ["inbox","followups","templates"],
-};
-// Specific restrictions for manager
-const MANAGER_RESTRICTIONS = {
-  canSeeRevenue: false,
-  canDeleteLeads: false,
-  canAccessAutomation: false,
-  canAccessCampaigns: false,
-  canManageAgents: false, // read only
-};
+/* ═══ HELPERS ═══ */
+const $=id=>document.getElementById(id);
+const rc=()=>(ROLES[selectedRole]||ROLES.admin).color;
+const uid=()=>nextId++;
+const now=()=>new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
+const today=()=>new Date().toLocaleDateString("en-IN",{weekday:"short",month:"short",day:"numeric"});
+const initials=n=>n.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
+const canDo=a=>selectedRole==="admin"?true:selectedRole==="manager"?!MANAGER_RESTRICTIONS[a]:false;
 
-let selectedRole = null, curPage = "dashboard", sidebarCollapsed = false;
-let selectedLead = null, dragItem = null, isDark = true;
-
-/* ════════════════════ HELPERS ════════════════════ */
-const $ = id => document.getElementById(id);
-const rc = () => (ROLES[selectedRole]||ROLES.admin).color;
-const uid = () => nextId++;
-const now = () => new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
-const today = () => new Date().toLocaleDateString("en-IN",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
-const canDo = (action) => {
-  if(selectedRole==="admin") return true;
-  if(selectedRole==="manager") return !MANAGER_RESTRICTIONS[action] ? true : false;
-  return false; // agent can't
-};
-
-function av(t, sz=34, g){
-  const grad = g || `${rc()},${rc()}99`;
+function av(t,sz=34,g){
+  const grad=g||`${rc()},${rc()}99`;
   return `<div class="av" style="width:${sz}px;height:${sz}px;font-size:${Math.max(sz*.3,10)}px;background:linear-gradient(135deg,${grad})">${t}</div>`;
 }
-function pill(label, color){
+function pill(label,color){
   return `<span class="pill" style="background:${color}22;color:${color};border:1px solid ${color}44">${label}</span>`;
 }
-function bar(v, max=100, color){
+function bar(v,max=100,color){
   return `<div class="bar-track"><div class="bar-fill" style="width:${Math.min((v/max)*100,100)}%;background:${color||rc()}"></div></div>`;
 }
-function initials(name){
-  return name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
-}
-function showToast(msg, type="info"){
-  const t = document.createElement("div");
-  const icons = {info:"ℹ️",success:"✅",error:"❌",warning:"⚠️"};
-  t.className = "toast";
-  t.innerHTML = `<span>${icons[type]||icons.info}</span><span>${msg}</span>`;
+function showToast(msg){
+  const t=document.createElement("div");
+  t.className="toast";
+  t.innerHTML=msg;
   document.body.appendChild(t);
-  setTimeout(()=>{ t.style.opacity="0"; t.style.transition="opacity .3s"; setTimeout(()=>t.remove(),300); }, 3000);
+  setTimeout(()=>{t.style.opacity="0";t.style.transition="opacity .3s";setTimeout(()=>t.remove(),300);},3000);
 }
-function closeModal(){
-  const mc = $("modalContainer");
-  if(mc) mc.innerHTML = "";
-}
-function showModal(html){
-  $("modalContainer").innerHTML = `<div class="modal-overlay" onclick="if(event.target===this)closeModal()">${html}</div>`;
-}
-function accessDenied(label="this feature"){
-  return `<div class="access-denied"><div class="ad-icon">🔒</div><p style="font-weight:700;font-size:15px;color:var(--white)">Access Restricted</p><p>Your role does not have access to ${label}.</p></div>`;
-}
+function closeModal(){$("modalContainer").innerHTML="";}
+function showModal(html){$("modalContainer").innerHTML=`<div class="modal-overlay" onclick="if(event.target===this)closeModal()">${html}</div>`;}
+function accessDenied(label="this feature"){return `<div class="access-denied"><div class="ad-icon">🔒</div><p style="font-weight:700;font-size:15px;color:var(--white)">Access Restricted</p><p>Your role does not have access to ${label}.</p></div>`;}
 
-/* ════════════════════ THEME ════════════════════ */
-function toggleTheme(){
-  isDark = !isDark;
-  document.body.classList.toggle("light", !isDark);
-  const icon = isDark ? "🌙" : "☀️";
-  if($("appThemeBtn"))   $("appThemeBtn").textContent = icon;
-  if($("loginThemeBtn")) $("loginThemeBtn").textContent = icon;
-}
-
-/* ════════════════════ LOGIN ════════════════════ */
+/* ═══ LOGIN ═══ */
 function selectRole(el){
   document.querySelectorAll(".role-card").forEach(c=>c.classList.remove("active"));
   el.classList.add("active");
-  selectedRole = el.dataset.role;
-  const color = el.dataset.color;
-  $("continueBtn").disabled = false;
-  $("continueBtn").style.background = `linear-gradient(135deg,${color},${color}cc)`;
-  $("continueBtn").style.color = "#fff";
+  selectedRole=el.dataset.role;
+  $("continueBtn").disabled=false;
+  $("continueBtn").style.background=`linear-gradient(135deg,${el.dataset.color},${el.dataset.color}cc)`;
 }
 function goStep2(){
   if(!selectedRole) return;
-  const r = ROLES[selectedRole];
-  $("step1").style.display = "none";
-  $("step2").style.display = "block";
-  $("forgotLink").style.color = r.color;
-  $("signInBtn").style.background = `linear-gradient(135deg,${r.color},${r.color}bb)`;
-  $("signInBtn").style.color = "#fff";
-  $("roleBadge").style.cssText = `background:${r.color}14;border:1px solid ${r.color}30;padding:11px 13px;border-radius:11px;display:flex;align-items:center;gap:12px;margin-bottom:18px`;
-  $("roleBadge").innerHTML = `<span style="font-size:22px">${r.icon}</span><div><p style="color:var(--white);font-weight:700;font-size:13px;margin:0">Signing in as ${r.label}</p><p style="color:var(--text);font-size:11px;margin:0">${r.icon==="👑"?"Full platform access":"Limited access based on role"}</p></div>`;
+  const r=ROLES[selectedRole];
+  $("step1").style.display="none";$("step2").style.display="block";
+  $("signInBtn").style.background=`linear-gradient(135deg,${r.color},${r.color}bb)`;
+  $("roleBadge").style.cssText=`background:${r.color}12;border:1px solid ${r.color}25;padding:10px 12px;border-radius:10px;display:flex;align-items:center;gap:12px;margin-bottom:14px`;
+  $("roleBadge").innerHTML=`<span style="font-size:20px">${r.icon}</span><div><p style="color:var(--white);font-weight:700;font-size:13px;margin:0">Signing in as ${r.label}</p><p style="color:var(--text);font-size:11px;margin:0">Tap Sign In to continue</p></div>`;
 }
-function goStep1(){
-  $("step2").style.display = "none";
-  $("step1").style.display = "block";
-}
+function goStep1(){$("step2").style.display="none";$("step1").style.display="block";}
 function doLogin(){
-  const e = $("emailInput").value.trim(), p = $("passInput").value;
-  if(!e || !p){ $("errMsg").style.display = "block"; return; }
-  $("errMsg").style.display = "none";
-  $("signInBtn").textContent = "Signing in…"; $("signInBtn").style.opacity = ".7";
-  setTimeout(initApp, 1200);
+  const e=$("emailInput").value.trim(),p=$("passInput").value;
+  if(!e||!p){$("errMsg").style.display="block";return;}
+  $("errMsg").style.display="none";
+  $("signInBtn").textContent="Signing in…";$("signInBtn").style.opacity=".7";
+  setTimeout(initApp,1000);
 }
 function doLogout(){
-  $("app").classList.remove("show"); $("app").style.display = "none";
-  $("loginWrap").classList.remove("hide"); $("loginWrap").style.display = "flex";
-  $("step2").style.display = "none"; $("step1").style.display = "block";
-  selectedRole = null; $("continueBtn").disabled = true;
-  document.querySelectorAll(".role-card").forEach(c=>c.classList.remove("active"));
-  $("emailInput").value = ""; $("passInput").value = "";
-  $("signInBtn").textContent = "Sign In →"; $("signInBtn").style.opacity = "1";
+  $("app").style.opacity="0";
+  setTimeout(()=>{
+    $("app").style.display="none";$("app").classList.remove("show");
+    $("loginWrap").style.display="flex";$("loginWrap").classList.remove("hide");
+    $("step2").style.display="none";$("step1").style.display="block";
+    selectedRole=null;$("continueBtn").disabled=true;
+    document.querySelectorAll(".role-card").forEach(c=>c.classList.remove("active"));
+    $("emailInput").value="";$("passInput").value="";
+    $("signInBtn").textContent="Sign In →";$("signInBtn").style.opacity="1";
+  },400);
 }
 
-/* ════════════════════ APP INIT ════════════════════ */
+/* ═══ APP INIT ═══ */
 function initApp(){
-  const r = ROLES[selectedRole];
-  document.documentElement.style.setProperty("--rc", r.color);
+  document.documentElement.style.setProperty("--rc",ROLES[selectedRole].color);
   $("loginWrap").classList.add("hide");
   setTimeout(()=>{
-    $("loginWrap").style.display = "none";
-    $("app").style.display = "flex";
-    setTimeout(()=>$("app").classList.add("show"), 10);
-  }, 400);
-  $("sbAv").textContent = r.icon; $("sbAv").style.background = `linear-gradient(135deg,${r.color},${r.color}88)`;
-  $("sbUserName").textContent = r.label;
-  $("topAv").textContent = r.icon; $("topAv").style.background = `linear-gradient(135deg,${r.color},${r.color}88)`;
-  $("pageDate").textContent = today();
-  const startPage = selectedRole === "agent" ? "inbox" : "dashboard";
-  buildNav(); renderPage(startPage);
+    $("loginWrap").style.display="none";
+    $("app").style.display="flex";
+    setTimeout(()=>$("app").classList.add("show"),10);
+  },400);
+  const r=ROLES[selectedRole];
+  [$("topAv"),$("drawerAv")].forEach(el=>{if(el){el.textContent=r.icon;el.style.background=`linear-gradient(135deg,${r.color},${r.color}88)`;}});
+  $("drawerUserName").textContent=r.label;
+  $("pageDate").textContent=today();
+  buildDrawerNav();buildBottomNav();
+  const start=selectedRole==="agent"?"inbox":"dashboard";
+  renderPage(start);
 }
-function buildNav(){
-  const nav = $("navList"); nav.innerHTML = "";
-  const pages = ROLE_NAV[selectedRole] || ROLE_NAV.agent;
-  const allNav = [
+
+/* ═══ DRAWER ═══ */
+function toggleDrawer(){$("drawer").classList.toggle("open");}
+function closeDrawer(){$("drawer").classList.remove("open");}
+function buildDrawerNav(){
+  const nav=$("drawerNav");nav.innerHTML="";
+  const pages=ROLE_NAV[selectedRole]||ROLE_NAV.agent;
+  const allNav=[
     {id:"dashboard",icon:"▣",label:"Dashboard"},
-    {id:"inbox",    icon:"✉",label:"Inbox"},
-    {id:"pipeline", icon:"◈",label:"Pipeline"},
-    {id:"agents",   icon:"◉",label:"Agents"},
+    {id:"inbox",icon:"✉",label:"Inbox"},
+    {id:"pipeline",icon:"◈",label:"Pipeline"},
+    {id:"agents",icon:"◉",label:"Agents"},
     {id:"followups",icon:"◷",label:"Follow-ups"},
     {id:"automation",icon:"⚙",label:"Automation"},
     {id:"campaigns",icon:"◎",label:"Campaigns"},
     {id:"templates",icon:"◧",label:"Templates"},
   ];
   allNav.filter(n=>pages.includes(n.id)).forEach(n=>{
-    const btn = document.createElement("button");
-    btn.className = "nav-btn" + (n.id===curPage?" active":"");
-    btn.innerHTML = `<div class="nav-dot"></div><span class="nav-icon">${n.icon}</span><span class="nav-label">${n.label}</span>`;
-    btn.onclick = ()=>renderPage(n.id);
+    const btn=document.createElement("button");
+    btn.className="nav-btn"+(n.id===curPage?" active":"");
+    btn.innerHTML=`<div class="nav-dot"></div><span class="nav-icon">${n.icon}</span><span>${n.label}</span>`;
+    btn.onclick=()=>{renderPage(n.id);closeDrawer();};
     nav.appendChild(btn);
   });
 }
-function toggleSidebar(){
-  sidebarCollapsed = !sidebarCollapsed;
-  $("sidebar").classList.toggle("collapsed", sidebarCollapsed);
-  $("sbBrand").style.display = sidebarCollapsed ? "none" : "block";
-  $("sbUserInfo").style.display = sidebarCollapsed ? "none" : "flex";
-  document.querySelectorAll(".nav-label").forEach(el=>el.style.display=sidebarCollapsed?"none":"inline");
+function buildBottomNav(){
+  const bn=$("bottomNav");bn.innerHTML="";
+  const pages=BOTTOM_NAV_PAGES[selectedRole]||BOTTOM_NAV_PAGES.agent;
+  const allNav=[
+    {id:"dashboard",icon:"▣",label:"Home"},
+    {id:"inbox",icon:"✉",label:"Inbox"},
+    {id:"pipeline",icon:"◈",label:"Pipeline"},
+    {id:"agents",icon:"◉",label:"Agents"},
+    {id:"followups",icon:"◷",label:"Tasks"},
+    {id:"templates",icon:"◧",label:"Templates"},
+  ];
+  allNav.filter(n=>pages.includes(n.id)).forEach(n=>{
+    const btn=document.createElement("button");
+    btn.className="bnav-btn"+(n.id===curPage?" active":"");
+    btn.innerHTML=`<span class="bnav-icon">${n.icon}</span><span class="bnav-label">${n.label}</span>`;
+    btn.onclick=()=>renderPage(n.id);
+    bn.appendChild(btn);
+  });
 }
 function renderPage(id){
-  curPage = id;
-  $("pageTitle").textContent = {dashboard:"Dashboard",inbox:"Inbox",pipeline:"Pipeline",agents:"Agents",followups:"Follow-ups",automation:"Automation",campaigns:"Campaigns",templates:"Templates"}[id]||id;
+  curPage=id;chatView=false;
+  $("pageTitle").textContent={dashboard:"Dashboard",inbox:"Inbox",pipeline:"Pipeline",agents:"Agents",followups:"Follow-ups",automation:"Automation",campaigns:"Campaigns",templates:"Templates"}[id]||id;
   document.querySelectorAll(".nav-btn").forEach(b=>{
-    const label = b.querySelector(".nav-label");
-    b.classList.toggle("active", label && label.textContent.toLowerCase().replace(/-/g,"")===id.replace(/-/g,""));
+    b.classList.toggle("active",b.textContent.trim().toLowerCase().replace(/[^a-z]/g,"").includes(id.replace(/-/g,"")));
   });
-  const m = $("mainContent"); m.innerHTML = "";
-  const fns = {dashboard:pgDashboard,inbox:pgInbox,pipeline:pgPipeline,agents:pgAgents,followups:pgFollowups,automation:pgAutomation,campaigns:pgCampaigns,templates:pgTemplates};
+  document.querySelectorAll(".bnav-btn").forEach(b=>{
+    const lbl=b.querySelector(".bnav-label");
+    const map={Home:"dashboard",Inbox:"inbox",Pipeline:"pipeline",Agents:"agents",Tasks:"followups",Templates:"templates"};
+    b.classList.toggle("active",map[lbl?.textContent]===id);
+  });
+  const m=$("mainContent");m.innerHTML="";
+  const fns={dashboard:pgDashboard,inbox:pgInbox,pipeline:pgPipeline,agents:pgAgents,followups:pgFollowups,automation:pgAutomation,campaigns:pgCampaigns,templates:pgTemplates};
   (fns[id]||pgDashboard)(m);
 }
-function handleSearch(val){
-  if(val.length>1){ showToast(`🔍 Searching for "${val}"…`); }
+
+/* ═══ DETAIL SHEET ═══ */
+function openDetailSheet(leadId){
+  const l=leads.find(x=>x.id===leadId);if(!l)return;
+  const showRev=selectedRole==="admin";
+  $("detailPanel").innerHTML=`
+    <div class="detail-handle"></div>
+    <div style="text-align:center;margin-bottom:16px">
+      ${av(initials(l.name),48,`${rc()},${rc()}88`)}
+      <p style="font-weight:700;font-size:14px;margin:9px 0 6px;color:var(--white)">${l.name}</p>
+      ${pill(l.status,STAGE_COLORS[l.status]||rc())}
+    </div>
+    <div class="detail-block"><div class="detail-key">📞 Phone</div><div class="detail-val">${l.phone||"—"}</div></div>
+    <div class="detail-block"><div class="detail-key">📸 Instagram</div><div class="detail-val">${l.instagram||"—"}</div></div>
+    <div class="detail-block"><div class="detail-key">📡 Source</div><div class="detail-val">${l.source||"—"}</div></div>
+    <div class="detail-block"><div class="detail-key">👤 Agent</div><div class="detail-val">${l.agentName||"Unassigned"}</div></div>
+    ${showRev?`<div class="detail-block"><div class="detail-key">💰 Deal Value</div><div class="detail-val">${l.value?"₹"+l.value.toLocaleString("en-IN"):"—"}</div></div>`:""}
+    ${l.notes?`<div class="detail-block"><div class="detail-key">📌 Notes</div><div class="detail-val">${l.notes}</div></div>`:""}
+    <div style="height:12px"></div>
+    <button class="ghost-btn" style="border:1px solid ${rc()}44;background:${rc()}12;color:${rc()}" onclick="closeDetailSheet();showStageModal(${l.id})">Change Stage</button>
+    ${selectedRole!=="agent"?`<button class="ghost-btn" style="border:1px solid var(--border);background:var(--input-bg);color:var(--text2)" onclick="closeDetailSheet();showReassignModal(${l.id})">Reassign Lead</button>`:""}
+    <button class="ghost-btn" style="border:1px solid var(--border);background:var(--input-bg);color:var(--text2)" onclick="closeDetailSheet();showNoteModal(${l.id})">Add Note</button>
+    ${selectedRole!=="agent"?`<button class="ghost-btn" style="border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.06);color:#ef4444" onclick="closeDetailSheet();deleteLead(${l.id})">🗑 Delete Lead</button>`:""}
+  `;
+  $("detailSheet").classList.add("open");
 }
+function closeDetailSheet(){$("detailSheet").classList.remove("open");}
 
-/* ════════════════════ DASHBOARD ════════════════════ */
+/* ═══ DASHBOARD ═══ */
 function pgDashboard(el){
-  const totalLeads = leads.length;
-  const closed = leads.filter(l=>l.status==="Closed").length;
-  const conv = totalLeads ? Math.round((closed/totalLeads)*100) : 0;
-  const revenue = leads.filter(l=>l.status==="Closed").reduce((s,l)=>s+(l.value||0),0);
-  const activeChats = Object.values(messages).filter(arr=>arr.length>0).length;
-
-  const showRevenue = canDo("canSeeRevenue") || selectedRole==="admin";
-
-  const stats = [
-    {label:"Total Leads",  val:totalLeads||"0",  delta:"All time",     icon:"👥",a:"#6366f1",b:"#4f46e5"},
-    {label:"Active Chats", val:activeChats||"0", delta:"With messages", icon:"💬",a:"#0ea5e9",b:"#0284c7"},
-    {label:"Conversion",   val:conv+"%",          delta:"Closed/Total",  icon:"🎯",a:"#10b981",b:"#059669"},
-    {label:"Revenue",      val:showRevenue?(revenue?"₹"+revenue.toLocaleString("en-IN"):"₹0"):"🔒 Hidden",delta:showRevenue?"Closed deals":"Admin only",icon:"💰",a:"#f97316",b:"#ea580c"},
+  const totalLeads=leads.length;
+  const closed=leads.filter(l=>l.status==="Closed").length;
+  const conv=totalLeads?Math.round((closed/totalLeads)*100):0;
+  const revenue=leads.filter(l=>l.status==="Closed").reduce((s,l)=>s+(l.value||0),0);
+  const activeChats=Object.values(messages).filter(a=>a.length>0).length;
+  const showRevenue=selectedRole==="admin";
+  const stats=[
+    {label:"Total Leads",val:totalLeads||"0",delta:"All time",icon:"👥",a:"#6366f1",b:"#4f46e5"},
+    {label:"Active Chats",val:activeChats||"0",delta:"With messages",icon:"💬",a:"#0ea5e9",b:"#0284c7"},
+    {label:"Conversion",val:conv+"%",delta:"Closed/Total",icon:"🎯",a:"#16a34a",b:"#15803d"},
+    {label:"Revenue",val:showRevenue?(revenue?"₹"+revenue.toLocaleString("en-IN"):"₹0"):"🔒 Hidden",delta:showRevenue?"Closed deals":"Admin only",icon:"💰",a:"#f97316",b:"#ea580c"},
   ];
-
-  const sortedAgents = [...agents].sort((a,b)=>(b.conv||0)-(a.conv||0));
-  const recentLeads = [...leads].sort((a,b)=>b.id-a.id).slice(0,5);
-  const pendingTasks = tasks.filter(t=>!t.done).length;
-
-  el.innerHTML = `<div class="page">
+  const sortedAgents=[...agents].sort((a,b)=>(b.conv||0)-(a.conv||0));
+  const recentLeads=[...leads].sort((a,b)=>b.id-a.id).slice(0,4);
+  const pendingTasks=tasks.filter(t=>!t.done).length;
+  el.innerHTML=`<div class="page">
     <div class="stat-grid">${stats.map(s=>`
-      <div class="stat-card" style="background:linear-gradient(135deg,${s.a},${s.b});box-shadow:0 6px 24px ${s.a}33">
+      <div class="stat-card" style="background:linear-gradient(135deg,${s.a},${s.b});box-shadow:0 4px 16px ${s.a}33">
         <div class="stat-icon">${s.icon}</div>
         <div class="stat-val">${s.val}</div>
         <div class="stat-label">${s.label}</div>
         <span class="stat-delta">${s.delta}</span>
-      </div>`).join("")}
-    </div>
+      </div>`).join("")}</div>
     <div class="two-col">
       <div class="card">
-        <div class="card-title">🏆 Agent Leaderboard</div>
-        ${sortedAgents.length ? sortedAgents.map((ag,i)=>`
+        <div class="card-title">🏆 Leaderboard</div>
+        ${sortedAgents.length?sortedAgents.map((ag,i)=>`
           <div class="lb-row">
             <span class="lb-rank" style="color:${["#f59e0b","#94a3b8","#f97316"][i]||rc()}">#${i+1}</span>
-            ${av(initials(ag.name),30,i===0?"#f59e0b,#f97316":null)}
+            ${av(initials(ag.name),28,i===0?"#f59e0b,#f97316":null)}
             <div class="lb-info">
               <div class="lb-name"><span>${ag.name}</span><span style="color:var(--text)">${ag.conv||0}%</span></div>
               ${bar(ag.conv||0,100,i===0?"#f59e0b":rc())}
             </div>
-            <span style="width:7px;height:7px;border-radius:50%;background:${ag.status==="online"?"#10b981":ag.status==="away"?"#f59e0b":"#4b5563"};flex-shrink:0;display:inline-block"></span>
-          </div>`).join("") : `<p style="color:var(--text);font-size:13px;text-align:center;padding:20px 0">No agents added yet.<br><a href="#" onclick="renderPage('agents')" style="color:var(--rc)">Add your first agent →</a></p>`}
+          </div>`).join(""):`<p style="color:var(--text);font-size:13px;text-align:center;padding:16px 0">No agents yet</p>`}
       </div>
       <div class="card">
         <div class="card-title">🔥 Recent Leads</div>
-        ${recentLeads.length ? recentLeads.map(l=>`
+        ${recentLeads.length?recentLeads.map(l=>`
           <div class="lead-row" onclick="openLead(${l.id})">
-            ${av(initials(l.name),30)}
+            ${av(initials(l.name),28)}
             <div style="flex:1;min-width:0">
               <div style="font-size:12px;font-weight:600;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.name}</div>
-              <div style="color:var(--text);font-size:10px">${l.source} · ${l.platform}</div>
+              <div style="color:var(--text);font-size:10px">${l.source}</div>
             </div>
-            ${pill(l.status,STATUS_COLORS[l.status]||rc())}
-          </div>`).join("") : `<p style="color:var(--text);font-size:13px;text-align:center;padding:20px 0">No leads yet.<br><a href="#" onclick="showAddLeadModal()" style="color:var(--rc)">Add your first lead →</a></p>`}
+            ${pill(l.status,STAGE_COLORS[l.status]||rc())}
+          </div>`).join(""):`<p style="color:var(--text);font-size:13px;text-align:center;padding:16px 0">No leads yet<br><button onclick="showAddLeadModal()" style="margin-top:6px;background:${rc()};border:none;border-radius:8px;padding:6px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer">+ Add Lead</button></p>`}
       </div>
     </div>
-    <div class="two-col">
-      <div class="card">
-        <div class="card-title">📋 Pending Tasks <span style="background:${rc()}22;color:${rc()};border-radius:99px;padding:1px 8px;font-size:10px;margin-left:6px">${pendingTasks}</span></div>
-        ${tasks.filter(t=>!t.done).slice(0,4).map(t=>`
-          <div class="task-item" style="margin-bottom:5px">
-            <div class="task-prio" style="background:${t.priority==="high"?"#ef4444":t.priority==="medium"?"#f59e0b":"#10b981"}"></div>
-            <div style="flex:1"><div class="task-lead">${t.leadName} — <span style="color:var(--text);font-weight:400">${t.task}</span></div><div class="task-info">Due ${t.due}</div></div>
-          </div>`).join("") || `<p style="color:var(--text);font-size:12px;text-align:center;padding:16px 0">No pending tasks 🎉</p>`}
-      </div>
-      <div class="card">
-        <div class="card-title">📊 Pipeline Summary</div>
-        ${Object.entries(board).map(([stage,cards])=>`
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-            <div style="width:8px;height:8px;border-radius:50%;background:${STAGE_COLORS[stage]};flex-shrink:0"></div>
-            <span style="font-size:12px;color:var(--white);flex:1">${stage}</span>
-            <span style="font-size:12px;font-weight:700;color:var(--white)">${cards.length}</span>
-            ${bar(cards.length, Math.max(...Object.values(board).map(c=>c.length),1), STAGE_COLORS[stage])}
-          </div>`).join("")}
-      </div>
+    <div class="card">
+      <div class="card-title">📊 Pipeline Summary</div>
+      ${Object.entries(board).map(([stage,cards])=>`
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px">
+          <div style="width:8px;height:8px;border-radius:50%;background:${STAGE_COLORS[stage]};flex-shrink:0"></div>
+          <span style="font-size:12px;color:var(--white);flex:1">${stage}</span>
+          <span style="font-size:12px;font-weight:700;color:var(--white);min-width:24px;text-align:right">${cards.length}</span>
+          <div style="flex:2">${bar(cards.length,Math.max(...Object.values(board).map(c=>c.length),1),STAGE_COLORS[stage])}</div>
+        </div>`).join("")}
     </div>
   </div>`;
 }
-function openLead(id){ selectedLead=leads.find(l=>l.id===id)||null; renderPage("inbox"); }
+function openLead(id){selectedLead=leads.find(l=>l.id===id)||null;renderPage("inbox");}
 
-/* ════════════════════ INBOX ════════════════════ */
+/* ═══ INBOX ═══ */
 function pgInbox(el){
-  el.style.height="100%"; el.style.overflow="hidden";
-  const myLeads = selectedRole==="agent"
-    ? leads.filter(l=>l.agentName===(ROLES[selectedRole]?.label||""))
-    : leads;
-
-  el.innerHTML = `<div class="inbox-wrap" style="height:100%">
-    <div class="lead-list">
-      <div class="lead-list-head" style="display:flex;flex-direction:column;gap:7px">
-        <div style="display:flex;gap:7px;align-items:center">
-          <input class="list-search" id="leadSearch" placeholder="Search leads…" oninput="filterLeads(this.value)" style="flex:1"/>
-          ${selectedRole!=="agent"?`<button onclick="showAddLeadModal()" style="background:var(--rc);border:none;border-radius:8px;color:#fff;font-size:18px;width:32px;height:32px;cursor:pointer;flex-shrink:0">+</button>`:""}
-        </div>
-        <div class="tab-row" id="platTabs">
-          <button class="tab-btn active-tab" onclick="filterPlatform('all',this)">All</button>
-          <button class="tab-btn" onclick="filterPlatform('whatsapp',this)">WA</button>
-          <button class="tab-btn" onclick="filterPlatform('instagram',this)">IG</button>
-        </div>
-      </div>
-      <div class="lead-items" id="leadItems">${renderLeadList(myLeads)}</div>
-    </div>
-    ${selectedLead ? renderChatArea() : `<div class="chat-area"><div class="empty-chat"><div class="empty-icon">💬</div><p>Select a lead to start chatting</p>${selectedRole!=="agent"?`<button onclick="showAddLeadModal()" style="background:var(--rc);border:none;border-radius:9px;padding:9px 18px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;margin-top:6px">+ Add Lead</button>`:"</div>"}</div>`}
-    ${selectedLead ? renderLeadDetail() : ""}
-  </div>`;
-
-  if(selectedLead){
-    const box = $("chatMsgs");
-    if(box) box.scrollTop = box.scrollHeight;
+  const myLeads=selectedRole==="agent"?leads.filter(l=>l.agentName===(ROLES[selectedRole]?.label||"")):leads;
+  if(chatView&&selectedLead){
+    el.style.height="100%";el.style.overflow="hidden";
+    el.innerHTML=renderChatView();
+    const box=$("chatMsgs");if(box)box.scrollTop=box.scrollHeight;
+    return;
   }
+  el.innerHTML=`<div style="height:100%;display:flex;flex-direction:column;overflow:hidden">
+    <div style="padding:10px 14px;border-bottom:1px solid var(--border);background:var(--surface)">
+      <div style="display:flex;gap:7px;align-items:center">
+        <input class="list-search" id="leadSearch" placeholder="Search leads…" oninput="filterLeads(this.value)" style="flex:1"/>
+        ${selectedRole!=="agent"?`<button onclick="showAddLeadModal()" style="background:${rc()};border:none;border-radius:8px;color:#fff;font-size:20px;width:36px;height:36px;cursor:pointer;flex-shrink:0;touch-action:manipulation">+</button>`:""}
+      </div>
+      <div class="tab-row" style="margin-top:7px">
+        <button class="tab-btn active-tab" onclick="filterPlatform('all',this)">All</button>
+        <button class="tab-btn" onclick="filterPlatform('whatsapp',this)">WhatsApp</button>
+        <button class="tab-btn" onclick="filterPlatform('instagram',this)">Instagram</button>
+      </div>
+    </div>
+    <div style="flex:1;overflow-y:auto" id="leadItems">${renderLeadList(myLeads)}</div>
+  </div>`;
 }
 function renderLeadList(arr){
-  if(!arr.length) return `<div style="text-align:center;padding:30px 16px;color:var(--text)"><div style="font-size:32px;margin-bottom:8px">📭</div><p style="font-size:12px">No leads yet</p></div>`;
+  if(!arr.length)return`<div style="text-align:center;padding:40px 16px;color:var(--text)"><div style="font-size:40px;margin-bottom:10px">📭</div><p>No leads yet</p></div>`;
   return arr.map(l=>`
-    <div class="lead-item${selectedLead&&selectedLead.id===l.id?" active":""}" onclick="selectLead(${l.id})">
-      <div style="position:relative">${av(initials(l.name),32)}<span class="plat-dot" style="color:${l.platform==="WhatsApp"?"#10b981":"#ec4899"}">●</span></div>
+    <div class="lead-item" onclick="selectLead(${l.id})">
+      <div style="position:relative">${av(initials(l.name),36)}<span class="plat-dot" style="color:${l.platform==="WhatsApp"?"#16a34a":"#ec4899"}">●</span></div>
       <div style="flex:1;min-width:0">
-        <div style="display:flex;justify-content:space-between">
-          <span style="font-size:12px;font-weight:600;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px">${l.name}</span>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:13px;font-weight:700;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px">${l.name}</span>
           <span style="color:var(--text);font-size:10px;flex-shrink:0">${l.time||"now"}</span>
         </div>
-        <div style="color:var(--text);font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.source} · ${l.agentName||"Unassigned"}</div>
+        <div style="color:var(--text);font-size:11px;margin-top:2px;display:flex;align-items:center;gap:6px">
+          ${pill(l.status,STAGE_COLORS[l.status]||rc())}
+          <span>${l.agentName||"Unassigned"}</span>
+        </div>
       </div>
-      ${(messages[l.id]||[]).length>0?`<div class="unread-badge" style="background:${rc()}">${(messages[l.id]||[]).length}</div>`:""}
+      ${(messages[l.id]||[]).length?`<div class="unread-badge" style="background:${rc()}">${(messages[l.id]||[]).length}</div>`:"<span style='font-size:16px;color:var(--text)'>›</span>"}
     </div>`).join("");
 }
-function renderChatArea(){
-  const sl = selectedLead;
-  const msgs = messages[sl.id]||[];
-  return `<div class="chat-area">
+function renderChatView(){
+  const sl=selectedLead;
+  const msgs=messages[sl.id]||[];
+  return `<div class="chat-view" style="height:100%;overflow:hidden">
     <div class="chat-head">
-      ${av(initials(sl.name),36)}
-      <div><div class="chat-name">${sl.name}</div><div class="chat-sub">${sl.phone||"No phone"} · ${sl.instagram||"No IG"}</div></div>
-      <div class="chat-actions">
-        <button class="action-btn" onclick="showToast('📞 Calling ${sl.name}…','info')">📞 Call</button>
-        <button class="action-btn" onclick="showNoteModal(${sl.id})">📝 Note</button>
-        <button class="action-btn" onclick="showStageModal(${sl.id})">${pill(sl.status,STATUS_COLORS[sl.status]||rc())}</button>
-        ${selectedRole!=="agent"?`<button class="action-btn" onclick="deleteLead(${sl.id})" style="color:#ef4444">🗑</button>`:""}
+      <button class="chat-back" onclick="chatView=false;renderPage('inbox')">‹</button>
+      ${av(initials(sl.name),34)}
+      <div style="flex:1;min-width:0">
+        <div class="chat-name">${sl.name}</div>
+        <div class="chat-sub">${sl.phone||"No phone"}</div>
+      </div>
+      <div class="chat-hactions">
+        <button class="action-btn" onclick="openDetailSheet(${sl.id})">⋯</button>
+        <button class="action-btn" onclick="showStageModal(${sl.id})">${pill(sl.status,STAGE_COLORS[sl.status]||rc())}</button>
       </div>
     </div>
     <div class="chat-msgs" id="chatMsgs">
-      ${sl.notes?`<div style="text-align:center;margin-bottom:8px"><span style="background:rgba(255,200,0,.1);color:#f59e0b;border:1px solid rgba(255,200,0,.2);border-radius:99px;padding:3px 12px;font-size:11px">📌 ${sl.notes}</span></div>`:""}
-      ${msgs.length ? msgs.map(m=>`
+      ${sl.notes?`<div style="text-align:center;margin-bottom:8px"><span style="background:rgba(245,158,11,.1);color:#f59e0b;border:1px solid rgba(245,158,11,.2);border-radius:99px;padding:3px 12px;font-size:11px">📌 ${sl.notes}</span></div>`:""}
+      ${msgs.length?msgs.map(m=>`
         <div style="display:flex;justify-content:${m.from==="agent"?"flex-end":"flex-start"}">
           <div class="msg-bubble ${m.from==="agent"?"msg-out":"msg-in"}" style="${m.from==="agent"?`background:linear-gradient(135deg,${rc()},${rc()}cc)`:""}">
-            ${m.text}
-            <div class="msg-time">${m.time}</div>
+            ${m.text}<div class="msg-time">${m.time}</div>
           </div>
-        </div>`).join("") : `<div style="text-align:center;color:var(--text);padding:30px;font-size:13px">No messages yet. Start the conversation!</div>`}
+        </div>`).join(""):`<div style="text-align:center;color:var(--text);padding:40px 20px;font-size:13px">No messages yet. Start the conversation!</div>`}
     </div>
     <div class="chat-input-row">
-      <button class="emoji-btn">😊</button>
       <button class="emoji-btn" onclick="showTemplatePicker(${sl.id})">📋</button>
-      <input id="msgInput" class="msg-input" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendMsg()"/>
+      <input id="msgInput" class="msg-input" placeholder="Message…" onkeydown="if(event.key==='Enter')sendMsg()"/>
       <button class="send-btn" style="background:linear-gradient(135deg,${rc()},${rc()}bb)" onclick="sendMsg()">Send</button>
     </div>
   </div>`;
 }
-function renderLeadDetail(){
-  const sl = selectedLead;
-  const showRev = selectedRole==="admin";
-  return `<div class="lead-detail">
-    <div style="text-align:center">
-      ${av(initials(sl.name),46,`${rc()},${rc()}88`)}
-      <p style="font-weight:700;font-size:13px;margin:9px 0 6px;color:var(--white)">${sl.name}</p>
-      ${pill(sl.status,STATUS_COLORS[sl.status]||rc())}
-    </div>
-    <div class="detail-block"><div class="detail-key">📞 Phone</div><div class="detail-val">${sl.phone||"—"}</div></div>
-    <div class="detail-block"><div class="detail-key">📸 Instagram</div><div class="detail-val">${sl.instagram||"—"}</div></div>
-    <div class="detail-block"><div class="detail-key">📡 Source</div><div class="detail-val">${sl.source||"—"}</div></div>
-    <div class="detail-block"><div class="detail-key">👤 Agent</div><div class="detail-val">${sl.agentName||"Unassigned"}</div></div>
-    <div class="detail-block"><div class="detail-key">📱 Platform</div><div class="detail-val">${sl.platform||"—"}</div></div>
-    ${showRev?`<div class="detail-block"><div class="detail-key">💰 Deal Value</div><div class="detail-val">${sl.value?"₹"+sl.value.toLocaleString("en-IN"):"—"}</div></div>`:""}
-    ${sl.notes?`<div class="detail-block"><div class="detail-key">📌 Notes</div><div class="detail-val">${sl.notes}</div></div>`:""}
-    ${selectedRole!=="agent"?`<button class="ghost-btn" style="border:1px solid ${rc()}44;background:${rc()}14;color:${rc()}" onclick="showStageModal(${sl.id})">Change Stage</button>
-    <button class="ghost-btn" style="border:1px solid var(--border);background:var(--input-bg);color:var(--text2)" onclick="showReassignModal(${sl.id})">Reassign Lead</button>`:""}
-    <button class="ghost-btn" style="border:1px solid var(--border);background:var(--input-bg);color:var(--text2)" onclick="showNoteModal(${sl.id})">Add Note</button>
-  </div>`;
-}
-function selectLead(id){ selectedLead=leads.find(l=>l.id===id)||null; renderPage("inbox"); }
+function selectLead(id){selectedLead=leads.find(l=>l.id===id)||null;chatView=true;renderPage("inbox");}
 function sendMsg(){
-  const inp=$("msgInput"); if(!inp||!inp.value.trim()) return;
-  const text = inp.value.trim();
-  if(!messages[selectedLead.id]) messages[selectedLead.id]=[];
+  const inp=$("msgInput");if(!inp||!inp.value.trim())return;
+  const text=inp.value.trim();
+  if(!messages[selectedLead.id])messages[selectedLead.id]=[];
   messages[selectedLead.id].push({from:"agent",text,time:now()});
   inp.value="";
   const box=$("chatMsgs");
@@ -773,85 +737,80 @@ function sendMsg(){
     const div=document.createElement("div");
     div.style.cssText="display:flex;justify-content:flex-end";
     div.innerHTML=`<div class="msg-bubble msg-out" style="background:linear-gradient(135deg,${rc()},${rc()}cc)">${text}<div class="msg-time">${now()}</div></div>`;
-    box.appendChild(div); box.scrollTop=box.scrollHeight;
+    box.appendChild(div);box.scrollTop=box.scrollHeight;
   }
 }
 function filterLeads(val){
-  const myLeads = selectedRole==="agent" ? leads : leads;
-  const filtered = val ? myLeads.filter(l=>l.name.toLowerCase().includes(val.toLowerCase())||l.phone?.includes(val)) : myLeads;
-  const li=$("leadItems"); if(li) li.innerHTML=renderLeadList(filtered);
+  const filtered=val?leads.filter(l=>l.name.toLowerCase().includes(val.toLowerCase())||(l.phone&&l.phone.includes(val))):leads;
+  const li=$("leadItems");if(li)li.innerHTML=renderLeadList(filtered);
 }
 function filterPlatform(plat,btn){
-  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active-tab")); btn.classList.add("active-tab");
-  const filtered = plat==="all" ? leads : leads.filter(l=>l.platform.toLowerCase()===plat);
-  const li=$("leadItems"); if(li) li.innerHTML=renderLeadList(filtered);
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active-tab"));btn.classList.add("active-tab");
+  const filtered=plat==="all"?leads:leads.filter(l=>l.platform.toLowerCase()===plat);
+  const li=$("leadItems");if(li)li.innerHTML=renderLeadList(filtered);
 }
 function deleteLead(id){
-  if(!confirm("Delete this lead? This cannot be undone.")) return;
+  if(!confirm("Delete this lead?"))return;
   leads=leads.filter(l=>l.id!==id);
-  // remove from board
-  Object.keys(board).forEach(col=>{ board[col]=board[col].filter(c=>c.leadId!==id); });
-  delete messages[id];
-  selectedLead=leads[0]||null;
-  renderPage("inbox");
-  showToast("Lead deleted","warning");
+  Object.keys(board).forEach(col=>{board[col]=board[col].filter(c=>c.leadId!==id);});
+  delete messages[id];selectedLead=null;chatView=false;renderPage("inbox");showToast("Lead deleted");
 }
 function showStageModal(leadId){
-  const l=leads.find(x=>x.id===leadId); if(!l) return;
+  const l=leads.find(x=>x.id===leadId);if(!l)return;
   showModal(`<div class="modal">
+    <div class="modal-handle"></div>
     <div class="modal-title">Change Stage — ${l.name}</div>
     ${Object.keys(STAGE_COLORS).map(s=>`<button class="stage-btn${l.status===s?" current":""}" onclick="changeStage(${leadId},'${s}')"><div style="width:8px;height:8px;border-radius:50%;background:${STAGE_COLORS[s]};flex-shrink:0"></div>${s}</button>`).join("")}
-    <div class="modal-footer"><button class="btn-cancel" onclick="closeModal()">Cancel</button></div>
+    <button class="btn-cancel" onclick="closeModal()" style="width:100%;margin-top:4px">Cancel</button>
   </div>`);
 }
 function changeStage(leadId,stage){
-  const l=leads.find(x=>x.id===leadId); if(!l) return;
-  const oldStage=l.status;
+  const l=leads.find(x=>x.id===leadId);if(!l)return;
   l.status=stage;
-  // sync board
-  Object.keys(board).forEach(col=>{ board[col]=board[col].filter(c=>c.leadId!==leadId); });
+  Object.keys(board).forEach(col=>{board[col]=board[col].filter(c=>c.leadId!==leadId);});
   board[stage].push({id:uid(),name:l.name,val:l.value?"₹"+l.value.toLocaleString("en-IN"):"—",src:l.source,av:initials(l.name),leadId});
-  closeModal(); selectedLead=l; renderPage("inbox");
-  showToast(`✅ ${l.name} moved to ${stage}`,"success");
+  closeModal();if(chatView){selectedLead=l;renderPage("inbox");}
+  showToast(`✅ ${l.name} → ${stage}`);
 }
 function showReassignModal(leadId){
-  const l=leads.find(x=>x.id===leadId); if(!l) return;
+  const l=leads.find(x=>x.id===leadId);if(!l)return;
   showModal(`<div class="modal">
+    <div class="modal-handle"></div>
     <div class="modal-title">Reassign — ${l.name}</div>
-    ${agents.length ? agents.map(ag=>`<button class="stage-btn${l.agentName===ag.name?" current":""}" onclick="reassignLead(${leadId},'${ag.name}')">👤 ${ag.name}</button>`).join("") : `<p style="color:var(--text);font-size:13px">No agents added yet.</p>`}
-    <div class="modal-footer"><button class="btn-cancel" onclick="closeModal()">Cancel</button></div>
+    ${agents.length?agents.map(ag=>`<button class="stage-btn${l.agentName===ag.name?" current":""}" onclick="reassignLead(${leadId},'${ag.name}')">👤 ${ag.name}</button>`).join(""):`<p style="color:var(--text);font-size:13px;padding:12px 0">No agents added yet.</p>`}
+    <button class="btn-cancel" onclick="closeModal()" style="width:100%;margin-top:4px">Cancel</button>
   </div>`);
 }
 function reassignLead(leadId,agentName){
-  const l=leads.find(x=>x.id===leadId); if(!l) return;
-  l.agentName=agentName; closeModal(); selectedLead=l; renderPage("inbox");
-  showToast(`✅ Lead reassigned to ${agentName}`,"success");
+  const l=leads.find(x=>x.id===leadId);if(!l)return;
+  l.agentName=agentName;closeModal();showToast(`✅ Reassigned to ${agentName}`);
 }
 function showNoteModal(leadId){
-  const l=leads.find(x=>x.id===leadId); if(!l) return;
+  const l=leads.find(x=>x.id===leadId);if(!l)return;
   showModal(`<div class="modal">
-    <div class="modal-title">📌 Add Note — ${l.name}</div>
-    <div class="form-row"><label>NOTE</label><textarea id="noteInput" style="width:100%">${l.notes||""}</textarea></div>
+    <div class="modal-handle"></div>
+    <div class="modal-title">📌 Note — ${l.name}</div>
+    <div class="form-row"><label>NOTE</label><textarea id="noteInput">${l.notes||""}</textarea></div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" style="background:${rc()}" onclick="saveNote(${leadId})">Save Note</button>
+      <button class="btn-save" style="background:${rc()}" onclick="saveNote(${leadId})">Save</button>
     </div>
   </div>`);
 }
 function saveNote(leadId){
-  const l=leads.find(x=>x.id===leadId); if(!l) return;
-  l.notes=$("noteInput").value; closeModal(); selectedLead=l; renderPage("inbox");
-  showToast("Note saved","success");
+  const l=leads.find(x=>x.id===leadId);if(!l)return;
+  l.notes=$("noteInput").value;closeModal();showToast("Note saved ✅");
 }
 function showAddLeadModal(){
   showModal(`<div class="modal">
+    <div class="modal-handle"></div>
     <div class="modal-title">➕ Add New Lead</div>
     <div class="form-row"><label>FULL NAME *</label><input id="ln" placeholder="e.g. Rajesh Kumar"/></div>
-    <div class="form-row"><label>PHONE NUMBER</label><input id="lp" placeholder="+91 98765 43210"/></div>
-    <div class="form-row"><label>INSTAGRAM HANDLE</label><input id="li" placeholder="@handle"/></div>
+    <div class="form-row"><label>PHONE</label><input id="lp" placeholder="+91 98765 43210" type="tel"/></div>
+    <div class="form-row"><label>INSTAGRAM</label><input id="li" placeholder="@handle"/></div>
     <div class="form-row"><label>SOURCE</label><select id="ls">${SOURCES.map(s=>`<option>${s}</option>`).join("")}</select></div>
     <div class="form-row"><label>PLATFORM</label><select id="lpl">${PLATFORMS.map(p=>`<option>${p}</option>`).join("")}</select></div>
-    <div class="form-row"><label>ASSIGN TO AGENT</label><select id="lag"><option value="">Unassigned</option>${agents.map(a=>`<option>${a.name}</option>`).join("")}</select></div>
+    <div class="form-row"><label>ASSIGN TO</label><select id="lag"><option value="">Unassigned</option>${agents.map(a=>`<option>${a.name}</option>`).join("")}</select></div>
     <div class="form-row"><label>DEAL VALUE (₹)</label><input id="lv" type="number" placeholder="e.g. 25000"/></div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal()">Cancel</button>
@@ -860,39 +819,39 @@ function showAddLeadModal(){
   </div>`);
 }
 function addLead(){
-  const name=$("ln").value.trim(); if(!name){showToast("Name is required","error");return;}
+  const name=$("ln").value.trim();if(!name){showToast("Name is required");return;}
   const l={id:uid(),name,phone:$("lp").value,instagram:$("li").value,source:$("ls").value,platform:$("lpl").value,agentName:$("lag").value||"Unassigned",value:parseInt($("lv").value)||0,status:"New Lead",notes:"",time:"just now"};
   leads.push(l);
   board["New Lead"].push({id:uid(),name:l.name,val:l.value?"₹"+l.value.toLocaleString("en-IN"):"—",src:l.source,av:initials(l.name),leadId:l.id});
-  closeModal(); selectedLead=l; renderPage("inbox");
-  showToast(`✅ Lead "${name}" added`,"success");
+  closeModal();showToast(`✅ "${name}" added`);renderPage("inbox");
 }
 function showTemplatePicker(leadId){
-  if(!templates.length){showToast("No templates yet. Add some in Templates!","warning");return;}
+  if(!templates.length){showToast("No templates yet!");return;}
   showModal(`<div class="modal">
-    <div class="modal-title">📋 Use Template</div>
+    <div class="modal-handle"></div>
+    <div class="modal-title">📋 Templates</div>
     ${templates.map(t=>`<button class="stage-btn" onclick="useTemplate(${leadId},'${t.content.replace(/'/g,"\\'")}')">📄 ${t.title}</button>`).join("")}
-    <div class="modal-footer"><button class="btn-cancel" onclick="closeModal()">Cancel</button></div>
+    <button class="btn-cancel" onclick="closeModal()" style="width:100%;margin-top:4px">Cancel</button>
   </div>`);
 }
 function useTemplate(leadId,content){
-  const l=leads.find(x=>x.id===leadId); if(!l) return;
+  const l=leads.find(x=>x.id===leadId);if(!l)return;
   const text=content.replace(/{{name}}/g,l.name);
-  if(!messages[leadId]) messages[leadId]=[];
+  if(!messages[leadId])messages[leadId]=[];
   messages[leadId].push({from:"agent",text,time:now()});
-  closeModal(); selectedLead=l; renderPage("inbox");
-  showToast("Template sent","success");
+  closeModal();showToast("Template sent ✅");
+  if(chatView){selectedLead=l;renderPage("inbox");}
 }
 
-/* ════════════════════ PIPELINE ════════════════════ */
+/* ═══ PIPELINE ═══ */
 function pgPipeline(el){
-  el.innerHTML=`<div class="pipeline-wrap"><div class="kanban" id="kanban"></div><p style="color:var(--text);font-size:11px;margin-top:14px">Drag cards to update stage</p></div>`;
+  el.innerHTML=`<div class="pipeline-wrap"><div class="kanban" id="kanban"></div><p style="color:var(--text);font-size:11px;margin-top:10px">← Scroll · Drag cards to move</p></div>`;
   renderKanban();
 }
 function renderKanban(){
-  const kb=$("kanban"); if(!kb) return; kb.innerHTML="";
+  const kb=$("kanban");if(!kb)return;kb.innerHTML="";
   Object.entries(board).forEach(([col,cards])=>{
-    const cw=document.createElement("div"); cw.className="col-wrap";
+    const cw=document.createElement("div");cw.className="col-wrap";
     cw.innerHTML=`<div class="col-inner" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="dropCard('${col}',this)">
       <div class="col-head">
         <div class="col-title"><div class="col-dot" style="background:${STAGE_COLORS[col]}"></div>${col}</div>
@@ -901,10 +860,10 @@ function renderKanban(){
       <div class="col-body">
         ${cards.length?cards.map((c,i)=>`
           <div class="k-card" draggable="true" ondragstart="dragCard('${col}',${i})">
-            <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">${av(c.av||"??",26)}<span class="k-name">${c.name}</span></div>
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">${av(c.av||"??",24)}<span class="k-name">${c.name}</span></div>
             <div class="k-val">${c.val||"—"}</div>
             <div class="k-src">${c.src||"—"}</div>
-          </div>`).join(""):(`<div class="drop-hint">Drop here</div>`)}
+          </div>`).join(""):`<div class="drop-hint">Drop here</div>`}
       </div>
     </div>`;
     kb.appendChild(cw);
@@ -913,32 +872,30 @@ function renderKanban(){
 function dragCard(col,idx){dragItem={col,idx};}
 function dropCard(col,el){
   el.classList.remove("dragover");
-  if(!dragItem||dragItem.col===col) return;
+  if(!dragItem||dragItem.col===col)return;
   const [item]=board[dragItem.col].splice(dragItem.idx,1);
   board[col].push(item);
-  // sync lead status
   const l=leads.find(x=>x.id===item.leadId);
-  if(l){ l.status=col; showToast(`Moved ${l.name} → ${col}`,"success"); }
-  dragItem=null; renderKanban();
+  if(l){l.status=col;showToast(`${l.name} → ${col}`);}
+  dragItem=null;renderKanban();
 }
 
-/* ════════════════════ AGENTS ════════════════════ */
+/* ═══ AGENTS ═══ */
 function pgAgents(el){
-  const isReadOnly = selectedRole==="manager" && MANAGER_RESTRICTIONS.canManageAgents;
   el.innerHTML=`<div class="agent-grid">
-    ${selectedRole!=="manager"?`<div class="agent-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;border-style:dashed;min-height:200px" onclick="showAddAgentModal()">
-      <div style="font-size:32px;color:var(--text);margin-bottom:8px">+</div>
-      <p style="color:var(--text);font-size:13px">Add New Agent</p>
+    ${selectedRole!=="manager"?`<div class="agent-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;border-style:dashed;min-height:120px;touch-action:manipulation" onclick="showAddAgentModal()">
+      <div style="font-size:28px;color:var(--text)">+</div>
+      <p style="color:var(--text);font-size:13px;margin-top:6px">Add Agent</p>
     </div>`:""}
     ${agents.map(ag=>`
       <div class="agent-card">
         <div class="agent-head">
-          ${av(initials(ag.name),44,ag.status==="online"?"#10b981,#059669":ag.status==="away"?"#f59e0b,#d97706":"#4b5563,#374151")}
+          ${av(initials(ag.name),40,ag.status==="online"?"#16a34a,#15803d":ag.status==="away"?"#f59e0b,#d97706":"#9ca3af,#6b7280")}
           <div>
-            <div style="font-weight:800;font-size:14px;color:var(--white)">${ag.name}</div>
-            <div style="display:flex;align-items:center;gap:5px;margin-top:3px">
-              <span class="status-dot-inline" style="background:${ag.status==="online"?"#10b981":ag.status==="away"?"#f59e0b":"#4b5563"}"></span>
-              <span style="color:var(--text);font-size:11px;text-transform:capitalize">${ag.status}</span>
+            <div style="font-weight:800;font-size:13px;color:var(--white)">${ag.name}</div>
+            <div style="display:flex;align-items:center;gap:5px;margin-top:2px">
+              <span class="status-dot-inline" style="background:${ag.status==="online"?"#16a34a":ag.status==="away"?"#f59e0b":"#9ca3af"}"></span>
+              <span style="color:var(--text);font-size:11px">${ag.status}</span>
             </div>
           </div>
           <div class="agent-conv"><div class="agent-conv-val">${ag.conv||0}%</div><div class="agent-conv-lbl">conv.</div></div>
@@ -946,22 +903,22 @@ function pgAgents(el){
         <div class="agent-stats">
           <div class="agent-stat"><div class="agent-stat-val">${leads.filter(l=>l.agentName===ag.name).length}</div><div class="agent-stat-key">Leads</div></div>
           <div class="agent-stat"><div class="agent-stat-val">${selectedRole==="admin"?"₹"+leads.filter(l=>l.agentName===ag.name&&l.status==="Closed").reduce((s,l)=>s+(l.value||0),0).toLocaleString("en-IN"):"🔒"}</div><div class="agent-stat-key">Revenue</div></div>
-          <div class="agent-stat"><div class="agent-stat-val">${ag.resp||"—"}</div><div class="agent-stat-key">Avg Resp</div></div>
+          <div class="agent-stat"><div class="agent-stat-val">${ag.resp||"—"}</div><div class="agent-stat-key">Resp</div></div>
         </div>
         ${bar(ag.conv||0,100,rc())}
-        ${selectedRole==="admin"?`<div style="display:flex;gap:7px;margin-top:12px">
-          <button class="ghost-btn" style="border:1px solid var(--rc)44;background:var(--rc)14;color:var(--rc);flex:1" onclick="showEditAgentModal(${ag.id})">Edit</button>
-          <button class="ghost-btn" style="border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.08);color:#ef4444;flex:1" onclick="deleteAgent(${ag.id})">Remove</button>
+        ${selectedRole==="admin"?`<div style="display:flex;gap:7px;margin-top:10px">
+          <button class="ghost-btn" style="border:1px solid ${rc()}44;background:${rc()}12;color:${rc()};flex:1;padding:8px" onclick="showEditAgentModal(${ag.id})">Edit</button>
+          <button class="ghost-btn" style="border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.06);color:#ef4444;flex:1;padding:8px" onclick="deleteAgent(${ag.id})">Remove</button>
         </div>`:""}
       </div>`).join("")}
   </div>`;
 }
 function showAddAgentModal(){
   showModal(`<div class="modal">
+    <div class="modal-handle"></div>
     <div class="modal-title">➕ Add Agent</div>
     <div class="form-row"><label>FULL NAME *</label><input id="an" placeholder="e.g. Priya Menon"/></div>
     <div class="form-row"><label>EMAIL</label><input id="ae" type="email" placeholder="priya@homegym.in"/></div>
-    <div class="form-row"><label>PHONE</label><input id="ap" placeholder="+91 98765 43210"/></div>
     <div class="form-row"><label>STATUS</label><select id="as"><option>online</option><option>away</option><option>offline</option></select></div>
     <div class="form-row"><label>AVG RESPONSE TIME</label><input id="ar" placeholder="e.g. 5m"/></div>
     <div class="modal-footer">
@@ -971,18 +928,19 @@ function showAddAgentModal(){
   </div>`);
 }
 function addAgent(){
-  const name=$("an").value.trim(); if(!name){showToast("Name required","error");return;}
-  agents.push({id:uid(),name,email:$("ae").value,phone:$("ap").value,status:$("as").value,resp:$("ar").value||"—",conv:0});
-  closeModal(); renderPage("agents"); showToast(`✅ Agent "${name}" added`,"success");
+  const name=$("an").value.trim();if(!name){showToast("Name required");return;}
+  agents.push({id:uid(),name,email:$("ae").value,status:$("as").value,resp:$("ar").value||"—",conv:0});
+  closeModal();renderPage("agents");showToast(`✅ "${name}" added`);
 }
 function showEditAgentModal(id){
-  const ag=agents.find(a=>a.id===id); if(!ag) return;
+  const ag=agents.find(a=>a.id===id);if(!ag)return;
   showModal(`<div class="modal">
-    <div class="modal-title">✏️ Edit Agent — ${ag.name}</div>
-    <div class="form-row"><label>FULL NAME</label><input id="an" value="${ag.name}"/></div>
+    <div class="modal-handle"></div>
+    <div class="modal-title">✏️ Edit — ${ag.name}</div>
+    <div class="form-row"><label>NAME</label><input id="an" value="${ag.name}"/></div>
     <div class="form-row"><label>STATUS</label><select id="as"><option${ag.status==="online"?" selected":""}>online</option><option${ag.status==="away"?" selected":""}>away</option><option${ag.status==="offline"?" selected":""}>offline</option></select></div>
-    <div class="form-row"><label>AVG RESPONSE TIME</label><input id="ar" value="${ag.resp||""}"/></div>
-    <div class="form-row"><label>CONVERSION RATE (%)</label><input id="ac" type="number" value="${ag.conv||0}" min="0" max="100"/></div>
+    <div class="form-row"><label>RESPONSE TIME</label><input id="ar" value="${ag.resp||""}"/></div>
+    <div class="form-row"><label>CONVERSION (%)</label><input id="ac" type="number" value="${ag.conv||0}" min="0" max="100"/></div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal()">Cancel</button>
       <button class="btn-save" style="background:${rc()}" onclick="editAgent(${id})">Save</button>
@@ -990,114 +948,116 @@ function showEditAgentModal(id){
   </div>`);
 }
 function editAgent(id){
-  const ag=agents.find(a=>a.id===id); if(!ag) return;
-  ag.name=$("an").value||ag.name; ag.status=$("as").value; ag.resp=$("ar").value; ag.conv=parseInt($("ac").value)||0;
-  closeModal(); renderPage("agents"); showToast("Agent updated","success");
+  const ag=agents.find(a=>a.id===id);if(!ag)return;
+  ag.name=$("an").value||ag.name;ag.status=$("as").value;ag.resp=$("ar").value;ag.conv=parseInt($("ac").value)||0;
+  closeModal();renderPage("agents");showToast("Agent updated ✅");
 }
 function deleteAgent(id){
-  if(!confirm("Remove this agent?")) return;
-  agents=agents.filter(a=>a.id!==id); renderPage("agents"); showToast("Agent removed","warning");
+  if(!confirm("Remove this agent?"))return;
+  agents=agents.filter(a=>a.id!==id);renderPage("agents");showToast("Agent removed");
 }
 
-/* ════════════════════ FOLLOW-UPS ════════════════════ */
+/* ═══ FOLLOWUPS ═══ */
 function pgFollowups(el){
   const pending=tasks.filter(t=>!t.done);
   const overdue=tasks.filter(t=>!t.done&&t.overdue);
   el.innerHTML=`<div class="page">
     <div class="fu-counters">
       <div class="fu-counter"><div class="fu-num" style="color:#f97316">${pending.length}</div><div class="fu-lbl">Pending</div></div>
-      <div class="fu-counter"><div class="fu-num" style="color:#f59e0b">${tasks.filter(t=>!t.done&&t.today).length}</div><div class="fu-lbl">Due Today</div></div>
+      <div class="fu-counter"><div class="fu-num" style="color:#f59e0b">${tasks.filter(t=>!t.done&&t.today).length}</div><div class="fu-lbl">Today</div></div>
       <div class="fu-counter"><div class="fu-num" style="color:#ef4444">${overdue.length}</div><div class="fu-lbl">Overdue</div></div>
     </div>
-    <div class="card" style="margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <div class="card-title" style="margin:0">📋 Tasks</div>
-        <button onclick="showAddTaskModal()" style="background:${rc()};border:none;border-radius:8px;padding:6px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer">+ Add Task</button>
+        <button onclick="showAddTaskModal()" style="background:${rc()};border:none;border-radius:8px;padding:7px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;touch-action:manipulation">+ Add</button>
       </div>
       <div id="taskList">${renderTaskList()}</div>
     </div>
   </div>`;
 }
 function renderTaskList(){
-  const myTasks = selectedRole==="agent" ? tasks : tasks;
-  if(!myTasks.length) return `<div style="text-align:center;padding:24px;color:var(--text)"><div style="font-size:32px;margin-bottom:8px">✅</div><p>No tasks yet. Add your first task!</p></div>`;
-  return myTasks.map(t=>`
+  if(!tasks.length)return`<div style="text-align:center;padding:24px;color:var(--text)"><div style="font-size:32px;margin-bottom:8px">✅</div><p>No tasks yet</p></div>`;
+  return tasks.map(t=>`
     <div class="task-item" style="opacity:${t.done?.7:1}">
-      <div class="task-prio" style="background:${t.priority==="high"?"#ef4444":t.priority==="medium"?"#f59e0b":"#10b981"}"></div>
-      <div style="flex:1">
-        <div class="task-lead" style="text-decoration:${t.done?"line-through":""}">${t.leadName} — <span style="color:var(--text);font-weight:400">${t.task}</span></div>
-        <div class="task-info">Due ${t.due} · ${t.priority} priority</div>
+      <div class="task-prio" style="background:${t.priority==="high"?"#ef4444":t.priority==="medium"?"#f59e0b":"#16a34a"}"></div>
+      <div style="flex:1;min-width:0">
+        <div class="task-lead" style="text-decoration:${t.done?"line-through":""}">
+          ${t.leadName} <span style="color:var(--text);font-weight:400">— ${t.task}</span>
+        </div>
+        <div class="task-info">Due ${t.due} · ${t.priority}</div>
       </div>
-      ${!t.done?`<button class="done-btn" style="background:${rc()}22;color:${rc()};border:1px solid ${rc()}44" onclick="markDone(${t.id})">Done ✓</button>`:`<span style="color:#10b981;font-size:11px">✓ Done</span>`}
-      <button onclick="deleteTask(${t.id})" style="background:none;border:none;color:var(--text);cursor:pointer;font-size:13px;margin-left:4px">🗑</button>
+      ${!t.done?`<button class="done-btn" style="background:${rc()}18;color:${rc()};border:1px solid ${rc()}33" onclick="markDone(${t.id})">✓</button>`:`<span style="color:#16a34a;font-size:12px">✓</span>`}
+      <button onclick="deleteTask(${t.id})" style="background:none;border:none;color:var(--text);cursor:pointer;font-size:14px;padding:4px;touch-action:manipulation">🗑</button>
     </div>`).join("");
 }
 function showAddTaskModal(){
   showModal(`<div class="modal">
+    <div class="modal-handle"></div>
     <div class="modal-title">➕ Add Task</div>
     <div class="form-row"><label>LEAD NAME *</label><input id="tln" list="leadNames" placeholder="Type lead name"/><datalist id="leadNames">${leads.map(l=>`<option value="${l.name}">`).join("")}</datalist></div>
     <div class="form-row"><label>TASK *</label><input id="tt" placeholder="e.g. Send product catalog"/></div>
-    <div class="form-row"><label>DUE DATE *</label><input id="td" type="date"/></div>
+    <div class="form-row"><label>DUE DATE</label><input id="td" type="date"/></div>
     <div class="form-row"><label>PRIORITY</label><select id="tp"><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" style="background:${rc()}" onclick="addTask()">Add Task</button>
+      <button class="btn-save" style="background:${rc()}" onclick="addTask()">Add</button>
     </div>
   </div>`);
 }
 function addTask(){
-  const leadName=$("tln").value.trim(),task=$("tt").value.trim(),due=$("td").value;
-  if(!leadName||!task){showToast("Fill required fields","error");return;}
-  tasks.push({id:uid(),leadName,task,due:due||"No date",priority:$("tp").value,done:false,today:due===new Date().toISOString().slice(0,10)});
-  closeModal(); renderPage("followups"); showToast("Task added","success");
+  const leadName=$("tln").value.trim(),task=$("tt").value.trim();
+  if(!leadName||!task){showToast("Fill required fields");return;}
+  tasks.push({id:uid(),leadName,task,due:$("td").value||"No date",priority:$("tp").value,done:false,today:$("td").value===new Date().toISOString().slice(0,10)});
+  closeModal();renderPage("followups");showToast("Task added ✅");
 }
 function markDone(id){
-  const t=tasks.find(x=>x.id===id); if(t) t.done=true;
-  const tl=$("taskList"); if(tl) tl.innerHTML=renderTaskList();
-  showToast("Task marked done ✓","success");
+  const t=tasks.find(x=>x.id===id);if(t)t.done=true;
+  const tl=$("taskList");if(tl)tl.innerHTML=renderTaskList();
+  showToast("Done ✅");
 }
 function deleteTask(id){
   tasks=tasks.filter(t=>t.id!==id);
-  const tl=$("taskList"); if(tl) tl.innerHTML=renderTaskList();
+  const tl=$("taskList");if(tl)tl.innerHTML=renderTaskList();
 }
 
-/* ════════════════════ AUTOMATION ════════════════════ */
+/* ═══ AUTOMATION ═══ */
 function pgAutomation(el){
-  if(selectedRole==="manager"){ el.innerHTML=`<div class="page">${accessDenied("Automation")}</div>`; return; }
-  if(selectedRole==="agent"){   el.innerHTML=`<div class="page">${accessDenied("Automation")}</div>`; return; }
+  if(selectedRole!=="admin"){el.innerHTML=`<div class="page">${accessDenied("Automation")}</div>`;return;}
   el.innerHTML=`<div class="page">
-    <div class="card" style="margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <div class="card-title" style="margin:0">⚡ Automation Rules</div>
-        <button onclick="showAddAutoModal()" style="background:${rc()};border:none;border-radius:8px;padding:6px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer">+ Add Rule</button>
+        <button onclick="showAddAutoModal()" style="background:${rc()};border:none;border-radius:8px;padding:7px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;touch-action:manipulation">+ Add</button>
       </div>
       <div id="autoList">${renderAutoList()}</div>
     </div>
   </div>`;
 }
 function renderAutoList(){
-  if(!autos.length) return `<div style="text-align:center;padding:24px;color:var(--text)"><div style="font-size:32px;margin-bottom:8px">🤖</div><p>No automation rules yet.</p></div>`;
+  if(!autos.length)return`<div style="text-align:center;padding:24px;color:var(--text)"><div style="font-size:32px;margin-bottom:8px">🤖</div><p>No rules yet</p></div>`;
   return autos.map(a=>`
     <div class="auto-item">
-      <div style="flex:1">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
-          <span class="tag" style="background:#3b82f622;color:#60a5fa">IF</span>
-          <span style="font-size:12px;font-weight:600;color:var(--white)">${a.trigger}</span>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">
+          <span class="tag" style="background:rgba(59,130,246,.12);color:#3b82f6">IF</span>
+          <span style="font-size:12px;font-weight:600;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.trigger}</span>
         </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <span class="tag" style="background:${rc()}22;color:${rc()}">THEN</span>
-          <span style="color:var(--text2);font-size:12px">${a.action}</span>
+        <div style="display:flex;align-items:center;gap:7px">
+          <span class="tag" style="background:${rc()}18;color:${rc()}">THEN</span>
+          <span style="color:var(--text2);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.action}</span>
         </div>
       </div>
-      <div class="toggle" style="background:${a.on?rc():"rgba(255,255,255,.1)"}" onclick="toggleAuto(${a.id})">
+      <div class="toggle" style="background:${a.on?rc():"rgba(0,0,0,.1)"}" onclick="toggleAuto(${a.id})">
         <div class="toggle-knob" style="left:${a.on?"22px":"3px"}"></div>
       </div>
-      <button onclick="deleteAuto(${a.id})" style="background:none;border:none;color:var(--text);cursor:pointer;font-size:13px;margin-left:8px">🗑</button>
+      <button onclick="deleteAuto(${a.id})" style="background:none;border:none;color:var(--text);cursor:pointer;font-size:14px;padding:4px;margin-left:6px;touch-action:manipulation">🗑</button>
     </div>`).join("");
 }
 function showAddAutoModal(){
   showModal(`<div class="modal">
-    <div class="modal-title">➕ New Automation Rule</div>
+    <div class="modal-handle"></div>
+    <div class="modal-title">➕ New Rule</div>
     <div class="form-row"><label>TRIGGER (IF)</label><select id="at"><option>New lead arrives</option><option>No reply in 24h</option><option>Call not answered</option><option>Stage changes to Interested</option><option>Stage changes to Closed</option></select></div>
     <div class="form-row"><label>ACTION (THEN)</label><select id="aa"><option>Send welcome message</option><option>Send follow-up reminder</option><option>Schedule retry call</option><option>Assign to agent</option><option>Create task</option><option>Send notification</option></select></div>
     <div class="modal-footer">
@@ -1108,79 +1068,77 @@ function showAddAutoModal(){
 }
 function addAuto(){
   autos.push({id:uid(),trigger:$("at").value,action:$("aa").value,on:true});
-  closeModal(); renderPage("automation"); showToast("Automation rule added","success");
+  closeModal();renderPage("automation");showToast("Rule added ✅");
 }
 function toggleAuto(id){
-  const a=autos.find(x=>x.id===id); if(a) a.on=!a.on;
-  const al=$("autoList"); if(al) al.innerHTML=renderAutoList();
+  const a=autos.find(x=>x.id===id);if(a)a.on=!a.on;
+  const al=$("autoList");if(al)al.innerHTML=renderAutoList();
 }
 function deleteAuto(id){
   autos=autos.filter(a=>a.id!==id);
-  const al=$("autoList"); if(al) al.innerHTML=renderAutoList();
+  const al=$("autoList");if(al)al.innerHTML=renderAutoList();
 }
 
-/* ════════════════════ CAMPAIGNS ════════════════════ */
+/* ═══ CAMPAIGNS ═══ */
 function pgCampaigns(el){
-  if(selectedRole==="manager"){ el.innerHTML=`<div class="page">${accessDenied("Campaigns (financial data)")}</div>`; return; }
-  if(selectedRole==="agent"){   el.innerHTML=`<div class="page">${accessDenied("Campaigns")}</div>`; return; }
+  if(selectedRole!=="admin"){el.innerHTML=`<div class="page">${accessDenied("Campaigns")}</div>`;return;}
   const totalSpend=campaigns.reduce((s,c)=>s+c.spend,0);
   const totalLeadsC=campaigns.reduce((s,c)=>s+c.leads,0);
   const totalRev=campaigns.reduce((s,c)=>s+c.revenue,0);
   const avgROAS=totalSpend?((totalRev/totalSpend)).toFixed(1)+"x":"—";
   el.innerHTML=`<div class="page">
     <div class="campaign-stat-grid">
-      <div class="camp-stat"><div class="camp-stat-icon">📤</div><div class="camp-stat-val">₹${totalSpend.toLocaleString("en-IN")||"0"}</div><div class="camp-stat-key">Total Spend</div></div>
-      <div class="camp-stat"><div class="camp-stat-icon">👥</div><div class="camp-stat-val">${totalLeadsC||"0"}</div><div class="camp-stat-key">Leads Generated</div></div>
-      <div class="camp-stat"><div class="camp-stat-icon">💰</div><div class="camp-stat-val">₹${totalRev.toLocaleString("en-IN")||"0"}</div><div class="camp-stat-key">Total Revenue</div></div>
-      <div class="camp-stat"><div class="camp-stat-icon">📈</div><div class="camp-stat-val">${avgROAS}</div><div class="camp-stat-key">Avg ROAS</div></div>
+      <div class="camp-stat"><div class="camp-stat-icon">📤</div><div class="camp-stat-val">₹${totalSpend.toLocaleString("en-IN")||"0"}</div><div class="camp-stat-key">Spend</div></div>
+      <div class="camp-stat"><div class="camp-stat-icon">👥</div><div class="camp-stat-val">${totalLeadsC||"0"}</div><div class="camp-stat-key">Leads</div></div>
+      <div class="camp-stat"><div class="camp-stat-icon">💰</div><div class="camp-stat-val">₹${totalRev.toLocaleString("en-IN")||"0"}</div><div class="camp-stat-key">Revenue</div></div>
+      <div class="camp-stat"><div class="camp-stat-icon">📈</div><div class="camp-stat-val">${avgROAS}</div><div class="camp-stat-key">ROAS</div></div>
     </div>
     <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <div class="card-title" style="margin:0">📊 Campaigns</div>
-        <button onclick="showAddCampaignModal()" style="background:${rc()};border:none;border-radius:8px;padding:6px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer">+ Add Campaign</button>
+        <button onclick="showAddCampaignModal()" style="background:${rc()};border:none;border-radius:8px;padding:7px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;touch-action:manipulation">+ Add</button>
       </div>
       ${campaigns.length?campaigns.map(c=>`
         <div class="camp-row">
-          <div style="flex:1"><div class="camp-name">${c.name}</div><div class="camp-sub">UTM: ${c.utm||"—"} · ${c.leads} leads</div></div>
+          <div style="flex:1;min-width:0"><div class="camp-name">${c.name}</div><div class="camp-sub">${c.leads} leads · ${c.status}</div></div>
           <div class="camp-metric"><div class="camp-metric-val">₹${c.spend.toLocaleString("en-IN")}</div><div class="camp-metric-key">Spend</div></div>
-          <div class="camp-metric"><div class="camp-metric-val" style="color:#10b981">${c.spend?(c.revenue/c.spend).toFixed(1)+"x":"—"}</div><div class="camp-metric-key">ROAS</div></div>
-          ${pill(c.status,c.status==="Active"?"#10b981":"#f59e0b")}
-          <button onclick="deleteCampaign(${c.id})" style="background:none;border:none;color:var(--text);cursor:pointer;font-size:13px;margin-left:8px">🗑</button>
-        </div>`).join(""):
-        `<div style="text-align:center;padding:30px;color:var(--text)"><div style="font-size:32px;margin-bottom:8px">📊</div><p>No campaigns yet.</p></div>`}
+          <div class="camp-metric"><div class="camp-metric-val" style="color:#16a34a">${c.spend?(c.revenue/c.spend).toFixed(1)+"x":"—"}</div><div class="camp-metric-key">ROAS</div></div>
+          <button onclick="deleteCampaign(${c.id})" style="background:none;border:none;color:var(--text);cursor:pointer;font-size:14px;touch-action:manipulation">🗑</button>
+        </div>`).join(""):`<div style="text-align:center;padding:28px;color:var(--text)"><div style="font-size:32px;margin-bottom:8px">📊</div><p>No campaigns yet</p></div>`}
     </div>
   </div>`;
 }
 function showAddCampaignModal(){
   showModal(`<div class="modal">
+    <div class="modal-handle"></div>
     <div class="modal-title">➕ Add Campaign</div>
-    <div class="form-row"><label>CAMPAIGN NAME *</label><input id="cn" placeholder="e.g. Diwali Sale 2026"/></div>
+    <div class="form-row"><label>NAME *</label><input id="cn" placeholder="e.g. Diwali Sale 2026"/></div>
     <div class="form-row"><label>UTM / TAG</label><input id="cu" placeholder="e.g. diwali_sale_ig"/></div>
     <div class="form-row"><label>AD SPEND (₹)</label><input id="cs" type="number" placeholder="0"/></div>
-    <div class="form-row"><label>LEADS GENERATED</label><input id="cl" type="number" placeholder="0"/></div>
+    <div class="form-row"><label>LEADS</label><input id="cl" type="number" placeholder="0"/></div>
     <div class="form-row"><label>REVENUE (₹)</label><input id="cr" type="number" placeholder="0"/></div>
     <div class="form-row"><label>STATUS</label><select id="cst"><option>Active</option><option>Paused</option><option>Ended</option></select></div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" style="background:${rc()}" onclick="addCampaign()">Add Campaign</button>
+      <button class="btn-save" style="background:${rc()}" onclick="addCampaign()">Add</button>
     </div>
   </div>`);
 }
 function addCampaign(){
-  const name=$("cn").value.trim(); if(!name){showToast("Name required","error");return;}
+  const name=$("cn").value.trim();if(!name){showToast("Name required");return;}
   campaigns.push({id:uid(),name,utm:$("cu").value,spend:parseInt($("cs").value)||0,leads:parseInt($("cl").value)||0,revenue:parseInt($("cr").value)||0,status:$("cst").value});
-  closeModal(); renderPage("campaigns"); showToast("Campaign added","success");
+  closeModal();renderPage("campaigns");showToast("Campaign added ✅");
 }
 function deleteCampaign(id){
-  campaigns=campaigns.filter(c=>c.id!==id); renderPage("campaigns"); showToast("Campaign removed","warning");
+  campaigns=campaigns.filter(c=>c.id!==id);renderPage("campaigns");showToast("Campaign removed");
 }
 
-/* ════════════════════ TEMPLATES ════════════════════ */
+/* ═══ TEMPLATES ═══ */
 function pgTemplates(el){
   el.innerHTML=`<div class="tpl-grid">
     <div class="tpl-add" onclick="showAddTemplateModal()">
       <div style="font-size:28px;color:var(--text)">+</div>
-      <div style="color:var(--text);font-size:12px;margin-top:8px">Add New Template</div>
+      <div style="color:var(--text);font-size:12px;margin-top:7px">New Template</div>
     </div>
     ${templates.map(t=>`
       <div class="tpl-card">
@@ -1188,9 +1146,9 @@ function pgTemplates(el){
         <div class="tpl-body">${t.content}</div>
         <div class="tpl-foot">
           <span class="tpl-uses">Used ${t.uses||0}×</span>
-          <div style="display:flex;gap:7px">
-            <button class="tpl-use-btn" style="background:${rc()}22;color:${rc()};border:1px solid ${rc()}44" onclick="showToast('Template copied to clipboard!','success')">Use</button>
-            ${selectedRole!=="agent"?`<button class="tpl-use-btn" style="background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.25)" onclick="deleteTemplate(${t.id})">🗑</button>`:""}
+          <div style="display:flex;gap:6px">
+            <button class="tpl-use-btn" style="background:${rc()}18;color:${rc()};border:1px solid ${rc()}33" onclick="showToast('Template copied!')">Use</button>
+            ${selectedRole!=="agent"?`<button class="tpl-use-btn" style="background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.2)" onclick="deleteTemplate(${t.id})">🗑</button>`:""}
           </div>
         </div>
       </div>`).join("")}
@@ -1198,24 +1156,25 @@ function pgTemplates(el){
 }
 function showAddTemplateModal(){
   showModal(`<div class="modal">
+    <div class="modal-handle"></div>
     <div class="modal-title">➕ New Template</div>
     <div class="form-row"><label>TITLE *</label><input id="ttl" placeholder="e.g. Welcome Message"/></div>
     <div class="form-row"><label>TYPE</label><select id="tty"><option>Text</option><option>Audio</option><option>Image</option></select></div>
-    <div class="form-row"><label>CONTENT * (use {{name}} for personalization)</label><textarea id="tcn" placeholder="Hi {{name}}! Welcome to HomeGym™…"></textarea></div>
+    <div class="form-row"><label>CONTENT (use {{name}})</label><textarea id="tcn" placeholder="Hi {{name}}! Welcome to HomeGym™…"></textarea></div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" style="background:${rc()}" onclick="addTemplate()">Save Template</button>
+      <button class="btn-save" style="background:${rc()}" onclick="addTemplate()">Save</button>
     </div>
   </div>`);
 }
 function addTemplate(){
   const title=$("ttl").value.trim(),content=$("tcn").value.trim();
-  if(!title||!content){showToast("Fill all fields","error");return;}
+  if(!title||!content){showToast("Fill all fields");return;}
   templates.push({id:uid(),title,type:$("tty").value,content,uses:0});
-  closeModal(); renderPage("templates"); showToast("Template saved","success");
+  closeModal();renderPage("templates");showToast("Template saved ✅");
 }
 function deleteTemplate(id){
-  templates=templates.filter(t=>t.id!==id); renderPage("templates"); showToast("Template deleted","warning");
+  templates=templates.filter(t=>t.id!==id);renderPage("templates");showToast("Deleted");
 }
 </script>
 </body>
