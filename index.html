@@ -9,12 +9,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-firestore-compat.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{--bg:#f0f2f5;--surface:#fff;--surface2:#f8f9fb;--border:rgba(0,0,0,.09);--text:rgba(0,0,0,.45);--text2:rgba(0,0,0,.7);--white:#111;--input-bg:rgba(0,0,0,.04);--input-border:rgba(0,0,0,.12);--card-hover:rgba(0,0,0,.03);--rc:#7c3aed;--shadow:0 2px 16px rgba(0,0,0,.08);--modal-bg:rgba(0,0,0,.5)}
-[data-theme="dark"]{--bg:#0f1117;--surface:#1a1d27;--surface2:#1e2130;--border:rgba(255,255,255,.08);--text:rgba(255,255,255,.4);--text2:rgba(255,255,255,.7);--white:#f0f2f5;--input-bg:rgba(255,255,255,.06);--input-border:rgba(255,255,255,.1);--card-hover:rgba(255,255,255,.04);--shadow:0 2px 16px rgba(0,0,0,.4);--modal-bg:rgba(0,0,0,.7)}
+:root{--bg:#f0f2f5;--surface:#fff;--border:rgba(0,0,0,.09);--text:rgba(0,0,0,.45);--text2:rgba(0,0,0,.7);--white:#111;--input-bg:rgba(0,0,0,.04);--input-border:rgba(0,0,0,.12);--card-hover:rgba(0,0,0,.03);--rc:#7c3aed;--shadow:0 2px 16px rgba(0,0,0,.08);--modal-bg:rgba(0,0,0,.5)}
+[data-theme="dark"]{--bg:#0f1117;--surface:#1a1d27;--border:rgba(255,255,255,.08);--text:rgba(255,255,255,.4);--text2:rgba(255,255,255,.7);--white:#f0f2f5;--input-bg:rgba(255,255,255,.06);--input-border:rgba(255,255,255,.1);--card-hover:rgba(255,255,255,.04);--shadow:0 2px 16px rgba(0,0,0,.4);--modal-bg:rgba(0,0,0,.75)}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--white);height:100dvh;overflow:hidden;display:flex;flex-direction:column;transition:background .3s,color .3s}
 input,select,button,textarea{font-family:inherit;color:var(--white)}
 ::-webkit-scrollbar{width:3px;height:3px}::-webkit-scrollbar-thumb{background:rgba(127,127,127,.3);border-radius:99px}
 select option{background:var(--surface);color:var(--white)}
+
+/* LOGIN */
 #loginWrap{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:16px;z-index:100;transition:opacity .4s,background .3s;overflow-y:auto}
 #loginWrap.hide{opacity:0;pointer-events:none}
 .login-card{width:100%;max-width:400px}
@@ -23,26 +25,29 @@ select option{background:var(--surface);color:var(--white)}
 .login-header h1{font-size:20px;font-weight:800;letter-spacing:-.5px;color:var(--white)}
 .login-header p{color:var(--text);font-size:12px;margin-top:4px}
 .glass{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px;box-shadow:var(--shadow)}
-.step-label{color:var(--text);font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px}
 .field-wrap{margin-bottom:12px}
 .field-input{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;padding:11px 13px;color:var(--white);font-size:14px;outline:none;transition:border-color .2s}
 .field-input:focus{border-color:var(--rc)}
-.btn-main{width:100%;padding:13px;border-radius:11px;border:none;font-weight:700;font-size:14px;cursor:pointer;margin-top:12px;transition:all .2s;color:#fff;touch-action:manipulation}
+.btn-main{width:100%;padding:13px;border-radius:11px;border:none;font-weight:700;font-size:14px;cursor:pointer;margin-top:12px;color:#fff;touch-action:manipulation}
 .btn-main:disabled{background:var(--input-bg)!important;color:var(--text)!important;cursor:not-allowed}
 .err-msg{color:#ef4444;font-size:11px;margin-bottom:8px;display:none;padding:8px;background:rgba(239,68,68,.08);border-radius:7px;border:1px solid rgba(239,68,68,.2)}
 .login-footer{color:var(--text);font-size:11px;text-align:center;margin-top:16px;opacity:.5}
 .theme-toggle-login{position:absolute;top:16px;right:16px;background:var(--surface);border:1px solid var(--border);border-radius:9px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--white);box-shadow:var(--shadow)}
+
+/* APP */
 #app{display:flex;height:100dvh;overflow:hidden;opacity:0;transition:opacity .4s;flex-direction:column}
 #app.show{opacity:1}
-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 14px;height:52px;display:flex;align-items:center;gap:10px;flex-shrink:0;box-shadow:var(--shadow);z-index:50;transition:background .3s,border-color .3s}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 14px;height:52px;display:flex;align-items:center;gap:10px;flex-shrink:0;box-shadow:var(--shadow);z-index:50}
 .logo-sm{width:34px;height:34px;border-radius:9px;background:#111;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .topbar-title{flex:1;min-width:0}
 .topbar-title p{font-weight:800;font-size:14px;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topbar-title small{color:var(--text);font-size:10px}
-.icon-btn{background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;width:36px;height:36px;cursor:pointer;font-size:15px;position:relative;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--white);touch-action:manipulation}
+.icon-btn{background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;width:36px;height:36px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--white)}
 .av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;flex-shrink:0}
-.hamburger{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;gap:4px;padding:6px;touch-action:manipulation}
-.ham-line{width:20px;height:2px;background:var(--white);border-radius:99px;transition:all .3s}
+.hamburger{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;gap:4px;padding:6px}
+.ham-line{width:20px;height:2px;background:var(--white);border-radius:99px}
+
+/* DRAWER */
 #drawer{position:fixed;inset:0;z-index:200;pointer-events:none}
 #drawerBg{position:absolute;inset:0;background:var(--modal-bg);opacity:0;transition:opacity .3s}
 #drawerPanel{position:absolute;left:0;top:0;bottom:0;width:260px;background:var(--surface);transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,.2)}
@@ -53,33 +58,43 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .drawer-brand p{font-weight:800;font-size:14px;color:var(--white)}
 .drawer-brand small{color:var(--text);font-size:10px}
 .drawer-nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:3px;overflow-y:auto}
-.nav-btn{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:10px;border:none;background:transparent;color:var(--text);font-weight:500;font-size:13px;cursor:pointer;transition:all .18s;text-align:left;width:100%;touch-action:manipulation;position:relative}
+.nav-btn{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:10px;border:none;background:transparent;color:var(--text);font-weight:500;font-size:13px;cursor:pointer;transition:all .18s;text-align:left;width:100%;position:relative}
 .nav-btn.active{background:var(--input-bg);color:var(--white);font-weight:700}
 .nav-dot{position:absolute;left:0;top:18%;bottom:18%;width:3px;border-radius:99px;background:var(--rc);display:none}
 .nav-btn.active .nav-dot{display:block}
 .nav-icon{font-size:16px;flex-shrink:0;width:22px;text-align:center}
 .drawer-foot{padding:12px 10px;border-top:1px solid var(--border);display:flex;align-items:center;gap:9px}
-.logout-btn{margin-left:auto;background:none;border:none;color:var(--text);font-size:13px;cursor:pointer;flex-shrink:0}
+.logout-btn{margin-left:auto;background:none;border:none;color:var(--text);font-size:13px;cursor:pointer}
+
+/* MAIN */
 main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .page{padding:14px;animation:fadeUp .25s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:15px;box-shadow:var(--shadow);transition:background .3s,border-color .3s}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:15px;box-shadow:var(--shadow)}
 .card-title{font-weight:700;font-size:13px;margin-bottom:12px;color:var(--white)}
 .card+.card{margin-top:12px}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.section-title{font-weight:700;font-size:13px;color:var(--white)}
+
+/* STATS */
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
 .stat-card{border-radius:14px;padding:14px;position:relative;overflow:hidden}
 .stat-card::before{content:'';position:absolute;top:-16px;right:-16px;width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.1)}
 .stat-icon{font-size:20px;margin-bottom:5px}
 .stat-val{font-size:20px;font-weight:800;color:#fff}
-.stat-label{color:rgba(255,255,255,.75);font-size:11px;margin-top:1px}
+.stat-label{color:rgba(255,255,255,.75);font-size:11px}
 .stat-delta{display:inline-block;margin-top:5px;background:rgba(255,255,255,.2);border-radius:99px;padding:1px 7px;font-size:10px;color:#fff}
+
+/* MISC */
 .pill{border-radius:99px;padding:2px 9px;font-size:10px;font-weight:600;white-space:nowrap}
 .bar-track{background:var(--border);border-radius:99px;height:3px;margin-top:4px}
 .bar-fill{height:3px;border-radius:99px;transition:width .9s ease}
-.lb-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.lb-rank{font-weight:800;font-size:12px;width:16px;flex-shrink:0}
-.lb-info{flex:1}
-.lb-name{display:flex;justify-content:space-between;font-size:12px;color:var(--white)}
+.two-col{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:14px}
+@media(min-width:600px){.two-col{grid-template-columns:1fr 1fr}}
+
+/* LEADS */
 .lead-row{display:flex;align-items:center;gap:10px;padding:8px 9px;border-radius:9px;cursor:pointer;transition:background .15s;margin-bottom:2px}
 .lead-row:hover{background:var(--card-hover)}
 .list-search{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;padding:8px 12px;color:var(--white);font-size:14px;outline:none}
@@ -89,7 +104,8 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .lead-item{display:flex;align-items:center;gap:9px;padding:11px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
 .lead-item:active{background:var(--card-hover)}
 .plat-dot{position:absolute;bottom:0;right:0;font-size:8px}
-.unread-badge{width:18px;height:18px;border-radius:50%;color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* CHAT */
 .chat-view{display:flex;flex-direction:column;height:100%;overflow:hidden}
 .chat-head{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--surface);flex-shrink:0}
 .chat-back{background:none;border:none;color:var(--white);font-size:20px;cursor:pointer;padding:4px}
@@ -106,9 +122,11 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .emoji-btn{background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;width:36px;height:36px;cursor:pointer;font-size:14px;flex-shrink:0}
 .msg-input{flex:1;background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;padding:9px 12px;color:var(--white);font-size:14px;outline:none}
 .send-btn{border:none;border-radius:9px;padding:9px 16px;color:#fff;font-weight:700;font-size:13px;cursor:pointer;flex-shrink:0}
+
+/* DETAIL SHEET */
 .detail-sheet{position:fixed;inset:0;z-index:150;pointer-events:none}
 .detail-bg{position:absolute;inset:0;background:var(--modal-bg);opacity:0;transition:opacity .3s}
-.detail-panel{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:20px 20px 0 0;max-height:80dvh;overflow-y:auto;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);padding:20px 16px;padding-bottom:max(20px,env(safe-area-inset-bottom))}
+.detail-panel{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:20px 20px 0 0;max-height:85dvh;overflow-y:auto;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);padding:20px 16px;padding-bottom:max(20px,env(safe-area-inset-bottom))}
 .detail-sheet.open{pointer-events:all}
 .detail-sheet.open .detail-bg{opacity:1}
 .detail-sheet.open .detail-panel{transform:translateY(0)}
@@ -117,22 +135,32 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .detail-key{color:var(--text);font-size:10px;margin-bottom:2px}
 .detail-val{font-size:12px;font-weight:600;color:var(--white)}
 .ghost-btn{width:100%;padding:10px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;margin-bottom:7px;background:transparent;border:none}
-.pipeline-wrap{padding:14px;overflow-x:auto;animation:fadeUp .25s ease}
-.kanban{display:flex;gap:10px;min-width:max-content}
-.col-wrap{width:190px;flex-shrink:0}
-.col-inner{border-radius:12px;border:1.5px solid var(--border);background:var(--surface);overflow:hidden}
-.col-inner.dragover{border-color:var(--rc);background:var(--card-hover)}
+
+/* ═══ PIPELINE / KANBAN ═══ */
+.pipeline-wrap{padding:14px;overflow-x:auto;animation:fadeUp .25s ease;user-select:none}
+.kanban{display:flex;gap:10px;min-width:max-content;align-items:flex-start}
+.col-wrap{width:200px;flex-shrink:0}
+.col-inner{border-radius:12px;border:1.5px solid var(--border);background:var(--surface);overflow:hidden;transition:border-color .2s}
+.col-inner.drag-over{border-color:var(--rc);background:var(--card-hover)}
 .col-head{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .col-dot{width:7px;height:7px;border-radius:50%;margin-right:6px;flex-shrink:0}
 .col-title{font-weight:700;font-size:11px;display:flex;align-items:center;color:var(--white)}
 .col-count{background:var(--input-bg);border-radius:99px;padding:1px 7px;font-size:10px;color:var(--text)}
-.col-body{padding:8px;min-height:60px;display:flex;flex-direction:column;gap:6px}
-.k-card{background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:10px;cursor:grab;transition:all .15s}
-.k-card:active{cursor:grabbing;transform:scale(.98)}
-.k-name{font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--white)}
+.col-body{padding:8px;min-height:80px;display:flex;flex-direction:column;gap:6px;position:relative}
+.k-card{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;padding:10px;cursor:grab;transition:box-shadow .15s,transform .15s,opacity .15s;position:relative}
+.k-card:active{cursor:grabbing}
+.k-card.dragging{opacity:.4;transform:scale(.97)}
+.k-card.drag-ghost{box-shadow:0 8px 32px rgba(0,0,0,.25);transform:rotate(1.5deg) scale(1.03);z-index:999;opacity:1}
+.k-card-top{display:flex;align-items:center;gap:7px;margin-bottom:4px}
+.k-name{font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--white);flex:1}
 .k-val{color:#16a34a;font-size:13px;font-weight:800;margin:3px 0}
 .k-src{color:var(--text);font-size:10px}
-.drop-hint{color:var(--text);font-size:11px;text-align:center;padding:10px 0;opacity:.4}
+.k-actions{display:flex;gap:4px;margin-top:7px}
+.k-act-btn{flex:1;border:none;border-radius:6px;padding:4px 0;font-size:10px;font-weight:600;cursor:pointer}
+.drop-zone{border:1.5px dashed var(--border);border-radius:8px;min-height:50px;display:flex;align-items:center;justify-content:center;color:var(--text);font-size:11px;opacity:.5;transition:all .2s}
+.drop-zone.active{border-color:var(--rc);opacity:1;background:rgba(124,58,237,.05)}
+
+/* AGENTS */
 .agent-grid{display:grid;grid-template-columns:1fr;gap:12px;padding:14px;animation:fadeUp .25s ease}
 @media(min-width:500px){.agent-grid{grid-template-columns:1fr 1fr}}
 .agent-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
@@ -144,19 +172,26 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .agent-stat{background:var(--input-bg);border-radius:8px;padding:8px 0;text-align:center}
 .agent-stat-val{font-weight:700;font-size:12px;color:var(--white)}
 .agent-stat-key{color:var(--text);font-size:10px}
+
+/* FOLLOWUPS */
 .fu-counters{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px}
 .fu-counter{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;box-shadow:var(--shadow)}
 .fu-num{font-size:28px;font-weight:800}
 .fu-lbl{color:var(--text);font-size:10px;margin-top:2px}
-.task-item{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:10px;margin-bottom:5px;background:var(--input-bg);cursor:pointer}
+.task-item{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:10px;margin-bottom:5px;background:var(--input-bg)}
 .task-prio{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .task-lead{font-size:12px;font-weight:600;color:var(--white)}
 .task-info{color:var(--text);font-size:10px;margin-top:1px}
-.done-btn{border-radius:7px;padding:4px 9px;font-size:10px;font-weight:600;cursor:pointer;border:none;margin-left:auto;white-space:nowrap}
+.task-actions{display:flex;gap:4px;margin-left:auto;flex-shrink:0}
+.task-btn{border:none;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:600;cursor:pointer}
+
+/* AUTOMATION */
 .auto-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--input-bg);border-radius:10px;margin-bottom:7px;border:1px solid var(--border)}
 .tag{padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700}
 .toggle{width:40px;height:21px;border-radius:99px;position:relative;cursor:pointer;transition:background .25s;flex-shrink:0}
 .toggle-knob{position:absolute;top:2.5px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .25s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+
+/* CAMPAIGNS */
 .campaign-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .camp-stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px;text-align:center;box-shadow:var(--shadow)}
 .camp-stat-icon{font-size:20px}
@@ -168,6 +203,8 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .camp-metric{text-align:center;min-width:50px}
 .camp-metric-val{font-weight:700;font-size:12px;color:var(--white)}
 .camp-metric-key{color:var(--text);font-size:10px}
+
+/* TEMPLATES */
 .tpl-grid{display:grid;grid-template-columns:1fr;gap:12px;padding:14px;animation:fadeUp .25s ease}
 @media(min-width:500px){.tpl-grid{grid-template-columns:1fr 1fr}}
 .tpl-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
@@ -176,8 +213,9 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .tpl-body{color:var(--text2);font-size:12px;line-height:1.6;white-space:pre-line}
 .tpl-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
 .tpl-uses{color:var(--text);font-size:11px}
-.tpl-use-btn{border:none;border-radius:7px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer}
 .tpl-add{border:1.5px dashed var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;min-height:120px;transition:border-color .2s}
+
+/* MODAL */
 .modal-overlay{position:fixed;inset:0;background:var(--modal-bg);z-index:300;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s ease}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .modal{background:var(--surface);border-radius:20px 20px 0 0;padding:22px 20px;width:100%;max-width:100%;box-shadow:0 -8px 40px rgba(0,0,0,.3);max-height:90dvh;overflow-y:auto;padding-bottom:max(22px,env(safe-area-inset-bottom))}
@@ -191,30 +229,39 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .form-row input,.form-row select,.form-row textarea{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;padding:11px 12px;color:var(--white);font-size:14px;outline:none;transition:border-color .2s}
 .form-row input:focus,.form-row select:focus,.form-row textarea:focus{border-color:var(--rc)}
 .form-row textarea{resize:vertical;min-height:80px}
+
+/* USER MGMT */
 .user-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--input-bg);border-radius:10px;margin-bottom:7px;border:1px solid var(--border)}
+
+/* ACCESS */
 .access-denied{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:10px;color:var(--text)}
 .access-denied .ad-icon{font-size:48px;opacity:.4}
-.toast{position:fixed;bottom:max(80px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#111;border-radius:12px;padding:11px 18px;font-size:13px;color:#fff;z-index:400;box-shadow:0 8px 30px rgba(0,0,0,.3);animation:slideUp .3s ease;display:flex;align-items:center;gap:9px;white-space:nowrap;max-width:90vw}
+
+/* TOAST */
+.toast{position:fixed;bottom:max(80px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#111;border-radius:12px;padding:11px 18px;font-size:13px;color:#fff;z-index:999;box-shadow:0 8px 30px rgba(0,0,0,.3);animation:slideUp .3s ease;display:flex;align-items:center;gap:9px;white-space:nowrap;max-width:90vw}
 [data-theme="dark"] .toast{background:#2a2d3a;border:1px solid var(--border)}
 @keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* STATUS */
 .status-dot-inline{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px}
 .stage-btn{width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--border);background:var(--input-bg);color:var(--white);font-size:13px;text-align:left;cursor:pointer;margin-bottom:6px;transition:all .15s;display:flex;align-items:center;gap:9px}
 .stage-btn.current{border-color:var(--rc);background:var(--card-hover)}
+
+/* BOTTOM NAV */
 #bottomNav{display:flex;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;padding-bottom:max(6px,env(safe-area-inset-bottom));box-shadow:0 -2px 12px rgba(0,0,0,.1)}
 .bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;border:none;background:transparent;cursor:pointer;gap:3px;touch-action:manipulation;transition:all .15s;color:var(--text)}
 .bnav-btn.active{color:var(--rc)}
 .bnav-icon{font-size:18px}
 .bnav-label{font-size:9px;font-weight:600}
+
+/* SPINNER */
 .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.two-col{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:14px}
-@media(min-width:600px){.two-col{grid-template-columns:1fr 1fr}}
-.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.section-title{font-weight:700;font-size:13px;color:var(--white)}
+
+/* SETTINGS */
 .settings-row{display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--input-bg);border-radius:10px;border:1px solid var(--border);margin-bottom:6px}
 .settings-row-label{font-size:13px;font-weight:600;color:var(--white)}
 .settings-row-sub{font-size:11px;color:var(--text);margin-top:2px}
-.loading-screen{display:flex;align-items:center;justify-content:center;height:200px;flex-direction:column;gap:12px;color:var(--text)}
 </style>
 </head>
 <body>
@@ -237,7 +284,7 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
       <p>HomeGym™ — Powered by SalesCMD</p>
     </div>
     <div class="glass">
-      <p class="step-label">Sign in to your account</p>
+      <p style="color:var(--text);font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">Sign in to your account</p>
       <div class="field-wrap">
         <label style="font-size:11px;color:var(--text);font-weight:600;display:block;margin-bottom:5px;letter-spacing:.4px">EMAIL</label>
         <input id="emailInput" class="field-input" type="email" placeholder="you@homegym.in" autocomplete="email"/>
@@ -274,7 +321,7 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
       <small id="pageDate"></small>
     </div>
     <button class="icon-btn" onclick="toggleTheme()" id="themeToggleApp">🌙</button>
-    <button class="icon-btn" onclick="showToast('🔔 No new notifications')" style="margin-left:2px"><span>🔔</span></button>
+    <button class="icon-btn" onclick="showToast('🔔 No new notifications')" style="margin-left:2px">🔔</button>
     <div class="av" id="topAv" style="width:32px;height:32px;font-size:13px"></div>
   </header>
 
@@ -318,29 +365,41 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 
 <script>
 /* ══ FIREBASE ══ */
-const firebaseConfig={apiKey:"AIzaSyAaryFhV7yH9NAUO9TlmINcTn9UxuIIebg",authDomain:"gym-sales.firebaseapp.com",projectId:"gym-sales",storageBucket:"gym-sales.firebasestorage.app",messagingSenderId:"253046066659",appId:"1:253046066659:web:60c96dde428eed01bd64d6",measurementId:"G-B9YVTHF829"};
+const firebaseConfig={apiKey:"AIzaSyAaryFhV7yH9NAUO9TlmINcTn9UxuIIebg",authDomain:"gym-sales.firebaseapp.com",projectId:"gym-sales",storageBucket:"gym-sales.firebasestorage.app",messagingSenderId:"253046066659",appId:"1:253046066699:web:60c96dde428eed01bd64d6"};
 firebase.initializeApp(firebaseConfig);
 const auth=firebase.auth();
 const db=firebase.firestore();
 
-/* ══ HELPERS (declared first so always hoisted) ══ */
+/* ══ CORE HELPERS ══ */
 function $(id){return document.getElementById(id);}
 function rc(){return (ROLES[selectedRole]||ROLES.agent).color;}
 function initials(n){return (n||"?").split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);}
 function nowT(){return new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});}
 function today(){return new Date().toLocaleDateString("en-IN",{weekday:"short",month:"short",day:"numeric"});}
+function todayStr(){return new Date().toISOString().slice(0,10);}
 function av(t,sz,g){sz=sz||34;const grad=g||`${rc()},${rc()}99`;return `<div class="av" style="width:${sz}px;height:${sz}px;font-size:${Math.max(sz*.3,10)}px;background:linear-gradient(135deg,${grad})">${t}</div>`;}
 function pill(label,color){return `<span class="pill" style="background:${color}22;color:${color};border:1px solid ${color}44">${label}</span>`;}
-function bar(v,max,color){max=max||100;return `<div class="bar-track"><div class="bar-fill" style="width:${Math.min((v/max)*100,100)}%;background:${color||rc()}"></div></div>`;}
+function bar(v,max,color){max=max||100;return `<div class="bar-track"><div class="bar-fill" style="width:${Math.min((v/(max||1))*100,100)}%;background:${color||rc()}"></div></div>`;}
 function showToast(msg,dur){
-  dur=dur||3000;
-  const t=document.createElement("div");t.className="toast";t.innerHTML=msg;document.body.appendChild(t);
+  dur=dur||3000;const t=document.createElement("div");t.className="toast";t.innerHTML=msg;document.body.appendChild(t);
   setTimeout(()=>{t.style.opacity="0";t.style.transition="opacity .3s";setTimeout(()=>t.remove(),300);},dur);
 }
 function closeModal(){$("modalContainer").innerHTML="";}
 function showModal(html){$("modalContainer").innerHTML=`<div class="modal-overlay" onclick="if(event.target===this)closeModal()">${html}</div>`;}
-function accessDenied(l){return `<div class="access-denied"><div class="ad-icon">🔒</div><p style="font-weight:700;font-size:15px;color:var(--white)">Access Restricted</p><p>Your role does not have access to ${l||"this feature"}.</p></div>`;}
-function addBtn(label,fn){return `<button onclick="${fn}()" style="background:${rc()};border:none;border-radius:8px;padding:7px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer">${label}</button>`;}
+function accessDenied(l){return `<div class="access-denied"><div class="ad-icon">🔒</div><p style="font-weight:700;font-size:15px;color:var(--white)">Access Restricted</p><p>Your role doesn't include ${l||"this feature"}.</p></div>`;}
+function fmtCur(v){return v?("₹"+Number(v).toLocaleString("en-IN")):"—";}
+function confirmDelete(msg,fn){
+  showModal(`<div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" style="color:#ef4444">🗑 Confirm Delete</div>
+    <p style="color:var(--text2);font-size:14px;margin-bottom:4px">${msg}</p>
+    <p style="color:var(--text);font-size:12px">This action cannot be undone.</p>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" style="background:#ef4444" onclick="closeModal();${fn}">Delete</button>
+    </div>
+  </div>`);
+}
 
 /* ══ THEME ══ */
 let darkMode=localStorage.getItem("theme")==="dark";
@@ -354,8 +413,9 @@ function applyTheme(){
 function toggleTheme(){darkMode=!darkMode;applyTheme();}
 applyTheme();
 
-/* ══ STATE ══ */
+/* ══ CONSTANTS ══ */
 const STAGE_COLORS={"New Lead":"#3b82f6","Contacted":"#f59e0b","Interested":"#8b5cf6","Payment Pending":"#f97316","Closed":"#16a34a"};
+const STAGES=Object.keys(STAGE_COLORS);
 const PLATFORMS=["WhatsApp","Instagram"];
 const SOURCES=["Meta Ad","Organic","Referral","WhatsApp","Instagram","Google Ad"];
 const ROLES={admin:{label:"Admin / CSO",icon:"👑",color:"#7c3aed"},manager:{label:"Manager",icon:"🧑‍💼",color:"#0ea5e9"},agent:{label:"Sales Agent",icon:"💬",color:"#16a34a"}};
@@ -363,12 +423,12 @@ const ROLE_NAV={admin:["dashboard","inbox","pipeline","agents","followups","auto
 const BOTTOM_NAV={admin:["dashboard","inbox","pipeline","followups"],manager:["dashboard","inbox","pipeline","followups"],agent:["inbox","followups","templates"]};
 const TITLES={dashboard:"Dashboard",inbox:"Inbox",pipeline:"Pipeline",agents:"Agents",followups:"Follow-ups",automation:"Automation",campaigns:"Campaigns",templates:"Templates",settings:"User Management"};
 
-let currentUser=null,selectedRole=null,curPage="dashboard",selectedLead=null,chatView=false,dragItem=null;
+/* ══ STATE ══ */
+let currentUser=null,selectedRole=null,curPage="dashboard",selectedLead=null,chatView=false;
 let leads=[],agents=[],tasks=[],templates=[],autos=[],campaigns=[],managedUsers=[];
-// Realtime listeners
-let unsubLeads=null,unsubAgents=null,unsubTasks=null,unsubTemplates=null,unsubAutos=null,unsubCampaigns=null;
+let unsubLeads=null,unsubAgents=null,unsubTasks=null,unsubTemplates=null,unsubAutos=null,unsubCampaigns=null,unsubMessages=null;
 
-/* ══ FIRESTORE COLLECTIONS ══ */
+/* ══ FIRESTORE REFS ══ */
 const COL={
   leads:()=>db.collection("leads"),
   agents:()=>db.collection("agents"),
@@ -380,41 +440,35 @@ const COL={
   users:()=>db.collection("users")
 };
 
-/* ══ REALTIME LISTENERS ══ */
+/* ══ LISTENERS ══ */
 function startListeners(){
   unsubLeads=COL.leads().orderBy("createdAt","desc").onSnapshot(snap=>{
     leads=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(curPage==="dashboard"||curPage==="inbox"||curPage==="pipeline")safeRender();
+    if(!chatView)safeRender(["dashboard","inbox","pipeline"]);
   });
   unsubAgents=COL.agents().orderBy("createdAt").onSnapshot(snap=>{
     agents=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(curPage==="agents"||curPage==="dashboard")safeRender();
+    safeRender(["agents","dashboard"]);
   });
   unsubTasks=COL.tasks().orderBy("createdAt","desc").onSnapshot(snap=>{
     tasks=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(curPage==="followups")safeRender();
+    safeRender(["followups"]);
   });
   unsubTemplates=COL.templates().orderBy("createdAt").onSnapshot(snap=>{
     templates=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(curPage==="templates")safeRender();
+    safeRender(["templates"]);
   });
   unsubAutos=COL.autos().orderBy("createdAt").onSnapshot(snap=>{
     autos=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(curPage==="automation")safeRender();
+    safeRender(["automation"]);
   });
   unsubCampaigns=COL.campaigns().orderBy("createdAt","desc").onSnapshot(snap=>{
     campaigns=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(curPage==="campaigns")safeRender();
+    safeRender(["campaigns"]);
   });
 }
-function stopListeners(){
-  [unsubLeads,unsubAgents,unsubTasks,unsubTemplates,unsubAutos,unsubCampaigns].forEach(u=>u&&u());
-}
-function safeRender(){
-  // Don't re-render chat view mid-conversation
-  if(curPage==="inbox"&&chatView)return;
-  renderPage(curPage);
-}
+function stopListeners(){[unsubLeads,unsubAgents,unsubTasks,unsubTemplates,unsubAutos,unsubCampaigns,unsubMessages].forEach(u=>u&&u());}
+function safeRender(pages){if(pages.includes(curPage))renderPage(curPage);}
 
 /* ══ AUTH ══ */
 auth.onAuthStateChanged(async user=>{
@@ -423,63 +477,42 @@ auth.onAuthStateChanged(async user=>{
       const docRef=COL.users().doc(user.uid);
       const snap=await docRef.get();
       if(snap.exists){
-        const data=snap.data();
-        currentUser={uid:user.uid,email:user.email,name:data.name||user.email,role:data.role||"agent"};
-        selectedRole=currentUser.role;
-        initApp();
+        const d=snap.data();
+        currentUser={uid:user.uid,email:user.email,name:d.name||user.email,role:d.role||"agent"};
+        selectedRole=currentUser.role;initApp();
       } else {
-        const allUsers=await COL.users().limit(1).get();
-        if(allUsers.empty){
-          const adminName=user.email.split("@")[0];
-          await docRef.set({name:adminName,email:user.email,role:"admin",createdAt:new Date().toISOString()});
-          currentUser={uid:user.uid,email:user.email,name:adminName,role:"admin"};
-          selectedRole="admin";
-          initApp();
-          setTimeout(()=>showToast("👑 First login — you are now Admin!",5000),800);
+        const all=await COL.users().limit(1).get();
+        if(all.empty){
+          const name=user.email.split("@")[0];
+          await docRef.set({name,email:user.email,role:"admin",createdAt:new Date().toISOString()});
+          currentUser={uid:user.uid,email:user.email,name,role:"admin"};selectedRole="admin";
+          initApp();setTimeout(()=>showToast("👑 You are now Admin — first login!",5000),800);
         } else {
-          await auth.signOut();
-          showLoginScreen();
-          showErrMsg("No account configured for this email. Contact your admin.");
+          await auth.signOut();showLoginScreen();showErrMsg("No account found for this email. Contact your admin.");
         }
       }
-    } catch(e){
-      console.error("Auth error:",e);
-      await auth.signOut();
-      showLoginScreen();
-      showErrMsg("Error: "+e.message);
-    }
-  } else {
-    showLoginScreen();
-  }
+    } catch(e){await auth.signOut();showLoginScreen();showErrMsg("Error: "+e.message);}
+  } else {showLoginScreen();}
 });
-
 function showLoginScreen(){
-  stopListeners();
-  $("app").style.opacity="0";$("app").style.display="none";$("app").classList.remove("show");
+  stopListeners();$("app").style.opacity="0";$("app").style.display="none";$("app").classList.remove("show");
   $("loginWrap").style.display="flex";$("loginWrap").classList.remove("hide");
   const btn=$("signInBtn");if(btn){btn.textContent="Sign In →";btn.disabled=false;}
 }
 function showErrMsg(msg){const e=$("errMsg");if(e){e.style.display="block";e.textContent=msg;}}
-
 async function doLogin(){
-  const email=($("emailInput").value||"").trim();
-  const pass=$("passInput").value||"";
+  const email=($("emailInput").value||"").trim(),pass=$("passInput").value||"";
   if(!email||!pass){showErrMsg("Please enter email and password.");return;}
-  const btn=$("signInBtn");
-  btn.innerHTML=`<span class="spinner"></span>Signing in…`;btn.disabled=true;
+  const btn=$("signInBtn");btn.innerHTML=`<span class="spinner"></span>Signing in…`;btn.disabled=true;
   $("errMsg").style.display="none";
-  try{
-    await auth.signInWithEmailAndPassword(email,pass);
-  } catch(e){
-    const msgs={"auth/user-not-found":"No account with this email.","auth/wrong-password":"Incorrect password.","auth/invalid-email":"Invalid email.","auth/too-many-requests":"Too many attempts. Try later.","auth/invalid-credential":"Invalid email or password."};
-    showErrMsg(msgs[e.code]||"Login failed: "+e.message);
-    btn.textContent="Sign In →";btn.disabled=false;
+  try{await auth.signInWithEmailAndPassword(email,pass);}
+  catch(e){
+    const msgs={"auth/user-not-found":"No account with this email.","auth/wrong-password":"Incorrect password.","auth/invalid-email":"Invalid email.","auth/too-many-requests":"Too many attempts.","auth/invalid-credential":"Invalid email or password."};
+    showErrMsg(msgs[e.code]||"Login failed: "+e.message);btn.textContent="Sign In →";btn.disabled=false;
   }
 }
-
 async function doLogout(){
-  $("app").style.opacity="0";
-  stopListeners();
+  $("app").style.opacity="0";stopListeners();
   leads=[];agents=[];tasks=[];templates=[];autos=[];campaigns=[];managedUsers=[];
   currentUser=null;selectedRole=null;selectedLead=null;chatView=false;
   await auth.signOut();
@@ -489,20 +522,14 @@ async function doLogout(){
 function initApp(){
   document.documentElement.style.setProperty("--rc",ROLES[selectedRole].color);
   $("loginWrap").classList.add("hide");
-  setTimeout(()=>{
-    $("loginWrap").style.display="none";
-    $("app").style.display="flex";
-    setTimeout(()=>$("app").classList.add("show"),10);
-  },400);
+  setTimeout(()=>{$("loginWrap").style.display="none";$("app").style.display="flex";setTimeout(()=>$("app").classList.add("show"),10);},400);
   const r=ROLES[selectedRole];
   [$("topAv"),$("drawerAv")].forEach(el=>{if(el){el.textContent=initials(currentUser.name);el.style.background=`linear-gradient(135deg,${r.color},${r.color}88)`;}});
   $("drawerUserName").textContent=currentUser.name;
   $("drawerUserEmail").textContent=currentUser.email||"";
   $("pageDate").textContent=today();
-  buildDrawerNav();buildBottomNav();
-  startListeners();
-  renderPage(selectedRole==="agent"?"inbox":"dashboard");
-  applyTheme();
+  buildDrawerNav();buildBottomNav();startListeners();
+  renderPage(selectedRole==="agent"?"inbox":"dashboard");applyTheme();
 }
 
 /* ══ NAV ══ */
@@ -511,129 +538,75 @@ function closeDrawer(){$("drawer").classList.remove("open");}
 function buildDrawerNav(){
   const nav=$("drawerNav");nav.innerHTML="";
   const pages=ROLE_NAV[selectedRole]||ROLE_NAV.agent;
-  const allNav=[{id:"dashboard",icon:"▣",label:"Dashboard"},{id:"inbox",icon:"✉",label:"Inbox"},{id:"pipeline",icon:"◈",label:"Pipeline"},{id:"agents",icon:"◉",label:"Agents"},{id:"followups",icon:"◷",label:"Follow-ups"},{id:"automation",icon:"⚙",label:"Automation"},{id:"campaigns",icon:"◎",label:"Campaigns"},{id:"templates",icon:"◧",label:"Templates"},{id:"settings",icon:"⚡",label:"User Management"}];
-  allNav.filter(n=>pages.includes(n.id)).forEach(n=>{
-    const btn=document.createElement("button");
-    btn.className="nav-btn"+(n.id===curPage?" active":"");
+  const all=[{id:"dashboard",icon:"▣",label:"Dashboard"},{id:"inbox",icon:"✉",label:"Inbox"},{id:"pipeline",icon:"◈",label:"Pipeline"},{id:"agents",icon:"◉",label:"Agents"},{id:"followups",icon:"◷",label:"Follow-ups"},{id:"automation",icon:"⚙",label:"Automation"},{id:"campaigns",icon:"◎",label:"Campaigns"},{id:"templates",icon:"◧",label:"Templates"},{id:"settings",icon:"⚡",label:"User Management"}];
+  all.filter(n=>pages.includes(n.id)).forEach(n=>{
+    const btn=document.createElement("button");btn.className="nav-btn"+(n.id===curPage?" active":"");
     btn.innerHTML=`<div class="nav-dot"></div><span class="nav-icon">${n.icon}</span><span>${n.label}</span>`;
-    btn.onclick=()=>{renderPage(n.id);closeDrawer();};
-    nav.appendChild(btn);
+    btn.onclick=()=>{renderPage(n.id);closeDrawer();};nav.appendChild(btn);
   });
 }
 function buildBottomNav(){
   const bn=$("bottomNav");bn.innerHTML="";
   const pages=BOTTOM_NAV[selectedRole]||BOTTOM_NAV.agent;
-  const allNav=[{id:"dashboard",icon:"▣",label:"Home"},{id:"inbox",icon:"✉",label:"Inbox"},{id:"pipeline",icon:"◈",label:"Pipeline"},{id:"followups",icon:"◷",label:"Tasks"},{id:"templates",icon:"◧",label:"Templates"}];
-  allNav.filter(n=>pages.includes(n.id)).forEach(n=>{
-    const btn=document.createElement("button");
-    btn.className="bnav-btn"+(n.id===curPage?" active":"");
+  const all=[{id:"dashboard",icon:"▣",label:"Home"},{id:"inbox",icon:"✉",label:"Inbox"},{id:"pipeline",icon:"◈",label:"Pipeline"},{id:"followups",icon:"◷",label:"Tasks"},{id:"templates",icon:"◧",label:"Templates"}];
+  all.filter(n=>pages.includes(n.id)).forEach(n=>{
+    const btn=document.createElement("button");btn.className="bnav-btn"+(n.id===curPage?" active":"");
     btn.innerHTML=`<span class="bnav-icon">${n.icon}</span><span class="bnav-label">${n.label}</span>`;
-    btn.onclick=()=>renderPage(n.id);
-    bn.appendChild(btn);
+    btn.onclick=()=>renderPage(n.id);bn.appendChild(btn);
   });
 }
 function renderPage(id){
-  curPage=id;
-  if(id!=="inbox")chatView=false;
+  curPage=id;if(id!=="inbox")chatView=false;
   $("pageTitle").textContent=TITLES[id]||id;
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.querySelector("span:last-child")?.textContent===TITLES[id]));
   document.querySelectorAll(".bnav-btn").forEach(b=>{const lm={Home:"dashboard",Inbox:"inbox",Pipeline:"pipeline",Tasks:"followups",Templates:"templates"};b.classList.toggle("active",lm[b.querySelector(".bnav-label")?.textContent]===id);});
   const m=$("mainContent");m.innerHTML="";
-  const fns={dashboard:pgDashboard,inbox:pgInbox,pipeline:pgPipeline,agents:pgAgents,followups:pgFollowups,automation:pgAutomation,campaigns:pgCampaigns,templates:pgTemplates,settings:pgSettings};
-  (fns[id]||pgDashboard)(m);
+  ({dashboard:pgDashboard,inbox:pgInbox,pipeline:pgPipeline,agents:pgAgents,followups:pgFollowups,automation:pgAutomation,campaigns:pgCampaigns,templates:pgTemplates,settings:pgSettings}[id]||pgDashboard)(m);
 }
 
-/* ══ DETAIL SHEET ══ */
-function openDetailSheet(lid){
-  const l=leads.find(x=>x.id===lid);if(!l)return;
-  const showRev=selectedRole==="admin";
-  $("detailPanel").innerHTML=`
-    <div class="detail-handle"></div>
-    <div style="text-align:center;margin-bottom:16px">
-      ${av(initials(l.name),48,`${rc()},${rc()}88`)}
-      <p style="font-weight:700;font-size:14px;margin:9px 0 6px;color:var(--white)">${l.name}</p>
-      ${pill(l.status,STAGE_COLORS[l.status]||rc())}
-    </div>
-    <div class="detail-block"><div class="detail-key">📞 Phone</div><div class="detail-val">${l.phone||"—"}</div></div>
-    <div class="detail-block"><div class="detail-key">📸 Instagram</div><div class="detail-val">${l.instagram||"—"}</div></div>
-    <div class="detail-block"><div class="detail-key">📡 Source</div><div class="detail-val">${l.source||"—"}</div></div>
-    <div class="detail-block"><div class="detail-key">👤 Agent</div><div class="detail-val">${l.agentName||"Unassigned"}</div></div>
-    ${showRev?`<div class="detail-block"><div class="detail-key">💰 Deal Value</div><div class="detail-val">${l.value?"₹"+Number(l.value).toLocaleString("en-IN"):"—"}</div></div>`:""}
-    ${l.notes?`<div class="detail-block"><div class="detail-key">📌 Notes</div><div class="detail-val">${l.notes}</div></div>`:""}
-    <div style="height:12px"></div>
-    <button class="ghost-btn" style="border:1px solid ${rc()}44;background:${rc()}12;color:${rc()}" onclick="closeDetailSheet();showStageModal('${lid}')">Change Stage</button>
-    ${selectedRole!=="agent"?`<button class="ghost-btn" style="border:1px solid var(--border);background:var(--input-bg);color:var(--text2)" onclick="closeDetailSheet();showReassignModal('${lid}')">Reassign Lead</button>`:""}
-    <button class="ghost-btn" style="border:1px solid var(--border);background:var(--input-bg);color:var(--text2)" onclick="closeDetailSheet();showNoteModal('${lid}')">Add Note</button>
-    ${selectedRole!=="agent"?`<button class="ghost-btn" style="border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.06);color:#ef4444" onclick="closeDetailSheet();deleteLead('${lid}')">🗑 Delete Lead</button>`:""}
-  `;
-  $("detailSheet").classList.add("open");
-}
-function closeDetailSheet(){$("detailSheet").classList.remove("open");}
-
-/* ══ DASHBOARD ══ */
+/* ══════════════════════════════
+   DASHBOARD
+══════════════════════════════ */
 function pgDashboard(el){
   const closed=leads.filter(l=>l.status==="Closed");
-  const conv=leads.length?Math.round((closed.length/leads.length)*100):0;
+  const conv=leads.length?Math.round(closed.length/leads.length*100):0;
   const revenue=closed.reduce((s,l)=>s+Number(l.value||0),0);
   const showRev=selectedRole==="admin";
   const stats=[
     {label:"Total Leads",val:leads.length,delta:"All time",icon:"👥",a:"#6366f1",b:"#4f46e5"},
     {label:"Closed Deals",val:closed.length,delta:"Converted",icon:"🎯",a:"#16a34a",b:"#15803d"},
     {label:"Conversion",val:conv+"%",delta:"Rate",icon:"📈",a:"#0ea5e9",b:"#0284c7"},
-    {label:"Revenue",val:showRev?("₹"+revenue.toLocaleString("en-IN")):"🔒 Hidden",delta:showRev?"Total closed":"Admin only",icon:"💰",a:"#f97316",b:"#ea580c"},
+    {label:"Revenue",val:showRev?fmtCur(revenue):"🔒",delta:showRev?"Total closed":"Admin only",icon:"💰",a:"#f97316",b:"#ea580c"},
   ];
-  const sortedAgents=[...agents].sort((a,b)=>(b.conv||0)-(a.conv||0));
-  const recentLeads=[...leads].slice(0,5);
+  const topAgents=[...agents].sort((a,b)=>(b.conv||0)-(a.conv||0));
   el.innerHTML=`<div class="page">
     <div class="stat-grid">${stats.map(s=>`<div class="stat-card" style="background:linear-gradient(135deg,${s.a},${s.b});box-shadow:0 4px 16px ${s.a}33"><div class="stat-icon">${s.icon}</div><div class="stat-val">${s.val}</div><div class="stat-label">${s.label}</div><span class="stat-delta">${s.delta}</span></div>`).join("")}</div>
     <div class="two-col">
       <div class="card">
         <div class="card-title">🏆 Leaderboard</div>
-        ${sortedAgents.length?sortedAgents.map((ag,i)=>`
-          <div class="lb-row">
-            <span class="lb-rank" style="color:${["#f59e0b","#94a3b8","#f97316"][i]||rc()}">#${i+1}</span>
-            ${av(initials(ag.name),28,i===0?"#f59e0b,#f97316":null)}
-            <div class="lb-info">
-              <div class="lb-name"><span>${ag.name}</span><span style="color:var(--text)">${ag.conv||0}%</span></div>
-              ${bar(ag.conv||0,100,i===0?"#f59e0b":rc())}
-            </div>
-          </div>`).join(""):`<p style="color:var(--text);font-size:13px;text-align:center;padding:16px 0">No agents yet</p>`}
+        ${topAgents.length?topAgents.map((ag,i)=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-weight:800;font-size:12px;width:16px;color:${["#f59e0b","#94a3b8","#f97316"][i]||rc()}">#${i+1}</span>${av(initials(ag.name),28,i===0?"#f59e0b,#f97316":null)}<div style="flex:1"><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--white)"><span>${ag.name}</span><span style="color:var(--text)">${ag.conv||0}%</span></div>${bar(ag.conv||0,100,i===0?"#f59e0b":rc())}</div></div>`).join(""):`<p style="color:var(--text);font-size:13px;text-align:center;padding:16px 0">No agents yet</p>`}
       </div>
       <div class="card">
         <div class="card-title">🔥 Recent Leads</div>
-        ${recentLeads.length?recentLeads.map(l=>`
-          <div class="lead-row" onclick="openLead('${l.id}')">
-            ${av(initials(l.name),28)}
-            <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.name}</div><div style="color:var(--text);font-size:10px">${l.source||""}</div></div>
-            ${pill(l.status,STAGE_COLORS[l.status]||rc())}
-          </div>`).join(""):`<p style="color:var(--text);font-size:13px;text-align:center;padding:16px 0">No leads yet</p>`}
+        ${leads.slice(0,5).map(l=>`<div class="lead-row" onclick="openLead('${l.id}')">${av(initials(l.name),28)}<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.name}</div><div style="color:var(--text);font-size:10px">${l.source||""}</div></div>${pill(l.status,STAGE_COLORS[l.status]||rc())}</div>`).join("")||`<p style="color:var(--text);font-size:13px;text-align:center;padding:16px 0">No leads yet</p>`}
       </div>
     </div>
     <div class="card">
       <div class="card-title">📊 Pipeline Summary</div>
-      ${Object.keys(STAGE_COLORS).map(stage=>{
-        const cnt=leads.filter(l=>l.status===stage).length;
-        return `<div style="display:flex;align-items:center;gap:9px;margin-bottom:7px">
-          <div style="width:8px;height:8px;border-radius:50%;background:${STAGE_COLORS[stage]};flex-shrink:0"></div>
-          <span style="font-size:12px;color:var(--white);flex:1">${stage}</span>
-          <span style="font-size:12px;font-weight:700;color:var(--white);min-width:24px;text-align:right">${cnt}</span>
-          <div style="flex:2">${bar(cnt,Math.max(...Object.keys(STAGE_COLORS).map(s=>leads.filter(l=>l.status===s).length),1),STAGE_COLORS[stage])}</div>
-        </div>`;
-      }).join("")}
+      ${STAGES.map(s=>{const c=leads.filter(l=>l.status===s).length,mx=Math.max(...STAGES.map(st=>leads.filter(l=>l.status===st).length),1);return `<div style="display:flex;align-items:center;gap:9px;margin-bottom:7px"><div style="width:8px;height:8px;border-radius:50%;background:${STAGE_COLORS[s]};flex-shrink:0"></div><span style="font-size:12px;color:var(--white);flex:1">${s}</span><span style="font-size:12px;font-weight:700;color:var(--white);min-width:24px;text-align:right">${c}</span><div style="flex:2">${bar(c,mx,STAGE_COLORS[s])}</div></div>`;}).join("")}
     </div>
   </div>`;
 }
 function openLead(id){selectedLead=leads.find(l=>l.id===id)||null;chatView=true;renderPage("inbox");}
 
-/* ══ INBOX ══ */
+/* ══════════════════════════════
+   INBOX
+══════════════════════════════ */
 function pgInbox(el){
   const myLeads=selectedRole==="agent"?leads.filter(l=>l.agentName===currentUser.name):leads;
   if(chatView&&selectedLead){
     el.style.height="100%";el.style.overflow="hidden";
-    el.innerHTML=renderChatView();
-    // Load messages from Firestore
-    loadChatMessages(selectedLead.id);
-    return;
+    el.innerHTML=renderChatView();loadChatMessages(selectedLead.id);return;
   }
   el.innerHTML=`<div style="height:100%;display:flex;flex-direction:column;overflow:hidden">
     <div style="padding:10px 14px;border-bottom:1px solid var(--border);background:var(--surface)">
@@ -653,19 +626,19 @@ function pgInbox(el){
 function renderLeadList(arr){
   if(!arr.length)return`<div style="text-align:center;padding:40px 16px;color:var(--text)"><div style="font-size:40px;margin-bottom:10px">📭</div><p>No leads yet</p></div>`;
   return arr.map(l=>`
-    <div class="lead-item" onclick="selectLead('${l.id}')">
-      <div style="position:relative">${av(initials(l.name),36)}<span class="plat-dot" style="color:${l.platform==="WhatsApp"?"#16a34a":"#ec4899"}">●</span></div>
-      <div style="flex:1;min-width:0">
+    <div class="lead-item">
+      <div style="position:relative" onclick="selectLead('${l.id}')">${av(initials(l.name),36)}<span class="plat-dot" style="color:${l.platform==="WhatsApp"?"#16a34a":"#ec4899"}">●</span></div>
+      <div style="flex:1;min-width:0" onclick="selectLead('${l.id}')">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:13px;font-weight:700;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px">${l.name}</span>
+          <span style="font-size:13px;font-weight:700;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px">${l.name}</span>
           <span style="color:var(--text);font-size:10px;flex-shrink:0">${l.createdAt?new Date(l.createdAt).toLocaleDateString("en-IN",{day:"numeric",month:"short"}):""}</span>
         </div>
-        <div style="color:var(--text);font-size:11px;margin-top:2px;display:flex;align-items:center;gap:6px">
-          ${pill(l.status,STAGE_COLORS[l.status]||rc())}
-          <span>${l.agentName||"Unassigned"}</span>
-        </div>
+        <div style="color:var(--text);font-size:11px;margin-top:2px;display:flex;align-items:center;gap:6px">${pill(l.status,STAGE_COLORS[l.status]||rc())}<span>${l.agentName||"Unassigned"}</span></div>
       </div>
-      <span style="font-size:16px;color:var(--text)">›</span>
+      <div style="display:flex;gap:5px;flex-shrink:0">
+        ${selectedRole!=="agent"?`<button onclick="showEditLeadModal('${l.id}')" style="background:${rc()}15;border:1px solid ${rc()}33;border-radius:7px;padding:5px 8px;color:${rc()};font-size:11px;font-weight:600;cursor:pointer">✏️</button>`:""}
+        <button onclick="selectLead('${l.id}')" style="background:var(--input-bg);border:1px solid var(--input-border);border-radius:7px;padding:5px 8px;color:var(--text2);font-size:11px;cursor:pointer">💬</button>
+      </div>
     </div>`).join("");
 }
 function renderChatView(){
@@ -674,13 +647,14 @@ function renderChatView(){
     <div class="chat-head">
       <button class="chat-back" onclick="chatView=false;renderPage('inbox')">‹</button>
       ${av(initials(sl.name),34)}
-      <div style="flex:1;min-width:0"><div class="chat-name">${sl.name}</div><div class="chat-sub">${sl.phone||"No phone"}</div></div>
+      <div style="flex:1;min-width:0"><div class="chat-name">${sl.name}</div><div class="chat-sub">${sl.phone||sl.source||""}</div></div>
       <div class="chat-hactions">
+        <button class="action-btn" onclick="showEditLeadModal('${sl.id}')">✏️ Edit</button>
         <button class="action-btn" onclick="openDetailSheet('${sl.id}')">⋯</button>
         <button class="action-btn" onclick="showStageModal('${sl.id}')">${pill(sl.status,STAGE_COLORS[sl.status]||rc())}</button>
       </div>
     </div>
-    <div class="chat-msgs" id="chatMsgs"><div style="text-align:center;color:var(--text);padding:20px;font-size:12px">Loading messages…</div></div>
+    <div class="chat-msgs" id="chatMsgs"><div style="text-align:center;color:var(--text);padding:20px;font-size:12px">Loading…</div></div>
     <div class="chat-input-row">
       <button class="emoji-btn" onclick="showTemplatePicker('${sl.id}')">📋</button>
       <input id="msgInput" class="msg-input" placeholder="Message…" onkeydown="if(event.key==='Enter')sendMsg()"/>
@@ -688,21 +662,14 @@ function renderChatView(){
     </div>
   </div>`;
 }
-let unsubMessages=null;
 function loadChatMessages(lid){
   if(unsubMessages)unsubMessages();
   unsubMessages=COL.messages(lid).orderBy("createdAt").onSnapshot(snap=>{
     const box=$("chatMsgs");if(!box)return;
     const msgs=snap.docs.map(d=>d.data());
-    if(!msgs.length){box.innerHTML=`<div style="text-align:center;color:var(--text);padding:40px 20px;font-size:13px">No messages yet. Start the conversation!</div>`;return;}
-    const sl=selectedLead;
-    const notesHtml=sl.notes?`<div style="text-align:center;margin-bottom:8px"><span style="background:rgba(245,158,11,.1);color:#f59e0b;border:1px solid rgba(245,158,11,.2);border-radius:99px;padding:3px 12px;font-size:11px">📌 ${sl.notes}</span></div>`:"";
-    box.innerHTML=notesHtml+msgs.map(m=>`
-      <div style="display:flex;justify-content:${m.from==="agent"?"flex-end":"flex-start"}">
-        <div class="msg-bubble ${m.from==="agent"?"msg-out":"msg-in"}" style="${m.from==="agent"?`background:linear-gradient(135deg,${rc()},${rc()}cc)`:""}">
-          ${m.text}<div class="msg-time">${m.time||""}</div>
-        </div>
-      </div>`).join("");
+    const sl=leads.find(l=>l.id===lid)||selectedLead;
+    const noteHtml=sl&&sl.notes?`<div style="text-align:center;margin-bottom:8px"><span style="background:rgba(245,158,11,.1);color:#f59e0b;border:1px solid rgba(245,158,11,.2);border-radius:99px;padding:3px 12px;font-size:11px">📌 ${sl.notes}</span></div>`:"";
+    box.innerHTML=noteHtml+(msgs.length?msgs.map(m=>`<div style="display:flex;justify-content:${m.from==="agent"?"flex-end":"flex-start"}"><div class="msg-bubble ${m.from==="agent"?"msg-out":"msg-in"}" style="${m.from==="agent"?`background:linear-gradient(135deg,${rc()},${rc()}cc)`:""}"> ${m.text}<div class="msg-time">${m.time||""}</div></div></div>`).join(""):`<div style="text-align:center;color:var(--text);padding:40px 20px;font-size:13px">No messages yet.</div>`);
     box.scrollTop=box.scrollHeight;
   });
 }
@@ -710,32 +677,88 @@ function selectLead(id){selectedLead=leads.find(l=>l.id===id)||null;chatView=tru
 async function sendMsg(){
   const inp=$("msgInput");if(!inp||!inp.value.trim()||!selectedLead)return;
   const text=inp.value.trim();inp.value="";
-  try{
-    await COL.messages(selectedLead.id).add({from:"agent",text,time:nowT(),createdAt:new Date().toISOString(),senderName:currentUser.name});
-  } catch(e){showToast("❌ Failed to send: "+e.message);}
+  try{await COL.messages(selectedLead.id).add({from:"agent",text,time:nowT(),createdAt:new Date().toISOString(),senderName:currentUser.name});}
+  catch(e){showToast("❌ "+e.message);}
 }
 function filterLeads(val){
-  const myLeads=selectedRole==="agent"?leads.filter(l=>l.agentName===currentUser.name):leads;
-  const filtered=val?myLeads.filter(l=>l.name.toLowerCase().includes(val.toLowerCase())||(l.phone&&l.phone.includes(val))):myLeads;
-  const li=$("leadItems");if(li)li.innerHTML=renderLeadList(filtered);
+  const my=selectedRole==="agent"?leads.filter(l=>l.agentName===currentUser.name):leads;
+  const li=$("leadItems");if(li)li.innerHTML=renderLeadList(val?my.filter(l=>l.name.toLowerCase().includes(val.toLowerCase())||(l.phone&&l.phone.includes(val))):my);
 }
 function filterPlatform(plat,btn){
   document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active-tab"));btn.classList.add("active-tab");
-  const myLeads=selectedRole==="agent"?leads.filter(l=>l.agentName===currentUser.name):leads;
-  const filtered=plat==="all"?myLeads:myLeads.filter(l=>l.platform===plat);
-  const li=$("leadItems");if(li)li.innerHTML=renderLeadList(filtered);
+  const my=selectedRole==="agent"?leads.filter(l=>l.agentName===currentUser.name):leads;
+  const li=$("leadItems");if(li)li.innerHTML=renderLeadList(plat==="all"?my:my.filter(l=>l.platform===plat));
 }
-async function deleteLead(id){
-  if(!confirm("Delete this lead?"))return;
-  try{await COL.leads().doc(id).delete();showToast("Lead deleted");}
-  catch(e){showToast("❌ "+e.message);}
-}
-function showStageModal(lid){
-  const l=leads.find(x=>x.id===lid);if(!l)return;
+
+/* ── LEAD MODALS ── */
+function showAddLeadModal(){_leadModal(null);}
+function showEditLeadModal(id){_leadModal(leads.find(l=>l.id===id));}
+function _leadModal(l){
+  const isEdit=!!l;
   showModal(`<div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">Change Stage — ${l.name}</div>
-    ${Object.keys(STAGE_COLORS).map(s=>`<button class="stage-btn${l.status===s?" current":""}" onclick="changeStage('${lid}','${s}')"><div style="width:8px;height:8px;border-radius:50%;background:${STAGE_COLORS[s]};flex-shrink:0"></div>${s}</button>`).join("")}
+    <div class="modal-title">${isEdit?"✏️ Edit Lead":"➕ Add Lead"}</div>
+    <div class="form-row"><label>FULL NAME *</label><input id="ln" value="${l?l.name:""}" placeholder="Rajesh Kumar"/></div>
+    <div class="form-row"><label>PHONE</label><input id="lp" type="tel" value="${l?l.phone||"":""}" placeholder="+91 98765 43210"/></div>
+    <div class="form-row"><label>INSTAGRAM</label><input id="lig" value="${l?l.instagram||"":""}" placeholder="@handle"/></div>
+    <div class="form-row"><label>SOURCE</label><select id="ls">${SOURCES.map(s=>`<option${l&&l.source===s?" selected":""}>${s}</option>`).join("")}</select></div>
+    <div class="form-row"><label>PLATFORM</label><select id="lpl">${PLATFORMS.map(p=>`<option${l&&l.platform===p?" selected":""}>${p}</option>`).join("")}</select></div>
+    <div class="form-row"><label>ASSIGN TO</label><select id="lag"><option value=""${!l||!l.agentName||l.agentName==="Unassigned"?" selected":""}>Unassigned</option>${agents.map(a=>`<option${l&&l.agentName===a.name?" selected":""}>${a.name}</option>`).join("")}</select></div>
+    <div class="form-row"><label>DEAL VALUE (₹)</label><input id="lv" type="number" value="${l?l.value||"":""}" placeholder="25000"/></div>
+    ${isEdit?`<div class="form-row"><label>STATUS</label><select id="lst">${STAGES.map(s=>`<option${l.status===s?" selected":""}>${s}</option>`).join("")}</select></div>`:""}
+    <div class="form-row"><label>NOTES</label><textarea id="lnotes">${l?l.notes||"":""}</textarea></div>
+    <div class="modal-footer">
+      ${isEdit?`<button class="btn-cancel" style="background:rgba(239,68,68,.08);color:#ef4444;border-color:rgba(239,68,68,.2)" onclick="confirmDelete('Delete lead <b>${l.name}</b>?','deleteLead(\\'${l.id}\\');closeModal()')">🗑 Delete</button>`:`<button class="btn-cancel" onclick="closeModal()">Cancel</button>`}
+      <button class="btn-save" style="background:${rc()}" onclick="${isEdit?`updateLead('${l.id}')`:"addLead()"}">${isEdit?"Save Changes":"Add Lead"}</button>
+    </div>
+  </div>`);
+}
+async function addLead(){
+  const name=($("ln").value||"").trim();if(!name){showToast("Name is required");return;}
+  const data={name,phone:$("lp").value||"",instagram:$("lig").value||"",source:$("ls").value,platform:$("lpl").value,agentName:$("lag").value||"Unassigned",value:Number($("lv").value)||0,status:"New Lead",notes:$("lnotes").value||"",createdAt:new Date().toISOString()};
+  try{await COL.leads().add(data);closeModal();showToast(`✅ "${name}" added`);}
+  catch(e){showToast("❌ "+e.message);}
+}
+async function updateLead(id){
+  const name=($("ln").value||"").trim();if(!name){showToast("Name is required");return;}
+  const data={name,phone:$("lp").value||"",instagram:$("lig").value||"",source:$("ls").value,platform:$("lpl").value,agentName:$("lag").value||"Unassigned",value:Number($("lv").value)||0,status:$("lst").value,notes:$("lnotes").value||"",updatedAt:new Date().toISOString()};
+  try{await COL.leads().doc(id).update(data);closeModal();showToast("✅ Lead updated");if(chatView){selectedLead=leads.find(l=>l.id===id);renderPage("inbox");}}
+  catch(e){showToast("❌ "+e.message);}
+}
+async function deleteLead(id){
+  try{await COL.leads().doc(id).delete();chatView=false;selectedLead=null;renderPage("inbox");showToast("Lead deleted");}
+  catch(e){showToast("❌ "+e.message);}
+}
+
+/* ── DETAIL SHEET ── */
+function openDetailSheet(lid){
+  const l=leads.find(x=>x.id===lid);if(!l)return;
+  $("detailPanel").innerHTML=`
+    <div class="detail-handle"></div>
+    <div style="text-align:center;margin-bottom:16px">
+      ${av(initials(l.name),48,`${rc()},${rc()}88`)}
+      <p style="font-weight:700;font-size:14px;margin:9px 0 6px;color:var(--white)">${l.name}</p>
+      ${pill(l.status,STAGE_COLORS[l.status]||rc())}
+    </div>
+    <div class="detail-block"><div class="detail-key">📞 Phone</div><div class="detail-val">${l.phone||"—"}</div></div>
+    <div class="detail-block"><div class="detail-key">📸 Instagram</div><div class="detail-val">${l.instagram||"—"}</div></div>
+    <div class="detail-block"><div class="detail-key">📡 Source</div><div class="detail-val">${l.source||"—"}</div></div>
+    <div class="detail-block"><div class="detail-key">👤 Agent</div><div class="detail-val">${l.agentName||"Unassigned"}</div></div>
+    ${selectedRole==="admin"?`<div class="detail-block"><div class="detail-key">💰 Deal Value</div><div class="detail-val">${fmtCur(l.value)}</div></div>`:""}
+    ${l.notes?`<div class="detail-block"><div class="detail-key">📌 Notes</div><div class="detail-val">${l.notes}</div></div>`:""}
+    <div style="height:12px"></div>
+    <button class="ghost-btn" style="border:1px solid ${rc()}44;background:${rc()}12;color:${rc()}" onclick="closeDetailSheet();showEditLeadModal('${lid}')">✏️ Edit Lead</button>
+    <button class="ghost-btn" style="border:1px solid ${rc()}44;background:${rc()}12;color:${rc()}" onclick="closeDetailSheet();showStageModal('${lid}')">🔄 Change Stage</button>
+    ${selectedRole!=="agent"?`<button class="ghost-btn" style="border:1px solid var(--border);background:var(--input-bg);color:var(--text2)" onclick="closeDetailSheet();showReassignModal('${lid}')">👤 Reassign</button>`:""}
+    ${selectedRole!=="agent"?`<button class="ghost-btn" style="border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.06);color:#ef4444" onclick="closeDetailSheet();confirmDelete('Delete lead <b>${l.name}</b>?','deleteLead(\\'${lid}\\')')">🗑 Delete Lead</button>`:""}
+  `;
+  $("detailSheet").classList.add("open");
+}
+function closeDetailSheet(){$("detailSheet").classList.remove("open");}
+function showStageModal(lid){
+  const l=leads.find(x=>x.id===lid);if(!l)return;
+  showModal(`<div class="modal"><div class="modal-handle"></div><div class="modal-title">Change Stage — ${l.name}</div>
+    ${STAGES.map(s=>`<button class="stage-btn${l.status===s?" current":""}" onclick="changeStage('${lid}','${s}')"><div style="width:8px;height:8px;border-radius:50%;background:${STAGE_COLORS[s]};flex-shrink:0"></div>${s}</button>`).join("")}
     <button class="btn-cancel" onclick="closeModal()" style="width:100%;margin-top:4px">Cancel</button>
   </div>`);
 }
@@ -745,9 +768,7 @@ async function changeStage(lid,stage){
 }
 function showReassignModal(lid){
   const l=leads.find(x=>x.id===lid);if(!l)return;
-  showModal(`<div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Reassign — ${l.name}</div>
+  showModal(`<div class="modal"><div class="modal-handle"></div><div class="modal-title">Reassign — ${l.name}</div>
     ${agents.length?agents.map(ag=>`<button class="stage-btn${l.agentName===ag.name?" current":""}" onclick="reassignLead('${lid}','${ag.name}')">👤 ${ag.name}</button>`).join(""):`<p style="color:var(--text);font-size:13px;padding:12px 0">No agents added yet.</p>`}
     <button class="btn-cancel" onclick="closeModal()" style="width:100%;margin-top:4px">Cancel</button>
   </div>`);
@@ -756,182 +777,194 @@ async function reassignLead(lid,agentName){
   try{await COL.leads().doc(lid).update({agentName});closeModal();showToast(`✅ Reassigned to ${agentName}`);}
   catch(e){showToast("❌ "+e.message);}
 }
-function showNoteModal(lid){
-  const l=leads.find(x=>x.id===lid);if(!l)return;
-  showModal(`<div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">📌 Note — ${l.name}</div>
-    <div class="form-row"><label>NOTE</label><textarea id="noteInput">${l.notes||""}</textarea></div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" style="background:${rc()}" onclick="saveNote('${lid}')">Save</button>
-    </div>
-  </div>`);
-}
-async function saveNote(lid){
-  try{await COL.leads().doc(lid).update({notes:$("noteInput").value});closeModal();showToast("Note saved ✅");}
-  catch(e){showToast("❌ "+e.message);}
-}
-function showAddLeadModal(){
-  showModal(`<div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">➕ Add New Lead</div>
-    <div class="form-row"><label>FULL NAME *</label><input id="ln" placeholder="e.g. Rajesh Kumar"/></div>
-    <div class="form-row"><label>PHONE</label><input id="lp" placeholder="+91 98765 43210" type="tel"/></div>
-    <div class="form-row"><label>INSTAGRAM</label><input id="li2" placeholder="@handle"/></div>
-    <div class="form-row"><label>SOURCE</label><select id="ls">${SOURCES.map(s=>`<option>${s}</option>`).join("")}</select></div>
-    <div class="form-row"><label>PLATFORM</label><select id="lpl">${PLATFORMS.map(p=>`<option>${p}</option>`).join("")}</select></div>
-    <div class="form-row"><label>ASSIGN TO</label><select id="lag"><option value="">Unassigned</option>${agents.map(a=>`<option>${a.name}</option>`).join("")}</select></div>
-    <div class="form-row"><label>DEAL VALUE (₹)</label><input id="lv" type="number" placeholder="e.g. 25000"/></div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" style="background:${rc()}" onclick="addLead()">Add Lead</button>
-    </div>
-  </div>`);
-}
-async function addLead(){
-  const name=($("ln").value||"").trim();if(!name){showToast("Name is required");return;}
-  const data={name,phone:$("lp").value||"",instagram:$("li2").value||"",source:$("ls").value,platform:$("lpl").value,agentName:$("lag").value||"Unassigned",value:Number($("lv").value)||0,status:"New Lead",notes:"",createdAt:new Date().toISOString()};
-  try{await COL.leads().add(data);closeModal();showToast(`✅ "${name}" added`);}
-  catch(e){showToast("❌ Failed: "+e.message);}
-}
 function showTemplatePicker(lid){
   if(!templates.length){showToast("No templates yet!");return;}
-  showModal(`<div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">📋 Templates</div>
+  showModal(`<div class="modal"><div class="modal-handle"></div><div class="modal-title">📋 Use Template</div>
     ${templates.map(t=>`<button class="stage-btn" onclick="useTemplate('${lid}','${t.id}')">📄 ${t.title}</button>`).join("")}
     <button class="btn-cancel" onclick="closeModal()" style="width:100%;margin-top:4px">Cancel</button>
   </div>`);
 }
 async function useTemplate(lid,tid){
-  const t=templates.find(x=>x.id===tid);const l=leads.find(x=>x.id===lid);if(!t||!l)return;
+  const t=templates.find(x=>x.id===tid),l=leads.find(x=>x.id===lid);if(!t||!l)return;
   const text=t.content.replace(/{{name}}/g,l.name);
-  try{
-    await COL.messages(lid).add({from:"agent",text,time:nowT(),createdAt:new Date().toISOString(),senderName:currentUser.name});
-    closeModal();showToast("Template sent ✅");
-  } catch(e){showToast("❌ "+e.message);}
+  try{await COL.messages(lid).add({from:"agent",text,time:nowT(),createdAt:new Date().toISOString(),senderName:currentUser.name});closeModal();showToast("Template sent ✅");}
+  catch(e){showToast("❌ "+e.message);}
 }
 
-/* ══ PIPELINE ══ */
+/* ══════════════════════════════
+   PIPELINE — DRAG & DROP
+══════════════════════════════ */
+let dragLead=null;
 function pgPipeline(el){
-  const grouped={};
-  Object.keys(STAGE_COLORS).forEach(s=>grouped[s]=[]);
+  const grouped={};STAGES.forEach(s=>grouped[s]=[]);
   leads.forEach(l=>{if(grouped[l.status])grouped[l.status].push(l);});
-  el.innerHTML=`<div class="pipeline-wrap"><div class="kanban">${Object.entries(grouped).map(([col,cards])=>`
-    <div class="col-wrap">
-      <div class="col-inner" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="dropCard('${col}',this)">
-        <div class="col-head">
-          <div class="col-title"><div class="col-dot" style="background:${STAGE_COLORS[col]}"></div>${col}</div>
-          <span class="col-count">${cards.length}</span>
-        </div>
-        <div class="col-body">
-          ${cards.length?cards.map(c=>`
-            <div class="k-card" draggable="true" ondragstart="dragItem={id:'${c.id}',fromCol:'${col}'}">
-              <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">${av(initials(c.name),24)}<span class="k-name">${c.name}</span></div>
-              <div class="k-val">${c.value?"₹"+Number(c.value).toLocaleString("en-IN"):"—"}</div>
-              <div class="k-src">${c.source||"—"}</div>
-            </div>`).join(""):`<div class="drop-hint">Drop here</div>`}
-        </div>
-      </div>
-    </div>`).join("")}</div>
-    <p style="color:var(--text);font-size:11px;margin-top:10px">← Scroll · Drag cards to move</p>
+  el.innerHTML=`<div class="pipeline-wrap">
+    <div class="kanban" id="kanban">
+      ${STAGES.map(col=>`
+        <div class="col-wrap">
+          <div class="col-inner" id="col-${col.replace(/ /g,'-')}"
+            ondragover="pipeDragOver(event,'${col}')"
+            ondragleave="pipeDragLeave(event)"
+            ondrop="pipeDrop(event,'${col}')">
+            <div class="col-head">
+              <div class="col-title"><div class="col-dot" style="background:${STAGE_COLORS[col]}"></div>${col}</div>
+              <div style="display:flex;align-items:center;gap:6px">
+                <span class="col-count">${grouped[col].length}</span>
+                ${selectedRole!=="agent"?`<button onclick="showAddLeadInStage('${col}')" style="background:${STAGE_COLORS[col]}22;border:1px solid ${STAGE_COLORS[col]}44;border-radius:5px;width:18px;height:18px;color:${STAGE_COLORS[col]};font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>`:""}
+              </div>
+            </div>
+            <div class="col-body">
+              ${grouped[col].length?grouped[col].map(c=>`
+                <div class="k-card" id="kcard-${c.id}" draggable="true"
+                  ondragstart="pipeDragStart(event,'${c.id}','${col}')"
+                  ondragend="pipeDragEnd(event)">
+                  <div class="k-card-top">${av(initials(c.name),22)}<span class="k-name">${c.name}</span></div>
+                  <div class="k-val">${fmtCur(c.value)}</div>
+                  <div class="k-src">${c.source||"—"} · ${c.agentName||"Unassigned"}</div>
+                  <div class="k-actions">
+                    <button class="k-act-btn" style="background:${rc()}18;color:${rc()};border:1px solid ${rc()}33" onclick="selectLead('${c.id}');renderPage('inbox')">💬 Chat</button>
+                    ${selectedRole!=="agent"?`<button class="k-act-btn" style="background:var(--input-bg);color:var(--text2);border:1px solid var(--border)" onclick="showEditLeadModal('${c.id}')">✏️ Edit</button>`:""}
+                  </div>
+                </div>`).join(""):`<div class="drop-zone" id="dz-${col.replace(/ /g,'-')}">Drop here</div>`}
+            </div>
+          </div>
+        </div>`).join("")}
+    </div>
+    <p style="color:var(--text);font-size:11px;margin-top:10px;padding:0 0 4px">← Scroll · Drag cards between columns · Click + to add</p>
   </div>`;
 }
-async function dropCard(toCol,el){
-  el.classList.remove("dragover");
-  if(!dragItem||dragItem.fromCol===toCol)return;
-  try{await COL.leads().doc(dragItem.id).update({status:toCol});showToast(`Moved to ${toCol}`);}
+function pipeDragStart(e,id,fromCol){
+  dragLead={id,fromCol};
+  const el=document.getElementById("kcard-"+id);if(el)el.classList.add("dragging");
+  e.dataTransfer.effectAllowed="move";
+  e.dataTransfer.setData("text/plain",id);
+}
+function pipeDragEnd(e){
+  dragLead=null;
+  document.querySelectorAll(".k-card").forEach(c=>c.classList.remove("dragging"));
+  document.querySelectorAll(".col-inner").forEach(c=>c.classList.remove("drag-over"));
+  document.querySelectorAll(".drop-zone").forEach(c=>c.classList.remove("active"));
+}
+function pipeDragOver(e,col){
+  e.preventDefault();e.dataTransfer.dropEffect="move";
+  if(!dragLead||dragLead.fromCol===col)return;
+  document.querySelectorAll(".col-inner").forEach(c=>c.classList.remove("drag-over"));
+  const colEl=document.getElementById("col-"+col.replace(/ /g,"-"));
+  if(colEl)colEl.classList.add("drag-over");
+  document.querySelectorAll(".drop-zone").forEach(c=>c.classList.remove("active"));
+  const dz=document.getElementById("dz-"+col.replace(/ /g,"-"));
+  if(dz)dz.classList.add("active");
+}
+function pipeDragLeave(e){
+  if(!e.currentTarget.contains(e.relatedTarget)){
+    e.currentTarget.classList.remove("drag-over");
+  }
+}
+async function pipeDrop(e,toCol){
+  e.preventDefault();
+  document.querySelectorAll(".col-inner").forEach(c=>c.classList.remove("drag-over"));
+  if(!dragLead||dragLead.fromCol===toCol){dragLead=null;return;}
+  const {id}=dragLead;dragLead=null;
+  try{
+    await COL.leads().doc(id).update({status:toCol});
+    showToast(`✅ Moved to ${toCol}`);
+  } catch(err){showToast("❌ "+err.message);}
+}
+function showAddLeadInStage(stage){
+  showModal(`<div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">➕ Add Lead to ${stage}</div>
+    <div class="form-row"><label>FULL NAME *</label><input id="ln" placeholder="Rajesh Kumar"/></div>
+    <div class="form-row"><label>PHONE</label><input id="lp" type="tel" placeholder="+91 98765 43210"/></div>
+    <div class="form-row"><label>SOURCE</label><select id="ls">${SOURCES.map(s=>`<option>${s}</option>`).join("")}</select></div>
+    <div class="form-row"><label>PLATFORM</label><select id="lpl">${PLATFORMS.map(p=>`<option>${p}</option>`).join("")}</select></div>
+    <div class="form-row"><label>ASSIGN TO</label><select id="lag"><option value="">Unassigned</option>${agents.map(a=>`<option>${a.name}</option>`).join("")}</select></div>
+    <div class="form-row"><label>DEAL VALUE (₹)</label><input id="lv" type="number" placeholder="25000"/></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" style="background:${STAGE_COLORS[stage]}" onclick="addLeadInStage('${stage}')">Add</button>
+    </div>
+  </div>`);
+}
+async function addLeadInStage(stage){
+  const name=($("ln").value||"").trim();if(!name){showToast("Name is required");return;}
+  const data={name,phone:$("lp").value||"",instagram:"",source:$("ls").value,platform:$("lpl").value,agentName:$("lag").value||"Unassigned",value:Number($("lv").value)||0,status:stage,notes:"",createdAt:new Date().toISOString()};
+  try{await COL.leads().add(data);closeModal();showToast(`✅ "${name}" added to ${stage}`);}
   catch(e){showToast("❌ "+e.message);}
-  dragItem=null;
 }
 
-/* ══ AGENTS ══ */
+/* ══════════════════════════════
+   AGENTS
+══════════════════════════════ */
 function pgAgents(el){
   el.innerHTML=`<div class="agent-grid">
-    ${selectedRole==="admin"?`<div class="agent-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;border-style:dashed;min-height:120px" onclick="showAddAgentModal()">
-      <div style="font-size:28px;color:var(--text)">+</div><p style="color:var(--text);font-size:13px;margin-top:6px">Add Agent</p>
-    </div>`:""}
+    ${selectedRole==="admin"?`<div class="agent-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;border-style:dashed;min-height:120px" onclick="showAddAgentModal()"><div style="font-size:28px;color:var(--text)">+</div><p style="color:var(--text);font-size:13px;margin-top:6px">Add Agent</p></div>`:""}
     ${agents.map(ag=>`
       <div class="agent-card">
         <div class="agent-head">
           ${av(initials(ag.name),40,ag.status==="online"?"#16a34a,#15803d":ag.status==="away"?"#f59e0b,#d97706":"#9ca3af,#6b7280")}
-          <div>
+          <div style="flex:1;min-width:0">
             <div style="font-weight:800;font-size:13px;color:var(--white)">${ag.name}</div>
-            <div style="display:flex;align-items:center;gap:5px;margin-top:2px">
-              <span class="status-dot-inline" style="background:${ag.status==="online"?"#16a34a":ag.status==="away"?"#f59e0b":"#9ca3af"}"></span>
-              <span style="color:var(--text);font-size:11px">${ag.status}</span>
-            </div>
+            <div style="display:flex;align-items:center;gap:5px;margin-top:2px"><span style="width:7px;height:7px;border-radius:50%;background:${ag.status==="online"?"#16a34a":ag.status==="away"?"#f59e0b":"#9ca3af"};display:inline-block"></span><span style="color:var(--text);font-size:11px">${ag.status}</span></div>
           </div>
           <div class="agent-conv"><div class="agent-conv-val">${ag.conv||0}%</div><div class="agent-conv-lbl">conv.</div></div>
         </div>
         <div class="agent-stats">
           <div class="agent-stat"><div class="agent-stat-val">${leads.filter(l=>l.agentName===ag.name).length}</div><div class="agent-stat-key">Leads</div></div>
-          <div class="agent-stat"><div class="agent-stat-val">${selectedRole==="admin"?"₹"+leads.filter(l=>l.agentName===ag.name&&l.status==="Closed").reduce((s,l)=>s+Number(l.value||0),0).toLocaleString("en-IN"):"🔒"}</div><div class="agent-stat-key">Revenue</div></div>
+          <div class="agent-stat"><div class="agent-stat-val">${selectedRole==="admin"?fmtCur(leads.filter(l=>l.agentName===ag.name&&l.status==="Closed").reduce((s,l)=>s+Number(l.value||0),0)):"🔒"}</div><div class="agent-stat-key">Revenue</div></div>
           <div class="agent-stat"><div class="agent-stat-val">${ag.resp||"—"}</div><div class="agent-stat-key">Resp</div></div>
         </div>
         ${bar(ag.conv||0,100,rc())}
         ${selectedRole==="admin"?`<div style="display:flex;gap:7px;margin-top:10px">
-          <button class="ghost-btn" style="border:1px solid ${rc()}44;background:${rc()}12;color:${rc()};flex:1;padding:8px" onclick="showEditAgentModal('${ag.id}')">Edit</button>
-          <button class="ghost-btn" style="border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.06);color:#ef4444;flex:1;padding:8px" onclick="deleteAgent('${ag.id}')">Remove</button>
+          <button class="ghost-btn" style="border:1px solid ${rc()}44;background:${rc()}12;color:${rc()};flex:1;padding:8px" onclick="showEditAgentModal('${ag.id}')">✏️ Edit</button>
+          <button class="ghost-btn" style="border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.06);color:#ef4444;flex:1;padding:8px" onclick="confirmDelete('Remove agent <b>${ag.name}</b>?','deleteAgent(\\'${ag.id}\\')') ">🗑 Remove</button>
         </div>`:""}
       </div>`).join("")}
   </div>`;
 }
-function showAddAgentModal(){
+function showAddAgentModal(){_agentModal(null);}
+function showEditAgentModal(id){_agentModal(agents.find(a=>a.id===id));}
+function _agentModal(ag){
+  const isEdit=!!ag;
   showModal(`<div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">➕ Add Agent</div>
-    <div class="form-row"><label>FULL NAME *</label><input id="an" placeholder="e.g. Priya Menon"/></div>
-    <div class="form-row"><label>STATUS</label><select id="as2"><option>online</option><option>away</option><option>offline</option></select></div>
-    <div class="form-row"><label>AVG RESPONSE TIME</label><input id="ar" placeholder="e.g. 5m"/></div>
+    <div class="modal-title">${isEdit?"✏️ Edit Agent":"➕ Add Agent"}</div>
+    <div class="form-row"><label>FULL NAME *</label><input id="an" value="${ag?ag.name:""}" placeholder="e.g. Priya Menon"/></div>
+    <div class="form-row"><label>EMAIL</label><input id="ae" type="email" value="${ag?ag.email||"":""}" placeholder="priya@homegym.in"/></div>
+    <div class="form-row"><label>STATUS</label><select id="as2"><option${!ag||ag.status==="online"?" selected":""}>online</option><option${ag&&ag.status==="away"?" selected":""}>away</option><option${ag&&ag.status==="offline"?" selected":""}>offline</option></select></div>
+    <div class="form-row"><label>AVG RESPONSE TIME</label><input id="ar" value="${ag?ag.resp||"":""}" placeholder="e.g. 5m"/></div>
+    <div class="form-row"><label>CONVERSION (%)</label><input id="ac" type="number" value="${ag?ag.conv||0:0}" min="0" max="100"/></div>
     <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" style="background:${rc()}" onclick="addAgent()">Add Agent</button>
+      ${isEdit?`<button class="btn-cancel" style="background:rgba(239,68,68,.08);color:#ef4444;border-color:rgba(239,68,68,.2)" onclick="confirmDelete('Remove agent <b>${ag.name}</b>?','deleteAgent(\\'${ag.id}\\');closeModal()')">🗑 Remove</button>`:`<button class="btn-cancel" onclick="closeModal()">Cancel</button>`}
+      <button class="btn-save" style="background:${rc()}" onclick="${isEdit?`updateAgent('${ag.id}')`:"addAgent()"}">${isEdit?"Save":"Add Agent"}</button>
     </div>
   </div>`);
 }
 async function addAgent(){
   const name=($("an").value||"").trim();if(!name){showToast("Name required");return;}
-  try{await COL.agents().add({name,status:$("as2").value,resp:$("ar").value||"—",conv:0,createdAt:new Date().toISOString()});closeModal();showToast(`✅ "${name}" added`);}
+  try{await COL.agents().add({name,email:$("ae").value||"",status:$("as2").value,resp:$("ar").value||"—",conv:Number($("ac").value)||0,createdAt:new Date().toISOString()});closeModal();showToast(`✅ "${name}" added`);}
   catch(e){showToast("❌ "+e.message);}
 }
-function showEditAgentModal(id){
-  const ag=agents.find(a=>a.id===id);if(!ag)return;
-  showModal(`<div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">✏️ Edit — ${ag.name}</div>
-    <div class="form-row"><label>NAME</label><input id="an" value="${ag.name}"/></div>
-    <div class="form-row"><label>STATUS</label><select id="as2"><option${ag.status==="online"?" selected":""}>online</option><option${ag.status==="away"?" selected":""}>away</option><option${ag.status==="offline"?" selected":""}>offline</option></select></div>
-    <div class="form-row"><label>RESPONSE TIME</label><input id="ar" value="${ag.resp||""}"/></div>
-    <div class="form-row"><label>CONVERSION (%)</label><input id="ac" type="number" value="${ag.conv||0}" min="0" max="100"/></div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" style="background:${rc()}" onclick="editAgent('${id}')">Save</button>
-    </div>
-  </div>`);
-}
-async function editAgent(id){
-  try{await COL.agents().doc(id).update({name:$("an").value,status:$("as2").value,resp:$("ar").value,conv:Number($("ac").value)||0});closeModal();showToast("Agent updated ✅");}
+async function updateAgent(id){
+  const name=($("an").value||"").trim();if(!name){showToast("Name required");return;}
+  try{await COL.agents().doc(id).update({name,email:$("ae").value||"",status:$("as2").value,resp:$("ar").value||"—",conv:Number($("ac").value)||0});closeModal();showToast("Agent updated ✅");}
   catch(e){showToast("❌ "+e.message);}
 }
 async function deleteAgent(id){
-  if(!confirm("Remove this agent?"))return;
-  try{await COL.agents().doc(id).delete();showToast("Agent removed");}
-  catch(e){showToast("❌ "+e.message);}
+  try{await COL.agents().doc(id).delete();showToast("Agent removed");}catch(e){showToast("❌ "+e.message);}
 }
 
-/* ══ FOLLOWUPS ══ */
+/* ══════════════════════════════
+   FOLLOW-UPS / TASKS
+══════════════════════════════ */
 function pgFollowups(el){
-  const todayStr=new Date().toISOString().slice(0,10);
+  const ts=todayStr();
   const pending=tasks.filter(t=>!t.done);
-  const todayT=tasks.filter(t=>!t.done&&t.due===todayStr);
-  const overdue=tasks.filter(t=>!t.done&&t.due&&t.due<todayStr);
   el.innerHTML=`<div class="page">
     <div class="fu-counters">
       <div class="fu-counter"><div class="fu-num" style="color:#f97316">${pending.length}</div><div class="fu-lbl">Pending</div></div>
-      <div class="fu-counter"><div class="fu-num" style="color:#f59e0b">${todayT.length}</div><div class="fu-lbl">Today</div></div>
-      <div class="fu-counter"><div class="fu-num" style="color:#ef4444">${overdue.length}</div><div class="fu-lbl">Overdue</div></div>
+      <div class="fu-counter"><div class="fu-num" style="color:#f59e0b">${tasks.filter(t=>!t.done&&t.due===ts).length}</div><div class="fu-lbl">Today</div></div>
+      <div class="fu-counter"><div class="fu-num" style="color:#ef4444">${tasks.filter(t=>!t.done&&t.due&&t.due<ts).length}</div><div class="fu-lbl">Overdue</div></div>
     </div>
     <div class="card">
       <div class="section-head">
@@ -945,27 +978,33 @@ function pgFollowups(el){
 function renderTaskList(){
   if(!tasks.length)return`<div style="text-align:center;padding:24px;color:var(--text)"><div style="font-size:32px;margin-bottom:8px">✅</div><p>No tasks yet</p></div>`;
   return tasks.map(t=>`
-    <div class="task-item" style="opacity:${t.done?.7:1}">
+    <div class="task-item" style="opacity:${t.done?.6:1}">
       <div class="task-prio" style="background:${t.priority==="high"?"#ef4444":t.priority==="medium"?"#f59e0b":"#16a34a"}"></div>
       <div style="flex:1;min-width:0">
         <div class="task-lead" style="text-decoration:${t.done?"line-through":"none"}">${t.leadName} <span style="color:var(--text);font-weight:400">— ${t.task}</span></div>
         <div class="task-info">Due ${t.due||"No date"} · ${t.priority}</div>
       </div>
-      ${!t.done?`<button class="done-btn" style="background:${rc()}18;color:${rc()};border:1px solid ${rc()}33" onclick="markDone('${t.id}')">✓</button>`:`<span style="color:#16a34a;font-size:12px">✓</span>`}
-      <button onclick="deleteTask('${t.id}')" style="background:none;border:none;color:var(--text);cursor:pointer;font-size:14px;padding:4px">🗑</button>
+      <div class="task-actions">
+        ${!t.done?`<button class="task-btn" style="background:${rc()}18;color:${rc()};border:1px solid ${rc()}33" onclick="markTaskDone('${t.id}')">✓</button>`:`<span style="color:#16a34a;font-size:12px;padding:4px">✓</span>`}
+        <button class="task-btn" style="background:var(--input-bg);color:var(--text2);border:1px solid var(--border)" onclick="showEditTaskModal('${t.id}')">✏️</button>
+        <button class="task-btn" style="background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.2)" onclick="confirmDelete('Delete this task?','deleteTask(\\'${t.id}\\')' )">🗑</button>
+      </div>
     </div>`).join("");
 }
-function showAddTaskModal(){
+function showAddTaskModal(){_taskModal(null);}
+function showEditTaskModal(id){_taskModal(tasks.find(t=>t.id===id));}
+function _taskModal(t){
+  const isEdit=!!t;
   showModal(`<div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">➕ Add Task</div>
-    <div class="form-row"><label>LEAD NAME *</label><input id="tln" list="leadNames" placeholder="Type lead name"/><datalist id="leadNames">${leads.map(l=>`<option value="${l.name}">`).join("")}</datalist></div>
-    <div class="form-row"><label>TASK *</label><input id="tt" placeholder="e.g. Send product catalog"/></div>
-    <div class="form-row"><label>DUE DATE</label><input id="td" type="date"/></div>
-    <div class="form-row"><label>PRIORITY</label><select id="tp"><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></div>
+    <div class="modal-title">${isEdit?"✏️ Edit Task":"➕ Add Task"}</div>
+    <div class="form-row"><label>LEAD NAME *</label><input id="tln" list="leadNames" value="${t?t.leadName:""}" placeholder="Type lead name"/><datalist id="leadNames">${leads.map(l=>`<option value="${l.name}">`).join("")}</datalist></div>
+    <div class="form-row"><label>TASK *</label><input id="tt" value="${t?t.task:""}" placeholder="e.g. Send product catalog"/></div>
+    <div class="form-row"><label>DUE DATE</label><input id="td" type="date" value="${t?t.due||"":""}"/></div>
+    <div class="form-row"><label>PRIORITY</label><select id="tp"><option value="high"${t&&t.priority==="high"?" selected":""}>High</option><option value="medium"${t&&t.priority==="medium"?" selected":""}>Medium</option><option value="low"${!t||t.priority==="low"?" selected":""}>Low</option></select></div>
     <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" style="background:${rc()}" onclick="addTask()">Add</button>
+      ${isEdit?`<button class="btn-cancel" style="background:rgba(239,68,68,.08);color:#ef4444;border-color:rgba(239,68,68,.2)" onclick="confirmDelete('Delete this task?','deleteTask(\\'${t.id}\\');closeModal()')">🗑 Delete</button>`:`<button class="btn-cancel" onclick="closeModal()">Cancel</button>`}
+      <button class="btn-save" style="background:${rc()}" onclick="${isEdit?`updateTask('${t.id}')`:"addTask()"}">${isEdit?"Save":"Add"}</button>
     </div>
   </div>`);
 }
@@ -975,16 +1014,24 @@ async function addTask(){
   try{await COL.tasks().add({leadName,task,due:$("td").value||"",priority:$("tp").value,done:false,createdAt:new Date().toISOString(),createdBy:currentUser.uid});closeModal();showToast("Task added ✅");}
   catch(e){showToast("❌ "+e.message);}
 }
-async function markDone(id){
-  try{await COL.tasks().doc(id).update({done:true});showToast("Done ✅");}
+async function updateTask(id){
+  const leadName=($("tln").value||"").trim(),task=($("tt").value||"").trim();
+  if(!leadName||!task){showToast("Fill required fields");return;}
+  try{await COL.tasks().doc(id).update({leadName,task,due:$("td").value||"",priority:$("tp").value});closeModal();showToast("Task updated ✅");}
   catch(e){showToast("❌ "+e.message);}
+}
+async function markTaskDone(id){
+  try{await COL.tasks().doc(id).update({done:true});showToast("Done ✅");}catch(e){showToast("❌ "+e.message);}
 }
 async function deleteTask(id){
-  try{await COL.tasks().doc(id).delete();}
-  catch(e){showToast("❌ "+e.message);}
+  try{await COL.tasks().doc(id).delete();}catch(e){showToast("❌ "+e.message);}
 }
 
-/* ══ AUTOMATION ══ */
+/* ══════════════════════════════
+   AUTOMATION
+══════════════════════════════ */
+const TRIGGERS=["New lead arrives","No reply in 24h","Call not answered","Stage → Interested","Stage → Closed","Stage → Payment Pending"];
+const ACTIONS=["Send welcome message","Send follow-up reminder","Schedule retry call","Assign to agent","Create task","Send notification"];
 function pgAutomation(el){
   if(selectedRole!=="admin"){el.innerHTML=`<div class="page">${accessDenied("Automation")}</div>`;return;}
   el.innerHTML=`<div class="page"><div class="card">
@@ -992,37 +1039,39 @@ function pgAutomation(el){
       <div class="section-title">⚡ Automation Rules</div>
       <button onclick="showAddAutoModal()" style="background:${rc()};border:none;border-radius:8px;padding:7px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer">+ Add</button>
     </div>
-    <div id="autoList">${renderAutoList()}</div>
+    ${autos.length?autos.map(a=>`
+      <div class="auto-item">
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span class="tag" style="background:rgba(59,130,246,.12);color:#3b82f6">IF</span><span style="font-size:12px;font-weight:600;color:var(--white)">${a.trigger}</span></div>
+          <div style="display:flex;align-items:center;gap:7px"><span class="tag" style="background:${rc()}18;color:${rc()}">THEN</span><span style="color:var(--text2);font-size:12px">${a.action}</span></div>
+        </div>
+        <button onclick="showEditAutoModal('${a.id}')" style="background:var(--input-bg);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--text2);font-size:11px;cursor:pointer;margin-right:6px">✏️</button>
+        <div class="toggle" style="background:${a.on?rc():"rgba(127,127,127,.2)"}" onclick="toggleAuto('${a.id}')"><div class="toggle-knob" style="left:${a.on?"22px":"3px"}"></div></div>
+        <button onclick="confirmDelete('Delete this rule?','deleteAuto(\\'${a.id}\\')')" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px;padding:4px;margin-left:6px">🗑</button>
+      </div>`).join(""):`<div style="text-align:center;padding:24px;color:var(--text)"><div style="font-size:32px;margin-bottom:8px">🤖</div><p>No rules yet</p></div>`}
   </div></div>`;
 }
-function renderAutoList(){
-  if(!autos.length)return`<div style="text-align:center;padding:24px;color:var(--text)"><div style="font-size:32px;margin-bottom:8px">🤖</div><p>No rules yet</p></div>`;
-  return autos.map(a=>`
-    <div class="auto-item">
-      <div style="flex:1;min-width:0">
-        <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><span class="tag" style="background:rgba(59,130,246,.12);color:#3b82f6">IF</span><span style="font-size:12px;font-weight:600;color:var(--white)">${a.trigger}</span></div>
-        <div style="display:flex;align-items:center;gap:7px"><span class="tag" style="background:${rc()}18;color:${rc()}">THEN</span><span style="color:var(--text2);font-size:12px">${a.action}</span></div>
-      </div>
-      <div class="toggle" style="background:${a.on?rc():"rgba(127,127,127,.2)"}" onclick="toggleAuto('${a.id}')">
-        <div class="toggle-knob" style="left:${a.on?"22px":"3px"}"></div>
-      </div>
-      <button onclick="deleteAuto('${a.id}')" style="background:none;border:none;color:var(--text);cursor:pointer;font-size:14px;padding:4px;margin-left:6px">🗑</button>
-    </div>`).join("");
-}
-function showAddAutoModal(){
+function showAddAutoModal(){_autoModal(null);}
+function showEditAutoModal(id){_autoModal(autos.find(a=>a.id===id));}
+function _autoModal(a){
+  const isEdit=!!a;
   showModal(`<div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">➕ New Rule</div>
-    <div class="form-row"><label>TRIGGER (IF)</label><select id="at2"><option>New lead arrives</option><option>No reply in 24h</option><option>Call not answered</option><option>Stage changes to Interested</option><option>Stage changes to Closed</option></select></div>
-    <div class="form-row"><label>ACTION (THEN)</label><select id="aa"><option>Send welcome message</option><option>Send follow-up reminder</option><option>Schedule retry call</option><option>Assign to agent</option><option>Create task</option></select></div>
+    <div class="modal-title">${isEdit?"✏️ Edit Rule":"➕ New Rule"}</div>
+    <div class="form-row"><label>TRIGGER (IF)</label><select id="at2">${TRIGGERS.map(t=>`<option${a&&a.trigger===t?" selected":""}>${t}</option>`).join("")}</select></div>
+    <div class="form-row"><label>ACTION (THEN)</label><select id="aa">${ACTIONS.map(t=>`<option${a&&a.action===t?" selected":""}>${t}</option>`).join("")}</select></div>
     <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" style="background:${rc()}" onclick="addAuto()">Add Rule</button>
+      ${isEdit?`<button class="btn-cancel" style="background:rgba(239,68,68,.08);color:#ef4444;border-color:rgba(239,68,68,.2)" onclick="confirmDelete('Delete this rule?','deleteAuto(\\'${a.id}\\');closeModal()')">🗑 Delete</button>`:`<button class="btn-cancel" onclick="closeModal()">Cancel</button>`}
+      <button class="btn-save" style="background:${rc()}" onclick="${isEdit?`updateAuto('${a.id}')`:"addAuto()"}">${isEdit?"Save":"Add"}</button>
     </div>
   </div>`);
 }
 async function addAuto(){
   try{await COL.autos().add({trigger:$("at2").value,action:$("aa").value,on:true,createdAt:new Date().toISOString()});closeModal();showToast("Rule added ✅");}
+  catch(e){showToast("❌ "+e.message);}
+}
+async function updateAuto(id){
+  try{await COL.autos().doc(id).update({trigger:$("at2").value,action:$("aa").value});closeModal();showToast("Rule updated ✅");}
   catch(e){showToast("❌ "+e.message);}
 }
 async function toggleAuto(id){
@@ -1033,18 +1082,18 @@ async function deleteAuto(id){
   try{await COL.autos().doc(id).delete();}catch(e){showToast("❌ "+e.message);}
 }
 
-/* ══ CAMPAIGNS ══ */
+/* ══════════════════════════════
+   CAMPAIGNS
+══════════════════════════════ */
 function pgCampaigns(el){
   if(selectedRole!=="admin"){el.innerHTML=`<div class="page">${accessDenied("Campaigns")}</div>`;return;}
-  const totalSpend=campaigns.reduce((s,c)=>s+Number(c.spend||0),0);
-  const totalRev=campaigns.reduce((s,c)=>s+Number(c.revenue||0),0);
-  const totalLeadsC=campaigns.reduce((s,c)=>s+Number(c.leads||0),0);
+  const ts=campaigns.reduce((s,c)=>s+Number(c.spend||0),0),tr=campaigns.reduce((s,c)=>s+Number(c.revenue||0),0),tl=campaigns.reduce((s,c)=>s+Number(c.leads||0),0);
   el.innerHTML=`<div class="page">
     <div class="campaign-stat-grid">
-      <div class="camp-stat"><div class="camp-stat-icon">📤</div><div class="camp-stat-val">₹${totalSpend.toLocaleString("en-IN")}</div><div class="camp-stat-key">Spend</div></div>
-      <div class="camp-stat"><div class="camp-stat-icon">👥</div><div class="camp-stat-val">${totalLeadsC}</div><div class="camp-stat-key">Leads</div></div>
-      <div class="camp-stat"><div class="camp-stat-icon">💰</div><div class="camp-stat-val">₹${totalRev.toLocaleString("en-IN")}</div><div class="camp-stat-key">Revenue</div></div>
-      <div class="camp-stat"><div class="camp-stat-icon">📈</div><div class="camp-stat-val">${totalSpend?(totalRev/totalSpend).toFixed(1)+"x":"—"}</div><div class="camp-stat-key">ROAS</div></div>
+      <div class="camp-stat"><div class="camp-stat-icon">📤</div><div class="camp-stat-val">₹${ts.toLocaleString("en-IN")}</div><div class="camp-stat-key">Spend</div></div>
+      <div class="camp-stat"><div class="camp-stat-icon">👥</div><div class="camp-stat-val">${tl}</div><div class="camp-stat-key">Leads</div></div>
+      <div class="camp-stat"><div class="camp-stat-icon">💰</div><div class="camp-stat-val">₹${tr.toLocaleString("en-IN")}</div><div class="camp-stat-key">Revenue</div></div>
+      <div class="camp-stat"><div class="camp-stat-icon">📈</div><div class="camp-stat-val">${ts?(tr/ts).toFixed(1)+"x":"—"}</div><div class="camp-stat-key">ROAS</div></div>
     </div>
     <div class="card">
       <div class="section-head">
@@ -1056,23 +1105,27 @@ function pgCampaigns(el){
           <div style="flex:1;min-width:0"><div class="camp-name">${c.name}</div><div class="camp-sub">${c.leads||0} leads · ${c.status}</div></div>
           <div class="camp-metric"><div class="camp-metric-val">₹${Number(c.spend||0).toLocaleString("en-IN")}</div><div class="camp-metric-key">Spend</div></div>
           <div class="camp-metric"><div class="camp-metric-val" style="color:#16a34a">${c.spend?(Number(c.revenue||0)/Number(c.spend)).toFixed(1)+"x":"—"}</div><div class="camp-metric-key">ROAS</div></div>
-          <button onclick="deleteCampaign('${c.id}')" style="background:none;border:none;color:var(--text);cursor:pointer;font-size:14px">🗑</button>
+          <button onclick="showEditCampaignModal('${c.id}')" style="background:var(--input-bg);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--text2);font-size:11px;cursor:pointer;margin-right:4px">✏️</button>
+          <button onclick="confirmDelete('Delete campaign <b>${c.name}</b>?','deleteCampaign(\\'${c.id}\\')')" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px">🗑</button>
         </div>`).join(""):`<div style="text-align:center;padding:28px;color:var(--text)"><div style="font-size:32px;margin-bottom:8px">📊</div><p>No campaigns yet</p></div>`}
     </div>
   </div>`;
 }
-function showAddCampaignModal(){
+function showAddCampaignModal(){_campaignModal(null);}
+function showEditCampaignModal(id){_campaignModal(campaigns.find(c=>c.id===id));}
+function _campaignModal(c){
+  const isEdit=!!c;
   showModal(`<div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">➕ Add Campaign</div>
-    <div class="form-row"><label>NAME *</label><input id="cn" placeholder="e.g. Diwali Sale 2026"/></div>
-    <div class="form-row"><label>AD SPEND (₹)</label><input id="cs" type="number" placeholder="0"/></div>
-    <div class="form-row"><label>LEADS</label><input id="cl" type="number" placeholder="0"/></div>
-    <div class="form-row"><label>REVENUE (₹)</label><input id="cr" type="number" placeholder="0"/></div>
-    <div class="form-row"><label>STATUS</label><select id="cst"><option>Active</option><option>Paused</option><option>Ended</option></select></div>
+    <div class="modal-title">${isEdit?"✏️ Edit Campaign":"➕ Add Campaign"}</div>
+    <div class="form-row"><label>NAME *</label><input id="cn" value="${c?c.name:""}" placeholder="e.g. Diwali Sale 2026"/></div>
+    <div class="form-row"><label>AD SPEND (₹)</label><input id="cs" type="number" value="${c?c.spend||0:0}"/></div>
+    <div class="form-row"><label>LEADS</label><input id="cl" type="number" value="${c?c.leads||0:0}"/></div>
+    <div class="form-row"><label>REVENUE (₹)</label><input id="cr" type="number" value="${c?c.revenue||0:0}"/></div>
+    <div class="form-row"><label>STATUS</label><select id="cst"><option${!c||c.status==="Active"?" selected":""}>Active</option><option${c&&c.status==="Paused"?" selected":""}>Paused</option><option${c&&c.status==="Ended"?" selected":""}>Ended</option></select></div>
     <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" style="background:${rc()}" onclick="addCampaign()">Add</button>
+      ${isEdit?`<button class="btn-cancel" style="background:rgba(239,68,68,.08);color:#ef4444;border-color:rgba(239,68,68,.2)" onclick="confirmDelete('Delete campaign <b>${c.name}</b>?','deleteCampaign(\\'${c.id}\\');closeModal()')">🗑 Delete</button>`:`<button class="btn-cancel" onclick="closeModal()">Cancel</button>`}
+      <button class="btn-save" style="background:${rc()}" onclick="${isEdit?`updateCampaign('${c.id}')`:"addCampaign()"}">${isEdit?"Save":"Add"}</button>
     </div>
   </div>`);
 }
@@ -1081,17 +1134,21 @@ async function addCampaign(){
   try{await COL.campaigns().add({name,spend:Number($("cs").value)||0,leads:Number($("cl").value)||0,revenue:Number($("cr").value)||0,status:$("cst").value,createdAt:new Date().toISOString()});closeModal();showToast("Campaign added ✅");}
   catch(e){showToast("❌ "+e.message);}
 }
+async function updateCampaign(id){
+  const name=($("cn").value||"").trim();if(!name){showToast("Name required");return;}
+  try{await COL.campaigns().doc(id).update({name,spend:Number($("cs").value)||0,leads:Number($("cl").value)||0,revenue:Number($("cr").value)||0,status:$("cst").value});closeModal();showToast("Campaign updated ✅");}
+  catch(e){showToast("❌ "+e.message);}
+}
 async function deleteCampaign(id){
   try{await COL.campaigns().doc(id).delete();}catch(e){showToast("❌ "+e.message);}
 }
 
-/* ══ TEMPLATES ══ */
+/* ══════════════════════════════
+   TEMPLATES
+══════════════════════════════ */
 function pgTemplates(el){
   el.innerHTML=`<div class="tpl-grid">
-    <div class="tpl-add" onclick="showAddTemplateModal()">
-      <div style="font-size:28px;color:var(--text)">+</div>
-      <div style="color:var(--text);font-size:12px;margin-top:7px">New Template</div>
-    </div>
+    <div class="tpl-add" onclick="showAddTemplateModal()"><div style="font-size:28px;color:var(--text)">+</div><div style="color:var(--text);font-size:12px;margin-top:7px">New Template</div></div>
     ${templates.map(t=>`
       <div class="tpl-card">
         <div class="tpl-head"><span class="tpl-title">${t.title}</span>${pill(t.type||"Text",rc())}</div>
@@ -1099,71 +1156,76 @@ function pgTemplates(el){
         <div class="tpl-foot">
           <span class="tpl-uses">Used ${t.uses||0}×</span>
           <div style="display:flex;gap:6px">
-            <button class="tpl-use-btn" style="background:${rc()}18;color:${rc()};border:1px solid ${rc()}33" onclick="showToast('📋 Template copied!')">Use</button>
-            ${selectedRole!=="agent"?`<button class="tpl-use-btn" style="background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.2)" onclick="deleteTemplate('${t.id}')">🗑</button>`:""}
+            <button style="background:${rc()}18;color:${rc()};border:1px solid ${rc()}33;border-radius:7px;padding:5px 10px;font-size:11px;font-weight:600;cursor:pointer" onclick="showEditTemplateModal('${t.id}')">✏️ Edit</button>
+            ${selectedRole!=="agent"?`<button style="background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.2);border-radius:7px;padding:5px 10px;font-size:11px;font-weight:600;cursor:pointer" onclick="confirmDelete('Delete template <b>${t.title}</b>?','deleteTemplate(\\'${t.id}\\')')">🗑</button>`:""}
           </div>
         </div>
       </div>`).join("")}
   </div>`;
 }
-function showAddTemplateModal(){
+function showAddTemplateModal(){_templateModal(null);}
+function showEditTemplateModal(id){_templateModal(templates.find(t=>t.id===id));}
+function _templateModal(t){
+  const isEdit=!!t;
   showModal(`<div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">➕ New Template</div>
-    <div class="form-row"><label>TITLE *</label><input id="ttl" placeholder="e.g. Welcome Message"/></div>
-    <div class="form-row"><label>TYPE</label><select id="tty"><option>Text</option><option>Audio</option><option>Image</option></select></div>
-    <div class="form-row"><label>CONTENT (use {{name}})</label><textarea id="tcn" placeholder="Hi {{name}}! Welcome to HomeGym™…"></textarea></div>
+    <div class="modal-title">${isEdit?"✏️ Edit Template":"➕ New Template"}</div>
+    <div class="form-row"><label>TITLE *</label><input id="ttl" value="${t?t.title:""}" placeholder="e.g. Welcome Message"/></div>
+    <div class="form-row"><label>TYPE</label><select id="tty"><option${!t||t.type==="Text"?" selected":""}>Text</option><option${t&&t.type==="Audio"?" selected":""}>Audio</option><option${t&&t.type==="Image"?" selected":""}>Image</option></select></div>
+    <div class="form-row"><label>CONTENT (use {{name}})</label><textarea id="tcn">${t?t.content:""}</textarea></div>
     <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" style="background:${rc()}" onclick="addTemplate()">Save</button>
+      ${isEdit?`<button class="btn-cancel" style="background:rgba(239,68,68,.08);color:#ef4444;border-color:rgba(239,68,68,.2)" onclick="confirmDelete('Delete template <b>${t.title}</b>?','deleteTemplate(\\'${t.id}\\');closeModal()')">🗑 Delete</button>`:`<button class="btn-cancel" onclick="closeModal()">Cancel</button>`}
+      <button class="btn-save" style="background:${rc()}" onclick="${isEdit?`updateTemplate('${t.id}')`:"addTemplate()"}">${isEdit?"Save":"Create"}</button>
     </div>
   </div>`);
 }
 async function addTemplate(){
-  const title=($("ttl").value||"").trim(),content=($("tcn").value||"").trim();
-  if(!title||!content){showToast("Fill all fields");return;}
+  const title=($("ttl").value||"").trim(),content=($("tcn").value||"").trim();if(!title||!content){showToast("Fill all fields");return;}
   try{await COL.templates().add({title,type:$("tty").value,content,uses:0,createdAt:new Date().toISOString()});closeModal();showToast("Template saved ✅");}
+  catch(e){showToast("❌ "+e.message);}
+}
+async function updateTemplate(id){
+  const title=($("ttl").value||"").trim(),content=($("tcn").value||"").trim();if(!title||!content){showToast("Fill all fields");return;}
+  try{await COL.templates().doc(id).update({title,type:$("tty").value,content});closeModal();showToast("Template updated ✅");}
   catch(e){showToast("❌ "+e.message);}
 }
 async function deleteTemplate(id){
   try{await COL.templates().doc(id).delete();}catch(e){showToast("❌ "+e.message);}
 }
 
-/* ══ SETTINGS / USER MANAGEMENT ══ */
+/* ══════════════════════════════
+   SETTINGS / USER MANAGEMENT
+══════════════════════════════ */
 async function pgSettings(el){
   if(selectedRole!=="admin"){el.innerHTML=`<div class="page">${accessDenied("User Management")}</div>`;return;}
-  el.innerHTML=`<div class="page"><div class="loading-screen"><div class="spinner" style="border-top-color:${rc()}"></div><p style="color:var(--text);font-size:13px">Loading users…</p></div></div>`;
+  el.innerHTML=`<div class="page"><div style="text-align:center;padding:40px;color:var(--text)"><div class="spinner" style="border-top-color:${rc()};width:24px;height:24px"></div></div></div>`;
   try{
     const snap=await COL.users().get();
     managedUsers=snap.docs.map(d=>({uid:d.id,...d.data()}));
-    renderSettingsPage(el);
+    _renderSettings(el);
   } catch(e){el.innerHTML=`<div class="page"><p style="color:#ef4444;padding:20px">Error: ${e.message}</p></div>`;}
 }
-function renderSettingsPage(el){
-  const rColors={admin:"#7c3aed",manager:"#0ea5e9",agent:"#16a34a"};
+function _renderSettings(el){
+  const rC={admin:"#7c3aed",manager:"#0ea5e9",agent:"#16a34a"};
   el.innerHTML=`<div class="page">
     <div class="card" style="margin-bottom:12px">
       <div class="section-head">
         <div class="section-title">👥 Platform Users</div>
-        <button onclick="showCreateUserModal()" style="background:${rc()};border:none;border-radius:8px;padding:7px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer">+ Create User</button>
+        <button onclick="showCreateUserModal()" style="background:${rc()};border:none;border-radius:8px;padding:7px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer">+ Create</button>
       </div>
-      <p style="color:var(--text);font-size:11px;margin-bottom:12px">Create Firebase accounts for your team. Share the email & password with them.</p>
-      ${managedUsers.length?managedUsers.map(u=>`
+      ${managedUsers.map(u=>`
         <div class="user-row">
-          ${av(initials(u.name||u.email||"?"),34,`${rColors[u.role]||"#666"},${rColors[u.role]||"#666"}88`)}
-          <div style="flex:1;min-width:0">
-            <div style="font-weight:700;font-size:13px;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${u.name||"—"}</div>
-            <div style="color:var(--text);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${u.email||u.uid}</div>
-          </div>
-          <span style="padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;background:${rColors[u.role]||"#666"}18;color:${rColors[u.role]||"#666"};border:1px solid ${rColors[u.role]||"#666"}33;flex-shrink:0">${ROLES[u.role]?.label||u.role}</span>
-          ${u.uid!==currentUser.uid?`<button onclick="showEditUserModal('${u.uid}')" style="background:none;border:none;color:var(--text);cursor:pointer;font-size:14px;padding:4px;margin-left:4px">✏️</button>`:"<span style='width:26px'></span>"}
-        </div>`).join(""):`<p style="color:var(--text);font-size:13px;text-align:center;padding:16px">No users found.</p>`}
+          ${av(initials(u.name||u.email||"?"),34,`${rC[u.role]||"#666"},${rC[u.role]||"#666"}88`)}
+          <div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13px;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${u.name||"—"}</div><div style="color:var(--text);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${u.email||u.uid}</div></div>
+          <span style="padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;background:${rC[u.role]||"#666"}18;color:${rC[u.role]||"#666"};border:1px solid ${rC[u.role]||"#666"}33;flex-shrink:0;margin-right:6px">${ROLES[u.role]?.label||u.role}</span>
+          ${u.uid!==currentUser.uid?`<button onclick="showEditUserModal('${u.uid}')" style="background:var(--input-bg);border:1px solid var(--border);border-radius:7px;padding:4px 8px;color:var(--text2);font-size:11px;cursor:pointer">✏️</button>`:"<span style='width:28px'></span>"}
+        </div>`).join("")||`<p style="color:var(--text);font-size:13px;text-align:center;padding:16px">No users found.</p>`}
     </div>
     <div class="card">
       <div class="section-title" style="margin-bottom:12px">⚙️ App Settings</div>
       <div class="settings-row">
-        <div><div class="settings-row-label">${darkMode?"☀️ Switch to Light":"🌙 Switch to Dark"}</div><div class="settings-row-sub">Toggle app theme</div></div>
-        <button onclick="toggleTheme();pgSettings($('mainContent'))" style="background:${rc()};border:none;border-radius:8px;padding:7px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer">${darkMode?"Light":"Dark"}</button>
+        <div><div class="settings-row-label">${darkMode?"☀️ Light Mode":"🌙 Dark Mode"}</div><div class="settings-row-sub">Toggle appearance</div></div>
+        <button onclick="toggleTheme();pgSettings($('mainContent'))" style="background:${rc()};border:none;border-radius:8px;padding:7px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer">${darkMode?"Switch Light":"Switch Dark"}</button>
       </div>
       <div class="settings-row">
         <div><div class="settings-row-label">🔑 Your Role</div><div class="settings-row-sub">${currentUser.email}</div></div>
@@ -1175,8 +1237,8 @@ function renderSettingsPage(el){
 function showCreateUserModal(){
   showModal(`<div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">➕ Create New User</div>
-    <div style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:9px;padding:10px 12px;margin-bottom:14px;font-size:12px;color:#3b82f6">ℹ️ A Firebase Auth account will be created. Share the credentials with the user.</div>
+    <div class="modal-title">➕ Create User</div>
+    <div style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:9px;padding:10px 12px;margin-bottom:14px;font-size:12px;color:#3b82f6">ℹ️ Creates a Firebase Auth account. Share credentials with the user.</div>
     <div class="form-row"><label>FULL NAME *</label><input id="un" placeholder="e.g. Arjun Nair"/></div>
     <div class="form-row"><label>EMAIL *</label><input id="ue" type="email" placeholder="arjun@homegym.in"/></div>
     <div class="form-row"><label>PASSWORD *</label><input id="upw" type="text" placeholder="Min 6 characters" autocomplete="new-password"/></div>
@@ -1193,17 +1255,14 @@ async function createUser(){
   if(pw.length<6){showToast("Password must be 6+ characters");return;}
   const btn=$("createUserBtn");btn.innerHTML=`<span class="spinner"></span>Creating…`;btn.disabled=true;
   try{
-    let secApp;
-    try{secApp=firebase.app("secondary");}catch(e){secApp=firebase.initializeApp(firebaseConfig,"secondary");}
+    let secApp;try{secApp=firebase.app("secondary");}catch(e){secApp=firebase.initializeApp(firebaseConfig,"secondary");}
     const cred=await secApp.auth().createUserWithEmailAndPassword(email,pw);
     await COL.users().doc(cred.user.uid).set({name,email,role,createdBy:currentUser.uid,createdAt:new Date().toISOString()});
     await secApp.auth().signOut();
-    closeModal();showToast(`✅ Account created for ${name}`,4000);
-    pgSettings($("mainContent"));
+    closeModal();showToast(`✅ Account created for ${name}`,4000);pgSettings($("mainContent"));
   } catch(e){
     const msgs={"auth/email-already-in-use":"Email already exists.","auth/invalid-email":"Invalid email.","auth/weak-password":"Password too weak."};
-    showToast("❌ "+(msgs[e.code]||e.message));
-    btn.textContent="Create Account";btn.disabled=false;
+    showToast("❌ "+(msgs[e.code]||e.message));btn.textContent="Create Account";btn.disabled=false;
   }
 }
 function showEditUserModal(uid2){
@@ -1221,10 +1280,8 @@ function showEditUserModal(uid2){
 }
 async function editUser(uid2){
   const btn=$("editUserBtn");btn.innerHTML=`<span class="spinner"></span>Saving…`;btn.disabled=true;
-  try{
-    await COL.users().doc(uid2).update({name:$("eun").value,role:$("eur").value});
-    closeModal();showToast("✅ User updated");pgSettings($("mainContent"));
-  } catch(e){showToast("❌ "+e.message);btn.textContent="Save";btn.disabled=false;}
+  try{await COL.users().doc(uid2).update({name:$("eun").value,role:$("eur").value});closeModal();showToast("✅ User updated");pgSettings($("mainContent"));}
+  catch(e){showToast("❌ "+e.message);btn.textContent="Save";btn.disabled=false;}
 }
 </script>
 </body>
