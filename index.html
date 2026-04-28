@@ -462,30 +462,40 @@ auth.onAuthStateChanged(async user=>{
   if(user){
     try{
       const docRef=db.collection("users").doc(user.uid);
-      const doc=await docRef.get();
-      if(doc.exists){
-        const data=doc.data();
+      const snap=await docRef.get();
+      if(snap.exists){
+        const data=snap.data();
         currentUser={uid:user.uid,email:user.email,name:data.name||user.email,role:data.role||"agent"};
         selectedRole=currentUser.role;
         initApp();
       } else {
-        // First-time login: check if ANY user docs exist
-        const allUsers=await db.collection("users").get();
+        // First-time: check if ANY users exist in Firestore
+        const allUsers=await db.collection("users").limit(1).get();
         if(allUsers.empty){
-          // No users at all → make this person the admin
-          await docRef.set({name:user.email.split("@")[0],email:user.email,role:"admin",createdAt:new Date().toISOString()});
-          currentUser={uid:user.uid,email:user.email,name:user.email.split("@")[0],role:"admin"};
+          // Bootstrap first admin
+          const adminName=user.email.split("@")[0];
+          await docRef.set({
+            name:adminName,
+            email:user.email,
+            role:"admin",
+            createdAt:new Date().toISOString()
+          });
+          currentUser={uid:user.uid,email:user.email,name:adminName,role:"admin"};
           selectedRole="admin";
-          showToast("👑 First login detected — you've been set as Admin!",5000);
           initApp();
+          // Toast after initApp so DOM exists
+          setTimeout(()=>showToast("👑 You've been set as Admin — first login!",5000),800);
         } else {
-          showErrMsg("Account not configured. Contact your admin.");
-          auth.signOut();
+          await auth.signOut();
+          showLoginScreen();
+          showErrMsg("No account configured for this email. Contact your admin.");
         }
       }
     } catch(e){
-      console.error(e);
-      showErrMsg("Failed to load profile. Check connection.");
+      console.error("Auth error:",e);
+      await auth.signOut();
+      showLoginScreen();
+      showErrMsg("Connection error: "+e.message);
     }
   } else {
     showLoginScreen();
@@ -493,15 +503,17 @@ auth.onAuthStateChanged(async user=>{
 });
 
 function showLoginScreen(){
+  $("app").style.opacity="0";
   $("app").style.display="none";
   $("app").classList.remove("show");
   $("loginWrap").style.display="flex";
   $("loginWrap").classList.remove("hide");
   const btn=$("signInBtn");
-  btn.textContent="Sign In →";btn.style.opacity="1";btn.disabled=false;
+  if(btn){btn.textContent="Sign In →";btn.style.opacity="1";btn.disabled=false;}
 }
 function showErrMsg(msg){
   const e=$("errMsg");
+  if(!e) return;
   e.style.display="block";e.textContent=msg;
 }
 
