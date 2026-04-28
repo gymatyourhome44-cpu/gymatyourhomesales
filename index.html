@@ -461,15 +461,27 @@ function showForgotToast(){showToast("📧 Contact your admin to get login crede
 auth.onAuthStateChanged(async user=>{
   if(user){
     try{
-      const doc=await db.collection("users").doc(user.uid).get();
+      const docRef=db.collection("users").doc(user.uid);
+      const doc=await docRef.get();
       if(doc.exists){
         const data=doc.data();
         currentUser={uid:user.uid,email:user.email,name:data.name||user.email,role:data.role||"agent"};
         selectedRole=currentUser.role;
         initApp();
       } else {
-        showErrMsg("Account not configured. Contact your admin.");
-        auth.signOut();
+        // First-time login: check if ANY user docs exist
+        const allUsers=await db.collection("users").get();
+        if(allUsers.empty){
+          // No users at all → make this person the admin
+          await docRef.set({name:user.email.split("@")[0],email:user.email,role:"admin",createdAt:new Date().toISOString()});
+          currentUser={uid:user.uid,email:user.email,name:user.email.split("@")[0],role:"admin"};
+          selectedRole="admin";
+          showToast("👑 First login detected — you've been set as Admin!",5000);
+          initApp();
+        } else {
+          showErrMsg("Account not configured. Contact your admin.");
+          auth.signOut();
+        }
       }
     } catch(e){
       console.error(e);
