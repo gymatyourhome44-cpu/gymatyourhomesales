@@ -414,7 +414,7 @@ function toggleTheme(){darkMode=!darkMode;applyTheme();}
 applyTheme();
 
 /* ══ CONSTANTS ══ */
-const STAGE_COLORS={"New Lead":"#3b82f6","Contacted":"#f59e0b","Interested":"#8b5cf6","Payment Pending":"#f97316","Closed":"#16a34a"};
+const STAGE_COLORS={"New Lead":"#3b82f6","Contacted":"#f59e0b","Interested":"#8b5cf6","Payment Pending":"#f97316","Closed":"#16a34a","Not Interested":"#ef4444"};
 const STAGES=Object.keys(STAGE_COLORS);
 const PLATFORMS=["WhatsApp","Instagram"];
 const SOURCES=["Meta Ad","Organic","Referral","WhatsApp","Instagram","Google Ad"];
@@ -1267,21 +1267,80 @@ async function createUser(){
 }
 function showEditUserModal(uid2){
   const u=managedUsers.find(x=>x.uid===uid2);if(!u)return;
+  const isSelf=uid2===currentUser.uid;
   showModal(`<div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">✏️ Edit — ${u.name||u.email}</div>
+    <div class="modal-title">✏️ Edit User</div>
+    <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--input-bg);border-radius:10px;margin-bottom:16px">
+      ${av(initials(u.name||u.email||"?"),40)}
+      <div>
+        <div style="font-weight:700;font-size:14px;color:var(--white)">${u.name||"—"}</div>
+        <div style="color:var(--text);font-size:12px">${u.email||u.uid}</div>
+      </div>
+    </div>
     <div class="form-row"><label>FULL NAME</label><input id="eun" value="${u.name||""}"/></div>
-    <div class="form-row"><label>ROLE</label><select id="eur"><option value="admin"${u.role==="admin"?" selected":""}>Admin / CSO</option><option value="manager"${u.role==="manager"?" selected":""}>Manager</option><option value="agent"${u.role==="agent"?" selected":""}>Sales Agent</option></select></div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" style="background:${rc()}" id="editUserBtn" onclick="editUser('${uid2}')">Save</button>
+    <div class="form-row"><label>ROLE</label><select id="eur">
+      <option value="admin"${u.role==="admin"?" selected":""}>Admin / CSO</option>
+      <option value="manager"${u.role==="manager"?" selected":""}>Manager</option>
+      <option value="agent"${u.role==="agent"?" selected":""}>Sales Agent</option>
+    </select></div>
+    ${isSelf?`<div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:9px;padding:9px 12px;font-size:12px;color:#f59e0b;margin-bottom:8px">⚠️ This is your own account. You cannot remove yourself.</div>`:""}
+    <div class="modal-footer" style="flex-direction:column;gap:8px">
+      <div style="display:flex;gap:8px;width:100%">
+        <button class="btn-cancel" onclick="closeModal()" style="flex:1">Cancel</button>
+        <button class="btn-save" style="background:${rc()};flex:2" id="editUserBtn" onclick="editUser('${uid2}')">Save Changes</button>
+      </div>
+      ${!isSelf?`<button onclick="confirmRemoveUser('${uid2}')" style="width:100%;padding:11px;border-radius:10px;border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.06);color:#ef4444;font-size:13px;font-weight:600;cursor:pointer">🗑 Remove User</button>`:""}
     </div>
   </div>`);
 }
 async function editUser(uid2){
   const btn=$("editUserBtn");btn.innerHTML=`<span class="spinner"></span>Saving…`;btn.disabled=true;
-  try{await COL.users().doc(uid2).update({name:$("eun").value,role:$("eur").value});closeModal();showToast("✅ User updated");pgSettings($("mainContent"));}
-  catch(e){showToast("❌ "+e.message);btn.textContent="Save";btn.disabled=false;}
+  try{
+    await COL.users().doc(uid2).update({name:$("eun").value,role:$("eur").value});
+    closeModal();showToast("✅ User updated");pgSettings($("mainContent"));
+  } catch(e){showToast("❌ "+e.message);btn.textContent="Save Changes";btn.disabled=false;}
+}
+function confirmRemoveUser(uid2){
+  const u=managedUsers.find(x=>x.uid===uid2);if(!u)return;
+  closeModal();
+  showModal(`<div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" style="color:#ef4444">🗑 Remove User</div>
+    <div style="background:var(--input-bg);border-radius:10px;padding:12px;margin-bottom:14px;display:flex;align-items:center;gap:12px">
+      ${av(initials(u.name||u.email||"?"),40)}
+      <div>
+        <div style="font-weight:700;font-size:14px;color:var(--white)">${u.name||"—"}</div>
+        <div style="color:var(--text);font-size:12px">${u.email||u.uid}</div>
+      </div>
+    </div>
+    <p style="color:var(--text2);font-size:14px;margin-bottom:6px">Are you sure you want to remove <b>${u.name||u.email}</b>?</p>
+    <p style="color:var(--text);font-size:12px;margin-bottom:4px">• Their profile will be deleted from the platform</p>
+    <p style="color:var(--text);font-size:12px;margin-bottom:14px">• They will no longer be able to log in</p>
+    <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:9px;padding:9px 12px;font-size:12px;color:#f59e0b;margin-bottom:4px">
+      ⚠️ Firebase Auth account deletion requires server-side Admin SDK. The profile will be removed from the app immediately — contact Firebase Console to fully delete the Auth account if needed.
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()" style="flex:1">Cancel</button>
+      <button class="btn-save" style="background:#ef4444;flex:2" id="removeUserBtn" onclick="removeUser('${uid2}')">Yes, Remove</button>
+    </div>
+  </div>`);
+}
+async function removeUser(uid2){
+  const btn=$("removeUserBtn");
+  btn.innerHTML=`<span class="spinner"></span>Removing…`;btn.disabled=true;
+  try{
+    // Delete Firestore profile
+    await COL.users().doc(uid2).delete();
+    // Remove from local list immediately
+    managedUsers=managedUsers.filter(u=>u.uid!==uid2);
+    closeModal();
+    showToast("✅ User removed from platform",4000);
+    pgSettings($("mainContent"));
+  } catch(e){
+    showToast("❌ Failed to remove: "+e.message);
+    btn.textContent="Yes, Remove";btn.disabled=false;
+  }
 }
 </script>
 </body>
