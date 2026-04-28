@@ -4,54 +4,54 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
 <title>Sales Command Center — HomeGym™</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-firestore-compat.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
   --bg:#f0f2f5;--surface:#ffffff;--surface2:#f8f9fb;--border:rgba(0,0,0,.09);
   --text:rgba(0,0,0,.45);--text2:rgba(0,0,0,.7);--white:#111;
   --input-bg:rgba(0,0,0,.04);--input-border:rgba(0,0,0,.12);--card-hover:rgba(0,0,0,.03);
-  --rc:#222;--shadow:0 2px 16px rgba(0,0,0,.08);
+  --rc:#222;--shadow:0 2px 16px rgba(0,0,0,.08);--modal-bg:rgba(0,0,0,.5);
 }
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--white);height:100dvh;overflow:hidden;display:flex;flex-direction:column}
-input,select,button,textarea{font-family:inherit}
+[data-theme="dark"]{
+  --bg:#0f1117;--surface:#1a1d27;--surface2:#1e2130;--border:rgba(255,255,255,.08);
+  --text:rgba(255,255,255,.4);--text2:rgba(255,255,255,.7);--white:#f0f2f5;
+  --input-bg:rgba(255,255,255,.06);--input-border:rgba(255,255,255,.1);--card-hover:rgba(255,255,255,.04);
+  --shadow:0 2px 16px rgba(0,0,0,.4);--modal-bg:rgba(0,0,0,.7);
+}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--white);height:100dvh;overflow:hidden;display:flex;flex-direction:column;transition:background .3s,color .3s}
+input,select,button,textarea{font-family:inherit;color:var(--white)}
 ::-webkit-scrollbar{width:3px;height:3px}
-::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:99px}
+::-webkit-scrollbar-thumb{background:rgba(127,127,127,.3);border-radius:99px}
+select option{background:var(--surface);color:var(--white)}
 
-/* ── LOGIN ── */
-#loginWrap{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:16px;z-index:100;transition:opacity .4s;overflow-y:auto}
+/* LOGIN */
+#loginWrap{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:16px;z-index:100;transition:opacity .4s,background .3s;overflow-y:auto}
 #loginWrap.hide{opacity:0;pointer-events:none}
 .login-card{width:100%;max-width:400px}
 .login-header{text-align:center;margin-bottom:24px}
-.logo-circle{display:inline-flex;align-items:center;justify-content:center;width:80px;height:80px;border-radius:20px;background:#111;margin-bottom:12px;box-shadow:0 4px 24px rgba(0,0,0,.15)}
+.logo-circle{display:inline-flex;align-items:center;justify-content:center;width:80px;height:80px;border-radius:20px;background:#111;margin-bottom:12px;box-shadow:0 4px 24px rgba(0,0,0,.25)}
 .login-header h1{font-size:20px;font-weight:800;letter-spacing:-.5px;color:var(--white)}
 .login-header p{color:var(--text);font-size:12px;margin-top:4px}
 .glass{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px;box-shadow:var(--shadow)}
 .step-label{color:var(--text);font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px}
-.role-card{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--input-bg);cursor:pointer;margin-bottom:8px;transition:all .2s;touch-action:manipulation}
-.role-card:active{transform:scale(.98)}
-.role-card.active{border-color:var(--rc)}
-.role-icon-wrap{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
-.role-name{font-weight:700;font-size:13px;color:var(--white)}
-.role-desc{color:var(--text);font-size:11px;margin-top:1px}
-.role-check{margin-left:auto;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;opacity:0;transition:opacity .2s}
-.role-card.active .role-check{opacity:1}
-.btn-main{width:100%;padding:13px;border-radius:11px;border:none;font-weight:700;font-size:14px;cursor:pointer;margin-top:12px;transition:all .2s;color:#fff;touch-action:manipulation}
-.btn-main:disabled{background:var(--input-bg)!important;color:var(--text)!important;cursor:not-allowed}
+.field-wrap{margin-bottom:12px}
 .field-input{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;padding:11px 13px;color:var(--white);font-size:14px;outline:none;transition:border-color .2s}
 .field-input:focus{border-color:var(--rc)}
-.field-wrap{margin-bottom:12px}
-.back-btn{background:none;border:none;color:var(--text);font-size:12px;cursor:pointer;margin-bottom:14px;padding:0;display:flex;align-items:center;gap:5px}
-.role-badge{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:11px;margin-bottom:16px}
-.err-msg{color:#ef4444;font-size:11px;margin-bottom:8px;display:none}
-.forgot{color:var(--text);font-size:11px;text-align:center;margin-top:8px}
+.btn-main{width:100%;padding:13px;border-radius:11px;border:none;font-weight:700;font-size:14px;cursor:pointer;margin-top:12px;transition:all .2s;color:#fff;touch-action:manipulation}
+.btn-main:disabled{background:var(--input-bg)!important;color:var(--text)!important;cursor:not-allowed}
+.err-msg{color:#ef4444;font-size:11px;margin-bottom:8px;display:none;padding:8px;background:rgba(239,68,68,.08);border-radius:7px;border:1px solid rgba(239,68,68,.2)}
 .login-footer{color:var(--text);font-size:11px;text-align:center;margin-top:16px;opacity:.5}
+.theme-toggle-login{position:absolute;top:16px;right:16px;background:var(--surface);border:1px solid var(--border);border-radius:9px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--white);box-shadow:var(--shadow)}
 
-/* ── APP SHELL ── */
+/* APP SHELL */
 #app{display:flex;height:100dvh;overflow:hidden;opacity:0;transition:opacity .4s;flex-direction:column}
 #app.show{opacity:1}
 
-/* ── TOPBAR ── */
-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 14px;height:52px;display:flex;align-items:center;gap:10px;flex-shrink:0;box-shadow:var(--shadow);z-index:50}
+/* TOPBAR */
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 14px;height:52px;display:flex;align-items:center;gap:10px;flex-shrink:0;box-shadow:var(--shadow);z-index:50;transition:background .3s,border-color .3s}
 .logo-sm{width:34px;height:34px;border-radius:9px;background:#111;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .topbar-title{flex:1;min-width:0}
 .topbar-title p{font-weight:800;font-size:14px;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -62,10 +62,10 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .hamburger{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;gap:4px;padding:6px;touch-action:manipulation}
 .ham-line{width:20px;height:2px;background:var(--white);border-radius:99px;transition:all .3s}
 
-/* ── DRAWER ── */
+/* DRAWER */
 #drawer{position:fixed;inset:0;z-index:200;pointer-events:none}
-#drawerBg{position:absolute;inset:0;background:rgba(0,0,0,.4);opacity:0;transition:opacity .3s}
-#drawerPanel{position:absolute;left:0;top:0;bottom:0;width:260px;background:var(--surface);transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,.1)}
+#drawerBg{position:absolute;inset:0;background:var(--modal-bg);opacity:0;transition:opacity .3s}
+#drawerPanel{position:absolute;left:0;top:0;bottom:0;width:260px;background:var(--surface);transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,.2)}
 #drawer.open{pointer-events:all}
 #drawer.open #drawerBg{opacity:1}
 #drawer.open #drawerPanel{transform:translateX(0)}
@@ -75,24 +75,24 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .drawer-nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:3px;overflow-y:auto}
 .nav-btn{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:10px;border:none;background:transparent;color:var(--text);font-weight:500;font-size:13px;cursor:pointer;transition:all .18s;text-align:left;width:100%;touch-action:manipulation;position:relative}
 .nav-btn:active{transform:scale(.97)}
-.nav-btn.active{background:rgba(0,0,0,.07);color:var(--white);font-weight:700}
+.nav-btn.active{background:var(--input-bg);color:var(--white);font-weight:700}
 .nav-dot{position:absolute;left:0;top:18%;bottom:18%;width:3px;border-radius:99px;background:var(--rc);display:none}
 .nav-btn.active .nav-dot{display:block}
 .nav-icon{font-size:16px;flex-shrink:0;width:22px;text-align:center}
 .drawer-foot{padding:12px 10px;border-top:1px solid var(--border);display:flex;align-items:center;gap:9px}
 .logout-btn{margin-left:auto;background:none;border:none;color:var(--text);font-size:13px;cursor:pointer;flex-shrink:0;touch-action:manipulation}
 
-/* ── MAIN ── */
+/* MAIN */
 main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .page{padding:14px;animation:fadeUp .25s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── CARDS ── */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:15px;box-shadow:var(--shadow)}
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:15px;box-shadow:var(--shadow);transition:background .3s,border-color .3s}
 .card-title{font-weight:700;font-size:13px;margin-bottom:12px;color:var(--white)}
 .card+.card{margin-top:12px}
 
-/* ── STAT GRID ── */
+/* STAT GRID */
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
 .stat-card{border-radius:14px;padding:14px;position:relative;overflow:hidden;cursor:default}
 .stat-card::before{content:'';position:absolute;top:-16px;right:-16px;width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.1)}
@@ -101,38 +101,34 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .stat-label{color:rgba(255,255,255,.75);font-size:11px;margin-top:1px}
 .stat-delta{display:inline-block;margin-top:5px;background:rgba(255,255,255,.2);border-radius:99px;padding:1px 7px;font-size:10px;color:#fff}
 
-/* ── PILL ── */
+/* PILL */
 .pill{border-radius:99px;padding:2px 9px;font-size:10px;font-weight:600;white-space:nowrap}
 
-/* ── BAR ── */
+/* BAR */
 .bar-track{background:var(--border);border-radius:99px;height:3px;margin-top:4px}
 .bar-fill{height:3px;border-radius:99px;transition:width .9s ease}
 
-/* ── LB ROW ── */
+/* LB ROW */
 .lb-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .lb-rank{font-weight:800;font-size:12px;width:16px;flex-shrink:0}
 .lb-info{flex:1}
 .lb-name{display:flex;justify-content:space-between;font-size:12px;color:var(--white)}
 
-/* ── LEAD ROW ── */
+/* LEAD ROW */
 .lead-row{display:flex;align-items:center;gap:10px;padding:8px 9px;border-radius:9px;cursor:pointer;transition:background .15s;margin-bottom:2px;touch-action:manipulation}
-.lead-row:active{background:var(--card-hover)}
+.lead-row:hover{background:var(--card-hover)}
 
-/* ── INBOX ── */
-.inbox-wrap{display:flex;flex-direction:column;height:100%;overflow:hidden}
-.lead-list-mobile{flex:1;overflow:hidden;display:flex;flex-direction:column}
-.lead-list-head-m{padding:10px 14px;border-bottom:1px solid var(--border);background:var(--surface)}
+/* INBOX */
 .list-search{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;padding:8px 12px;color:var(--white);font-size:14px;outline:none}
 .tab-row{display:flex;gap:5px;margin-top:7px}
 .tab-btn{flex:1;padding:6px 0;background:var(--input-bg);border:1px solid var(--input-border);border-radius:7px;color:var(--text);font-size:11px;cursor:pointer;transition:all .15s;touch-action:manipulation}
 .tab-btn.active-tab{background:var(--rc);color:#fff;border-color:var(--rc)}
-.lead-items{flex:1;overflow-y:auto}
 .lead-item{display:flex;align-items:center;gap:9px;padding:11px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;touch-action:manipulation}
 .lead-item:active{background:var(--card-hover)}
 .plat-dot{position:absolute;bottom:0;right:0;font-size:8px}
 .unread-badge{width:18px;height:18px;border-radius:50%;color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 
-/* ── CHAT VIEW ── */
+/* CHAT VIEW */
 .chat-view{display:flex;flex-direction:column;height:100%;overflow:hidden}
 .chat-head{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--surface);flex-shrink:0}
 .chat-back{background:none;border:none;color:var(--white);font-size:20px;cursor:pointer;padding:4px;touch-action:manipulation}
@@ -142,8 +138,7 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .action-btn{background:var(--input-bg);border:1px solid var(--input-border);border-radius:7px;padding:5px 10px;color:var(--text2);font-size:11px;cursor:pointer;touch-action:manipulation;white-space:nowrap}
 .chat-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;-webkit-overflow-scrolling:touch}
 .msg-bubble{max-width:75%;padding:9px 12px;font-size:13px;line-height:1.5;word-break:break-word}
-.msg-time{font-size:9px;color:rgba(0,0,0,.3);text-align:right;margin-top:3px}
-.msg-out .msg-time{color:rgba(255,255,255,.5)}
+.msg-time{font-size:9px;color:rgba(127,127,127,.5);text-align:right;margin-top:3px}
 .msg-out{border-radius:16px 16px 4px 16px;margin-left:auto;color:#fff}
 .msg-in{border-radius:16px 16px 16px 4px;background:var(--input-bg);color:var(--white)}
 .chat-input-row{padding:10px 12px;border-top:1px solid var(--border);display:flex;gap:7px;flex-shrink:0;background:var(--surface)}
@@ -151,9 +146,9 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .msg-input{flex:1;background:var(--input-bg);border:1px solid var(--input-border);border-radius:9px;padding:9px 12px;color:var(--white);font-size:14px;outline:none}
 .send-btn{border:none;border-radius:9px;padding:9px 16px;color:#fff;font-weight:700;font-size:13px;cursor:pointer;touch-action:manipulation;flex-shrink:0}
 
-/* ── LEAD DETAIL (bottom sheet) ── */
+/* DETAIL SHEET */
 .detail-sheet{position:fixed;inset:0;z-index:150;pointer-events:none}
-.detail-bg{position:absolute;inset:0;background:rgba(0,0,0,.4);opacity:0;transition:opacity .3s}
+.detail-bg{position:absolute;inset:0;background:var(--modal-bg);opacity:0;transition:opacity .3s}
 .detail-panel{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:20px 20px 0 0;max-height:80dvh;overflow-y:auto;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);padding:20px 16px;padding-bottom:max(20px,env(safe-area-inset-bottom))}
 .detail-sheet.open{pointer-events:all}
 .detail-sheet.open .detail-bg{opacity:1}
@@ -162,9 +157,9 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .detail-block{background:var(--input-bg);border-radius:9px;padding:9px 11px;margin-bottom:7px}
 .detail-key{color:var(--text);font-size:10px;margin-bottom:2px}
 .detail-val{font-size:12px;font-weight:600;color:var(--white)}
-.ghost-btn{width:100%;padding:10px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;margin-bottom:7px;touch-action:manipulation}
+.ghost-btn{width:100%;padding:10px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;margin-bottom:7px;touch-action:manipulation;background:transparent}
 
-/* ── PIPELINE ── */
+/* PIPELINE */
 .pipeline-wrap{padding:14px;overflow-x:auto;animation:fadeUp .25s ease;-webkit-overflow-scrolling:touch}
 .kanban{display:flex;gap:10px;min-width:max-content}
 .col-wrap{width:180px;flex-shrink:0}
@@ -182,7 +177,7 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .k-src{color:var(--text);font-size:10px}
 .drop-hint{color:var(--text);font-size:11px;text-align:center;padding:10px 0;opacity:.4}
 
-/* ── AGENTS ── */
+/* AGENTS */
 .agent-grid{display:grid;grid-template-columns:1fr;gap:12px;padding:14px;animation:fadeUp .25s ease}
 @media(min-width:500px){.agent-grid{grid-template-columns:1fr 1fr}}
 .agent-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
@@ -195,7 +190,7 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .agent-stat-val{font-weight:700;font-size:12px;color:var(--white)}
 .agent-stat-key{color:var(--text);font-size:10px}
 
-/* ── FOLLOWUPS ── */
+/* FOLLOWUPS */
 .fu-counters{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px}
 .fu-counter{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;box-shadow:var(--shadow)}
 .fu-num{font-size:28px;font-weight:800}
@@ -206,13 +201,13 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .task-info{color:var(--text);font-size:10px;margin-top:1px}
 .done-btn{border-radius:7px;padding:4px 9px;font-size:10px;font-weight:600;cursor:pointer;border:none;margin-left:auto;white-space:nowrap;touch-action:manipulation}
 
-/* ── AUTOMATION ── */
+/* AUTOMATION */
 .auto-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--input-bg);border-radius:10px;margin-bottom:7px;border:1px solid var(--border)}
 .tag{padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700}
 .toggle{width:40px;height:21px;border-radius:99px;position:relative;cursor:pointer;transition:background .25s;flex-shrink:0;touch-action:manipulation}
 .toggle-knob{position:absolute;top:2.5px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .25s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
 
-/* ── CAMPAIGNS ── */
+/* CAMPAIGNS */
 .campaign-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .camp-stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px;text-align:center;box-shadow:var(--shadow)}
 .camp-stat-icon{font-size:20px}
@@ -225,7 +220,7 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .camp-metric-val{font-weight:700;font-size:12px;color:var(--white)}
 .camp-metric-key{color:var(--text);font-size:10px}
 
-/* ── TEMPLATES ── */
+/* TEMPLATES */
 .tpl-grid{display:grid;grid-template-columns:1fr;gap:12px;padding:14px;animation:fadeUp .25s ease}
 @media(min-width:500px){.tpl-grid{grid-template-columns:1fr 1fr}}
 .tpl-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;cursor:pointer;transition:border-color .2s;box-shadow:var(--shadow)}
@@ -237,10 +232,10 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .tpl-use-btn{border:none;border-radius:7px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;touch-action:manipulation}
 .tpl-add{border:1.5px dashed var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;min-height:120px;transition:border-color .2s;touch-action:manipulation}
 
-/* ── MODAL ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:flex;align-items:flex-end;justify-content:center;padding:0;animation:fadeIn .2s ease}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:var(--modal-bg);z-index:300;display:flex;align-items:flex-end;justify-content:center;padding:0;animation:fadeIn .2s ease}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.modal{background:var(--surface);border-radius:20px 20px 0 0;padding:22px 20px;width:100%;max-width:100%;box-shadow:0 -8px 40px rgba(0,0,0,.15);max-height:90dvh;overflow-y:auto;padding-bottom:max(22px,env(safe-area-inset-bottom))}
+.modal{background:var(--surface);border-radius:20px 20px 0 0;padding:22px 20px;width:100%;max-width:100%;box-shadow:0 -8px 40px rgba(0,0,0,.3);max-height:90dvh;overflow-y:auto;padding-bottom:max(22px,env(safe-area-inset-bottom))}
 .modal-handle{width:36px;height:4px;border-radius:99px;background:var(--border);margin:0 auto 16px}
 .modal-title{font-weight:800;font-size:16px;margin-bottom:16px;color:var(--white)}
 .modal-footer{display:flex;gap:9px;margin-top:18px}
@@ -252,35 +247,56 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .form-row input:focus,.form-row select:focus,.form-row textarea:focus{border-color:var(--rc)}
 .form-row textarea{resize:vertical;min-height:80px}
 
-/* ── ACCESS DENIED ── */
+/* USER MGMT */
+.user-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--input-bg);border-radius:10px;margin-bottom:7px;border:1px solid var(--border)}
+.user-role-badge{padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;flex-shrink:0}
+
+/* ACCESS DENIED */
 .access-denied{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:10px;color:var(--text)}
 .access-denied .ad-icon{font-size:48px;opacity:.4}
 
-/* ── TOAST ── */
-.toast{position:fixed;bottom:max(80px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#111;border-radius:12px;padding:11px 18px;font-size:13px;color:#fff;z-index:400;box-shadow:0 8px 30px rgba(0,0,0,.2);animation:slideUp .3s ease;display:flex;align-items:center;gap:9px;white-space:nowrap;max-width:90vw}
+/* TOAST */
+.toast{position:fixed;bottom:max(80px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#111;border-radius:12px;padding:11px 18px;font-size:13px;color:#fff;z-index:400;box-shadow:0 8px 30px rgba(0,0,0,.3);animation:slideUp .3s ease;display:flex;align-items:center;gap:9px;white-space:nowrap;max-width:90vw}
+[data-theme="dark"] .toast{background:#2a2d3a;border:1px solid var(--border)}
 @keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 
-/* ── STATUS ── */
+/* STATUS */
 .status-dot-inline{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px}
 .stage-btn{width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--border);background:var(--input-bg);color:var(--white);font-size:13px;text-align:left;cursor:pointer;margin-bottom:6px;transition:all .15s;display:flex;align-items:center;gap:9px;touch-action:manipulation}
-.stage-btn.current{border-color:var(--rc);background:rgba(0,0,0,.06)}
+.stage-btn.current{border-color:var(--rc);background:var(--card-hover)}
 
-/* ── BOTTOM NAV ── */
-#bottomNav{display:flex;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;padding-bottom:max(6px,env(safe-area-inset-bottom));box-shadow:0 -2px 12px rgba(0,0,0,.06)}
+/* BOTTOM NAV */
+#bottomNav{display:flex;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;padding-bottom:max(6px,env(safe-area-inset-bottom));box-shadow:0 -2px 12px rgba(0,0,0,.1)}
 .bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;border:none;background:transparent;cursor:pointer;gap:3px;touch-action:manipulation;transition:all .15s;color:var(--text)}
 .bnav-btn.active{color:var(--rc)}
 .bnav-icon{font-size:18px}
 .bnav-label{font-size:9px;font-weight:600}
 
-/* Two-col for wider screens */
+/* LOADING SPINNER */
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:7px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* TWO COL */
 .two-col{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:14px}
 @media(min-width:600px){.two-col{grid-template-columns:1fr 1fr}}
+
+/* SECTION HEADER */
+.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.section-title{font-weight:700;font-size:13px;color:var(--white)}
+
+/* SETTINGS */
+.settings-section{margin-bottom:16px}
+.settings-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text);margin-bottom:8px;font-weight:600}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--input-bg);border-radius:10px;border:1px solid var(--border);margin-bottom:6px}
+.settings-row-label{font-size:13px;font-weight:600;color:var(--white)}
+.settings-row-sub{font-size:11px;color:var(--text);margin-top:2px}
 </style>
 </head>
 <body>
 
-<!-- ══ LOGIN ══ -->
+<!-- LOGIN -->
 <div id="loginWrap">
+  <button class="theme-toggle-login" onclick="toggleTheme()" title="Toggle theme" id="themeToggleLogin">🌙</button>
   <div class="login-card">
     <div class="login-header">
       <div class="logo-circle">
@@ -297,42 +313,27 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
       <p>HomeGym™ — Powered by SalesCMD</p>
     </div>
     <div class="glass">
-      <div id="step1">
-        <p class="step-label">Select your role</p>
-        <div class="role-card" data-role="admin" data-color="#222" onclick="selectRole(this)">
-          <div class="role-icon-wrap" style="background:rgba(0,0,0,.08);border:1px solid rgba(0,0,0,.1)">👑</div>
-          <div><div class="role-name">Admin / CSO</div><div class="role-desc">Full platform access & all data</div></div>
-          <div class="role-check" style="background:#222">✓</div>
-        </div>
-        <div class="role-card" data-role="manager" data-color="#0ea5e9" onclick="selectRole(this)">
-          <div class="role-icon-wrap" style="background:rgba(14,165,233,.12);border:1px solid rgba(14,165,233,.2)">🧑‍💼</div>
-          <div><div class="role-name">Manager</div><div class="role-desc">Team view, no financial data</div></div>
-          <div class="role-check" style="background:#0ea5e9">✓</div>
-        </div>
-        <div class="role-card" data-role="agent" data-color="#16a34a" onclick="selectRole(this)">
-          <div class="role-icon-wrap" style="background:rgba(22,163,74,.12);border:1px solid rgba(22,163,74,.2)">💬</div>
-          <div><div class="role-name">Sales Agent</div><div class="role-desc">Own leads & inbox only</div></div>
-          <div class="role-check" style="background:#16a34a">✓</div>
-        </div>
-        <button class="btn-main" id="continueBtn" disabled onclick="goStep2()">Continue →</button>
+      <p class="step-label">Sign in to your account</p>
+      <div class="field-wrap">
+        <label style="font-size:11px;color:var(--text);font-weight:600;display:block;margin-bottom:5px;letter-spacing:.4px">EMAIL</label>
+        <input id="emailInput" class="field-input" type="email" placeholder="you@homegym.in" autocomplete="email"/>
       </div>
-      <div id="step2" style="display:none">
-        <button class="back-btn" onclick="goStep1()">← Back</button>
-        <div class="role-badge" id="roleBadge"></div>
-        <div class="field-wrap"><label style="font-size:11px;color:var(--text);font-weight:600;display:block;margin-bottom:5px">EMAIL</label><input id="emailInput" class="field-input" type="email" placeholder="you@homegym.in"/></div>
-        <div class="field-wrap"><label style="font-size:11px;color:var(--text);font-weight:600;display:block;margin-bottom:5px">PASSWORD</label><input id="passInput" class="field-input" type="password" placeholder="••••••••"/></div>
-        <p class="err-msg" id="errMsg">Please fill all fields.</p>
-        <button class="btn-main" id="signInBtn" onclick="doLogin()">Sign In →</button>
-        <p class="forgot" style="margin-top:10px">Forgot password? <span style="cursor:pointer;text-decoration:underline">Reset here</span></p>
+      <div class="field-wrap">
+        <label style="font-size:11px;color:var(--text);font-weight:600;display:block;margin-bottom:5px;letter-spacing:.4px">PASSWORD</label>
+        <input id="passInput" class="field-input" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
       </div>
+      <p class="err-msg" id="errMsg">Invalid credentials. Please try again.</p>
+      <button class="btn-main" id="signInBtn" onclick="doLogin()" style="background:linear-gradient(135deg,#222,#444)">Sign In →</button>
+      <p style="color:var(--text);font-size:11px;text-align:center;margin-top:10px">
+        First time? <span style="cursor:pointer;text-decoration:underline;color:var(--white)" onclick="showForgotToast()">Contact your admin for access</span>
+      </p>
     </div>
     <p class="login-footer">© 2026 HomeGym™ · Sales Command Center v3.0</p>
   </div>
 </div>
 
-<!-- ══ APP ══ -->
+<!-- APP -->
 <div id="app">
-  <!-- Topbar -->
   <header>
     <button class="hamburger" onclick="toggleDrawer()" aria-label="Menu">
       <div class="ham-line"></div><div class="ham-line"></div><div class="ham-line"></div>
@@ -351,11 +352,11 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
       <p id="pageTitle">Dashboard</p>
       <small id="pageDate"></small>
     </div>
-    <button class="icon-btn" onclick="showToast('🔔 No new notifications')"><span>🔔</span><span class="notif-dot"></span></button>
+    <button class="icon-btn" onclick="toggleTheme()" id="themeToggleApp" title="Toggle theme">🌙</button>
+    <button class="icon-btn" onclick="showToast('🔔 No new notifications')" style="margin-left:2px"><span>🔔</span><span class="notif-dot"></span></button>
     <div class="av" id="topAv" style="width:32px;height:32px;font-size:13px"></div>
   </header>
 
-  <!-- Drawer -->
   <div id="drawer">
     <div id="drawerBg" onclick="closeDrawer()"></div>
     <div id="drawerPanel">
@@ -377,112 +378,154 @@ main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
         <div class="av" id="drawerAv" style="width:32px;height:32px;font-size:13px"></div>
         <div style="flex:1;min-width:0">
           <p style="font-weight:700;font-size:12px;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="drawerUserName"></p>
-          <p style="color:var(--text);font-size:10px">Active</p>
+          <p style="color:var(--text);font-size:10px" id="drawerUserEmail"></p>
         </div>
         <button class="logout-btn" onclick="doLogout()" title="Logout">⏏</button>
       </div>
     </div>
   </div>
 
-  <!-- Main -->
   <main id="mainContent"></main>
-
-  <!-- Bottom Nav -->
   <div id="bottomNav"></div>
 </div>
 
-<!-- Lead Detail Sheet -->
 <div id="detailSheet" class="detail-sheet">
   <div class="detail-bg" onclick="closeDetailSheet()"></div>
-  <div class="detail-panel" id="detailPanel">
-    <div class="detail-handle"></div>
-  </div>
+  <div class="detail-panel" id="detailPanel"><div class="detail-handle"></div></div>
 </div>
-
-<!-- Modal -->
 <div id="modalContainer"></div>
 
 <script>
-/* ═══ DATA ═══ */
+/* ══ FIREBASE ══ */
+const firebaseConfig={
+  apiKey:"AIzaSyAaryFhV7yH9NAUO9TlmINcTn9UxuIIebg",
+  authDomain:"gym-sales.firebaseapp.com",
+  projectId:"gym-sales",
+  storageBucket:"gym-sales.firebasestorage.app",
+  messagingSenderId:"253046066659",
+  appId:"1:253046066659:web:60c96dde428eed01bd64d6",
+  measurementId:"G-B9YVTHF829"
+};
+firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();
+const db=firebase.firestore();
+
+/* ══ THEME ══ */
+let darkMode=localStorage.getItem("theme")==="dark";
+function applyTheme(){
+  document.documentElement.setAttribute("data-theme",darkMode?"dark":"light");
+  const icon=darkMode?"☀️":"🌙";
+  const tl=$("themeToggleLogin"),ta=$("themeToggleApp");
+  if(tl)tl.textContent=icon;
+  if(ta)ta.textContent=icon;
+  localStorage.setItem("theme",darkMode?"dark":"light");
+}
+function toggleTheme(){darkMode=!darkMode;applyTheme();}
+applyTheme();
+
+/* ══ DATA ══ */
 let leads=[],agents=[],messages={},board={"New Lead":[],"Contacted":[],"Interested":[],"Payment Pending":[],"Closed":[]},autos=[],templates=[],campaigns=[],tasks=[],nextId=1;
+let currentUser=null,selectedRole=null,curPage="dashboard",selectedLead=null,chatView=false,dragItem=null;
+let managedUsers=[];
+
 const STAGE_COLORS={"New Lead":"#3b82f6","Contacted":"#f59e0b","Interested":"#8b5cf6","Payment Pending":"#f97316","Closed":"#16a34a"};
 const PLATFORMS=["WhatsApp","Instagram"];
 const SOURCES=["Meta Ad","Organic","Referral","WhatsApp","Instagram","Google Ad"];
-const ROLES={admin:{label:"Admin / CSO",icon:"👑",color:"#222"},manager:{label:"Manager",icon:"🧑‍💼",color:"#0ea5e9"},agent:{label:"Sales Agent",icon:"💬",color:"#16a34a"}};
-const ROLE_NAV={admin:["dashboard","inbox","pipeline","agents","followups","automation","campaigns","templates"],manager:["dashboard","inbox","pipeline","agents","followups","templates"],agent:["inbox","followups","templates"]};
-const BOTTOM_NAV_PAGES={admin:["dashboard","inbox","pipeline","followups"],manager:["dashboard","inbox","pipeline","followups"],agent:["inbox","followups","templates"]};
-const MANAGER_RESTRICTIONS={canSeeRevenue:false,canDeleteLeads:false,canAccessAutomation:false,canAccessCampaigns:false,canManageAgents:false};
+const ROLES={admin:{label:"Admin / CSO",icon:"👑",color:"#7c3aed"},manager:{label:"Manager",icon:"🧑‍💼",color:"#0ea5e9"},agent:{label:"Sales Agent",icon:"💬",color:"#16a34a"}};
+const ROLE_NAV={admin:["dashboard","inbox","pipeline","agents","followups","automation","campaigns","templates","settings"],manager:["dashboard","inbox","pipeline","agents","followups","templates"],agent:["inbox","followups","templates"]};
+const BOTTOM_NAV={admin:["dashboard","inbox","pipeline","followups"],manager:["dashboard","inbox","pipeline","followups"],agent:["inbox","followups","templates"]};
 
-let selectedRole=null,curPage="dashboard",selectedLead=null,chatView=false,dragItem=null;
-
-/* ═══ HELPERS ═══ */
-const $=id=>document.getElementById(id);
-const rc=()=>(ROLES[selectedRole]||ROLES.admin).color;
+function $(id){return document.getElementById(id);}
+const rc=()=>(ROLES[selectedRole]||ROLES.agent).color;
 const uid=()=>nextId++;
-const now=()=>new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
+const now_t=()=>new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
 const today=()=>new Date().toLocaleDateString("en-IN",{weekday:"short",month:"short",day:"numeric"});
-const initials=n=>n.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
-const canDo=a=>selectedRole==="admin"?true:selectedRole==="manager"?!MANAGER_RESTRICTIONS[a]:false;
+const initials=n=>(n||"?").split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
 
 function av(t,sz=34,g){
   const grad=g||`${rc()},${rc()}99`;
   return `<div class="av" style="width:${sz}px;height:${sz}px;font-size:${Math.max(sz*.3,10)}px;background:linear-gradient(135deg,${grad})">${t}</div>`;
 }
-function pill(label,color){
-  return `<span class="pill" style="background:${color}22;color:${color};border:1px solid ${color}44">${label}</span>`;
-}
-function bar(v,max=100,color){
-  return `<div class="bar-track"><div class="bar-fill" style="width:${Math.min((v/max)*100,100)}%;background:${color||rc()}"></div></div>`;
-}
-function showToast(msg){
-  const t=document.createElement("div");
-  t.className="toast";
-  t.innerHTML=msg;
-  document.body.appendChild(t);
-  setTimeout(()=>{t.style.opacity="0";t.style.transition="opacity .3s";setTimeout(()=>t.remove(),300);},3000);
+function pill(label,color){return `<span class="pill" style="background:${color}22;color:${color};border:1px solid ${color}44">${label}</span>`;}
+function bar(v,max=100,color){return `<div class="bar-track"><div class="bar-fill" style="width:${Math.min((v/max)*100,100)}%;background:${color||rc()}"></div></div>`;}
+function showToast(msg,dur=3000){
+  const t=document.createElement("div");t.className="toast";t.innerHTML=msg;document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity="0";t.style.transition="opacity .3s";setTimeout(()=>t.remove(),300);},dur);
 }
 function closeModal(){$("modalContainer").innerHTML="";}
 function showModal(html){$("modalContainer").innerHTML=`<div class="modal-overlay" onclick="if(event.target===this)closeModal()">${html}</div>`;}
-function accessDenied(label="this feature"){return `<div class="access-denied"><div class="ad-icon">🔒</div><p style="font-weight:700;font-size:15px;color:var(--white)">Access Restricted</p><p>Your role does not have access to ${label}.</p></div>`;}
+function accessDenied(l="this feature"){return `<div class="access-denied"><div class="ad-icon">🔒</div><p style="font-weight:700;font-size:15px;color:var(--white)">Access Restricted</p><p>Your role does not have access to ${l}.</p></div>`;}
+function showForgotToast(){showToast("📧 Contact your admin to get login credentials",4000);}
 
-/* ═══ LOGIN ═══ */
-function selectRole(el){
-  document.querySelectorAll(".role-card").forEach(c=>c.classList.remove("active"));
-  el.classList.add("active");
-  selectedRole=el.dataset.role;
-  $("continueBtn").disabled=false;
-  $("continueBtn").style.background=`linear-gradient(135deg,${el.dataset.color},${el.dataset.color}cc)`;
+/* ══ FIREBASE AUTH ══ */
+auth.onAuthStateChanged(async user=>{
+  if(user){
+    try{
+      const doc=await db.collection("users").doc(user.uid).get();
+      if(doc.exists){
+        const data=doc.data();
+        currentUser={uid:user.uid,email:user.email,name:data.name||user.email,role:data.role||"agent"};
+        selectedRole=currentUser.role;
+        initApp();
+      } else {
+        showErrMsg("Account not configured. Contact your admin.");
+        auth.signOut();
+      }
+    } catch(e){
+      console.error(e);
+      showErrMsg("Failed to load profile. Check connection.");
+    }
+  } else {
+    showLoginScreen();
+  }
+});
+
+function showLoginScreen(){
+  $("app").style.display="none";
+  $("app").classList.remove("show");
+  $("loginWrap").style.display="flex";
+  $("loginWrap").classList.remove("hide");
+  const btn=$("signInBtn");
+  btn.textContent="Sign In →";btn.style.opacity="1";btn.disabled=false;
 }
-function goStep2(){
-  if(!selectedRole) return;
-  const r=ROLES[selectedRole];
-  $("step1").style.display="none";$("step2").style.display="block";
-  $("signInBtn").style.background=`linear-gradient(135deg,${r.color},${r.color}bb)`;
-  $("roleBadge").style.cssText=`background:${r.color}12;border:1px solid ${r.color}25;padding:10px 12px;border-radius:10px;display:flex;align-items:center;gap:12px;margin-bottom:14px`;
-  $("roleBadge").innerHTML=`<span style="font-size:20px">${r.icon}</span><div><p style="color:var(--white);font-weight:700;font-size:13px;margin:0">Signing in as ${r.label}</p><p style="color:var(--text);font-size:11px;margin:0">Tap Sign In to continue</p></div>`;
+function showErrMsg(msg){
+  const e=$("errMsg");
+  e.style.display="block";e.textContent=msg;
 }
-function goStep1(){$("step2").style.display="none";$("step1").style.display="block";}
-function doLogin(){
-  const e=$("emailInput").value.trim(),p=$("passInput").value;
-  if(!e||!p){$("errMsg").style.display="block";return;}
+
+async function doLogin(){
+  const email=$("emailInput").value.trim();
+  const pass=$("passInput").value;
+  if(!email||!pass){showErrMsg("Please enter email and password.");return;}
+  const btn=$("signInBtn");
+  btn.innerHTML=`<span class="spinner"></span>Signing in…`;btn.disabled=true;
   $("errMsg").style.display="none";
-  $("signInBtn").textContent="Signing in…";$("signInBtn").style.opacity=".7";
-  setTimeout(initApp,1000);
+  try{
+    await auth.signInWithEmailAndPassword(email,pass);
+  } catch(e){
+    const msgs={
+      "auth/user-not-found":"No account found with this email.",
+      "auth/wrong-password":"Incorrect password.",
+      "auth/invalid-email":"Invalid email address.",
+      "auth/too-many-requests":"Too many attempts. Try again later.",
+      "auth/invalid-credential":"Invalid email or password."
+    };
+    showErrMsg(msgs[e.code]||"Login failed. Try again.");
+    btn.textContent="Sign In →";btn.disabled=false;btn.style.opacity="1";
+  }
 }
+
 function doLogout(){
   $("app").style.opacity="0";
   setTimeout(()=>{
-    $("app").style.display="none";$("app").classList.remove("show");
-    $("loginWrap").style.display="flex";$("loginWrap").classList.remove("hide");
-    $("step2").style.display="none";$("step1").style.display="block";
-    selectedRole=null;$("continueBtn").disabled=true;
-    document.querySelectorAll(".role-card").forEach(c=>c.classList.remove("active"));
-    $("emailInput").value="";$("passInput").value="";
-    $("signInBtn").textContent="Sign In →";$("signInBtn").style.opacity="1";
+    auth.signOut();
+    leads=[];agents=[];messages={};tasks=[];campaigns=[];autos=[];templates=[];managedUsers=[];
+    Object.keys(board).forEach(k=>board[k]=[]);
+    currentUser=null;selectedRole=null;selectedLead=null;chatView=false;nextId=1;
   },400);
 }
 
-/* ═══ APP INIT ═══ */
+/* ══ APP INIT ══ */
 function initApp(){
   document.documentElement.style.setProperty("--rc",ROLES[selectedRole].color);
   $("loginWrap").classList.add("hide");
@@ -492,15 +535,25 @@ function initApp(){
     setTimeout(()=>$("app").classList.add("show"),10);
   },400);
   const r=ROLES[selectedRole];
-  [$("topAv"),$("drawerAv")].forEach(el=>{if(el){el.textContent=r.icon;el.style.background=`linear-gradient(135deg,${r.color},${r.color}88)`;}});
-  $("drawerUserName").textContent=r.label;
+  [$("topAv"),$("drawerAv")].forEach(el=>{if(el){el.textContent=initials(currentUser.name);el.style.background=`linear-gradient(135deg,${r.color},${r.color}88)`;}});
+  $("drawerUserName").textContent=currentUser.name;
+  $("drawerUserEmail").textContent=currentUser.email||"";
   $("pageDate").textContent=today();
   buildDrawerNav();buildBottomNav();
-  const start=selectedRole==="agent"?"inbox":"dashboard";
-  renderPage(start);
+  renderPage(selectedRole==="agent"?"inbox":"dashboard");
+  applyTheme();
+  if(selectedRole==="admin") loadManagedUsers();
 }
 
-/* ═══ DRAWER ═══ */
+/* ══ MANAGED USERS ══ */
+async function loadManagedUsers(){
+  try{
+    const snap=await db.collection("users").get();
+    managedUsers=snap.docs.map(d=>({uid:d.id,...d.data()}));
+  } catch(e){console.error("Load users failed",e);}
+}
+
+/* ══ NAV ══ */
 function toggleDrawer(){$("drawer").classList.toggle("open");}
 function closeDrawer(){$("drawer").classList.remove("open");}
 function buildDrawerNav(){
@@ -515,6 +568,7 @@ function buildDrawerNav(){
     {id:"automation",icon:"⚙",label:"Automation"},
     {id:"campaigns",icon:"◎",label:"Campaigns"},
     {id:"templates",icon:"◧",label:"Templates"},
+    {id:"settings",icon:"⚡",label:"User Management"},
   ];
   allNav.filter(n=>pages.includes(n.id)).forEach(n=>{
     const btn=document.createElement("button");
@@ -526,12 +580,11 @@ function buildDrawerNav(){
 }
 function buildBottomNav(){
   const bn=$("bottomNav");bn.innerHTML="";
-  const pages=BOTTOM_NAV_PAGES[selectedRole]||BOTTOM_NAV_PAGES.agent;
+  const pages=BOTTOM_NAV[selectedRole]||BOTTOM_NAV.agent;
   const allNav=[
     {id:"dashboard",icon:"▣",label:"Home"},
     {id:"inbox",icon:"✉",label:"Inbox"},
     {id:"pipeline",icon:"◈",label:"Pipeline"},
-    {id:"agents",icon:"◉",label:"Agents"},
     {id:"followups",icon:"◷",label:"Tasks"},
     {id:"templates",icon:"◧",label:"Templates"},
   ];
@@ -545,21 +598,19 @@ function buildBottomNav(){
 }
 function renderPage(id){
   curPage=id;chatView=false;
-  $("pageTitle").textContent={dashboard:"Dashboard",inbox:"Inbox",pipeline:"Pipeline",agents:"Agents",followups:"Follow-ups",automation:"Automation",campaigns:"Campaigns",templates:"Templates"}[id]||id;
-  document.querySelectorAll(".nav-btn").forEach(b=>{
-    b.classList.toggle("active",b.textContent.trim().toLowerCase().replace(/[^a-z]/g,"").includes(id.replace(/-/g,"")));
-  });
+  const titles={dashboard:"Dashboard",inbox:"Inbox",pipeline:"Pipeline",agents:"Agents",followups:"Follow-ups",automation:"Automation",campaigns:"Campaigns",templates:"Templates",settings:"User Management"};
+  $("pageTitle").textContent=titles[id]||id;
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.querySelector("span:last-child")?.textContent===titles[id]));
   document.querySelectorAll(".bnav-btn").forEach(b=>{
-    const lbl=b.querySelector(".bnav-label");
-    const map={Home:"dashboard",Inbox:"inbox",Pipeline:"pipeline",Agents:"agents",Tasks:"followups",Templates:"templates"};
-    b.classList.toggle("active",map[lbl?.textContent]===id);
+    const lm={Home:"dashboard",Inbox:"inbox",Pipeline:"pipeline",Tasks:"followups",Templates:"templates"};
+    b.classList.toggle("active",lm[b.querySelector(".bnav-label")?.textContent]===id);
   });
   const m=$("mainContent");m.innerHTML="";
-  const fns={dashboard:pgDashboard,inbox:pgInbox,pipeline:pgPipeline,agents:pgAgents,followups:pgFollowups,automation:pgAutomation,campaigns:pgCampaigns,templates:pgTemplates};
+  const fns={dashboard:pgDashboard,inbox:pgInbox,pipeline:pgPipeline,agents:pgAgents,followups:pgFollowups,automation:pgAutomation,campaigns:pgCampaigns,templates:pgTemplates,settings:pgSettings};
   (fns[id]||pgDashboard)(m);
 }
 
-/* ═══ DETAIL SHEET ═══ */
+/* ══ DETAIL SHEET ══ */
 function openDetailSheet(leadId){
   const l=leads.find(x=>x.id===leadId);if(!l)return;
   const showRev=selectedRole==="admin";
@@ -586,23 +637,20 @@ function openDetailSheet(leadId){
 }
 function closeDetailSheet(){$("detailSheet").classList.remove("open");}
 
-/* ═══ DASHBOARD ═══ */
+/* ══ DASHBOARD ══ */
 function pgDashboard(el){
-  const totalLeads=leads.length;
   const closed=leads.filter(l=>l.status==="Closed").length;
-  const conv=totalLeads?Math.round((closed/totalLeads)*100):0;
+  const conv=leads.length?Math.round((closed/leads.length)*100):0;
   const revenue=leads.filter(l=>l.status==="Closed").reduce((s,l)=>s+(l.value||0),0);
-  const activeChats=Object.values(messages).filter(a=>a.length>0).length;
-  const showRevenue=selectedRole==="admin";
+  const showRev=selectedRole==="admin";
   const stats=[
-    {label:"Total Leads",val:totalLeads||"0",delta:"All time",icon:"👥",a:"#6366f1",b:"#4f46e5"},
-    {label:"Active Chats",val:activeChats||"0",delta:"With messages",icon:"💬",a:"#0ea5e9",b:"#0284c7"},
+    {label:"Total Leads",val:leads.length||"0",delta:"All time",icon:"👥",a:"#6366f1",b:"#4f46e5"},
+    {label:"Active Chats",val:Object.values(messages).filter(a=>a.length>0).length||"0",delta:"With messages",icon:"💬",a:"#0ea5e9",b:"#0284c7"},
     {label:"Conversion",val:conv+"%",delta:"Closed/Total",icon:"🎯",a:"#16a34a",b:"#15803d"},
-    {label:"Revenue",val:showRevenue?(revenue?"₹"+revenue.toLocaleString("en-IN"):"₹0"):"🔒 Hidden",delta:showRevenue?"Closed deals":"Admin only",icon:"💰",a:"#f97316",b:"#ea580c"},
+    {label:"Revenue",val:showRev?(revenue?"₹"+revenue.toLocaleString("en-IN"):"₹0"):"🔒 Hidden",delta:showRev?"Closed deals":"Admin only",icon:"💰",a:"#f97316",b:"#ea580c"},
   ];
   const sortedAgents=[...agents].sort((a,b)=>(b.conv||0)-(a.conv||0));
   const recentLeads=[...leads].sort((a,b)=>b.id-a.id).slice(0,4);
-  const pendingTasks=tasks.filter(t=>!t.done).length;
   el.innerHTML=`<div class="page">
     <div class="stat-grid">${stats.map(s=>`
       <div class="stat-card" style="background:linear-gradient(135deg,${s.a},${s.b});box-shadow:0 4px 16px ${s.a}33">
@@ -629,10 +677,7 @@ function pgDashboard(el){
         ${recentLeads.length?recentLeads.map(l=>`
           <div class="lead-row" onclick="openLead(${l.id})">
             ${av(initials(l.name),28)}
-            <div style="flex:1;min-width:0">
-              <div style="font-size:12px;font-weight:600;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.name}</div>
-              <div style="color:var(--text);font-size:10px">${l.source}</div>
-            </div>
+            <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.name}</div><div style="color:var(--text);font-size:10px">${l.source}</div></div>
             ${pill(l.status,STAGE_COLORS[l.status]||rc())}
           </div>`).join(""):`<p style="color:var(--text);font-size:13px;text-align:center;padding:16px 0">No leads yet<br><button onclick="showAddLeadModal()" style="margin-top:6px;background:${rc()};border:none;border-radius:8px;padding:6px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer">+ Add Lead</button></p>`}
       </div>
@@ -651,9 +696,9 @@ function pgDashboard(el){
 }
 function openLead(id){selectedLead=leads.find(l=>l.id===id)||null;renderPage("inbox");}
 
-/* ═══ INBOX ═══ */
+/* ══ INBOX ══ */
 function pgInbox(el){
-  const myLeads=selectedRole==="agent"?leads.filter(l=>l.agentName===(ROLES[selectedRole]?.label||"")):leads;
+  const myLeads=selectedRole==="agent"?leads.filter(l=>l.agentName===currentUser.name):leads;
   if(chatView&&selectedLead){
     el.style.height="100%";el.style.overflow="hidden";
     el.innerHTML=renderChatView();
@@ -664,9 +709,9 @@ function pgInbox(el){
     <div style="padding:10px 14px;border-bottom:1px solid var(--border);background:var(--surface)">
       <div style="display:flex;gap:7px;align-items:center">
         <input class="list-search" id="leadSearch" placeholder="Search leads…" oninput="filterLeads(this.value)" style="flex:1"/>
-        ${selectedRole!=="agent"?`<button onclick="showAddLeadModal()" style="background:${rc()};border:none;border-radius:8px;color:#fff;font-size:20px;width:36px;height:36px;cursor:pointer;flex-shrink:0;touch-action:manipulation">+</button>`:""}
+        ${selectedRole!=="agent"?`<button onclick="showAddLeadModal()" style="background:${rc()};border:none;border-radius:8px;color:#fff;font-size:20px;width:36px;height:36px;cursor:pointer;flex-shrink:0">+</button>`:""}
       </div>
-      <div class="tab-row" style="margin-top:7px">
+      <div class="tab-row">
         <button class="tab-btn active-tab" onclick="filterPlatform('all',this)">All</button>
         <button class="tab-btn" onclick="filterPlatform('whatsapp',this)">WhatsApp</button>
         <button class="tab-btn" onclick="filterPlatform('instagram',this)">Instagram</button>
@@ -694,16 +739,12 @@ function renderLeadList(arr){
     </div>`).join("");
 }
 function renderChatView(){
-  const sl=selectedLead;
-  const msgs=messages[sl.id]||[];
+  const sl=selectedLead;const msgs=messages[sl.id]||[];
   return `<div class="chat-view" style="height:100%;overflow:hidden">
     <div class="chat-head">
       <button class="chat-back" onclick="chatView=false;renderPage('inbox')">‹</button>
       ${av(initials(sl.name),34)}
-      <div style="flex:1;min-width:0">
-        <div class="chat-name">${sl.name}</div>
-        <div class="chat-sub">${sl.phone||"No phone"}</div>
-      </div>
+      <div style="flex:1;min-width:0"><div class="chat-name">${sl.name}</div><div class="chat-sub">${sl.phone||"No phone"}</div></div>
       <div class="chat-hactions">
         <button class="action-btn" onclick="openDetailSheet(${sl.id})">⋯</button>
         <button class="action-btn" onclick="showStageModal(${sl.id})">${pill(sl.status,STAGE_COLORS[sl.status]||rc())}</button>
@@ -730,13 +771,12 @@ function sendMsg(){
   const inp=$("msgInput");if(!inp||!inp.value.trim())return;
   const text=inp.value.trim();
   if(!messages[selectedLead.id])messages[selectedLead.id]=[];
-  messages[selectedLead.id].push({from:"agent",text,time:now()});
+  messages[selectedLead.id].push({from:"agent",text,time:now_t()});
   inp.value="";
   const box=$("chatMsgs");
   if(box){
-    const div=document.createElement("div");
-    div.style.cssText="display:flex;justify-content:flex-end";
-    div.innerHTML=`<div class="msg-bubble msg-out" style="background:linear-gradient(135deg,${rc()},${rc()}cc)">${text}<div class="msg-time">${now()}</div></div>`;
+    const div=document.createElement("div");div.style.cssText="display:flex;justify-content:flex-end";
+    div.innerHTML=`<div class="msg-bubble msg-out" style="background:linear-gradient(135deg,${rc()},${rc()}cc)">${text}<div class="msg-time">${now_t()}</div></div>`;
     box.appendChild(div);box.scrollTop=box.scrollHeight;
   }
 }
@@ -838,12 +878,12 @@ function useTemplate(leadId,content){
   const l=leads.find(x=>x.id===leadId);if(!l)return;
   const text=content.replace(/{{name}}/g,l.name);
   if(!messages[leadId])messages[leadId]=[];
-  messages[leadId].push({from:"agent",text,time:now()});
+  messages[leadId].push({from:"agent",text,time:now_t()});
   closeModal();showToast("Template sent ✅");
   if(chatView){selectedLead=l;renderPage("inbox");}
 }
 
-/* ═══ PIPELINE ═══ */
+/* ══ PIPELINE ══ */
 function pgPipeline(el){
   el.innerHTML=`<div class="pipeline-wrap"><div class="kanban" id="kanban"></div><p style="color:var(--text);font-size:11px;margin-top:10px">← Scroll · Drag cards to move</p></div>`;
   renderKanban();
@@ -871,21 +911,18 @@ function renderKanban(){
 }
 function dragCard(col,idx){dragItem={col,idx};}
 function dropCard(col,el){
-  el.classList.remove("dragover");
-  if(!dragItem||dragItem.col===col)return;
+  el.classList.remove("dragover");if(!dragItem||dragItem.col===col)return;
   const [item]=board[dragItem.col].splice(dragItem.idx,1);
   board[col].push(item);
-  const l=leads.find(x=>x.id===item.leadId);
-  if(l){l.status=col;showToast(`${l.name} → ${col}`);}
+  const l=leads.find(x=>x.id===item.leadId);if(l){l.status=col;showToast(`${l.name} → ${col}`);}
   dragItem=null;renderKanban();
 }
 
-/* ═══ AGENTS ═══ */
+/* ══ AGENTS ══ */
 function pgAgents(el){
   el.innerHTML=`<div class="agent-grid">
     ${selectedRole!=="manager"?`<div class="agent-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;border-style:dashed;min-height:120px;touch-action:manipulation" onclick="showAddAgentModal()">
-      <div style="font-size:28px;color:var(--text)">+</div>
-      <p style="color:var(--text);font-size:13px;margin-top:6px">Add Agent</p>
+      <div style="font-size:28px;color:var(--text)">+</div><p style="color:var(--text);font-size:13px;margin-top:6px">Add Agent</p>
     </div>`:""}
     ${agents.map(ag=>`
       <div class="agent-card">
@@ -918,7 +955,6 @@ function showAddAgentModal(){
     <div class="modal-handle"></div>
     <div class="modal-title">➕ Add Agent</div>
     <div class="form-row"><label>FULL NAME *</label><input id="an" placeholder="e.g. Priya Menon"/></div>
-    <div class="form-row"><label>EMAIL</label><input id="ae" type="email" placeholder="priya@homegym.in"/></div>
     <div class="form-row"><label>STATUS</label><select id="as"><option>online</option><option>away</option><option>offline</option></select></div>
     <div class="form-row"><label>AVG RESPONSE TIME</label><input id="ar" placeholder="e.g. 5m"/></div>
     <div class="modal-footer">
@@ -929,7 +965,7 @@ function showAddAgentModal(){
 }
 function addAgent(){
   const name=$("an").value.trim();if(!name){showToast("Name required");return;}
-  agents.push({id:uid(),name,email:$("ae").value,status:$("as").value,resp:$("ar").value||"—",conv:0});
+  agents.push({id:uid(),name,status:$("as").value,resp:$("ar").value||"—",conv:0});
   closeModal();renderPage("agents");showToast(`✅ "${name}" added`);
 }
 function showEditAgentModal(id){
@@ -957,20 +993,19 @@ function deleteAgent(id){
   agents=agents.filter(a=>a.id!==id);renderPage("agents");showToast("Agent removed");
 }
 
-/* ═══ FOLLOWUPS ═══ */
+/* ══ FOLLOWUPS ══ */
 function pgFollowups(el){
   const pending=tasks.filter(t=>!t.done);
-  const overdue=tasks.filter(t=>!t.done&&t.overdue);
   el.innerHTML=`<div class="page">
     <div class="fu-counters">
       <div class="fu-counter"><div class="fu-num" style="color:#f97316">${pending.length}</div><div class="fu-lbl">Pending</div></div>
       <div class="fu-counter"><div class="fu-num" style="color:#f59e0b">${tasks.filter(t=>!t.done&&t.today).length}</div><div class="fu-lbl">Today</div></div>
-      <div class="fu-counter"><div class="fu-num" style="color:#ef4444">${overdue.length}</div><div class="fu-lbl">Overdue</div></div>
+      <div class="fu-counter"><div class="fu-num" style="color:#ef4444">${tasks.filter(t=>!t.done&&t.overdue).length}</div><div class="fu-lbl">Overdue</div></div>
     </div>
     <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <div class="card-title" style="margin:0">📋 Tasks</div>
-        <button onclick="showAddTaskModal()" style="background:${rc()};border:none;border-radius:8px;padding:7px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;touch-action:manipulation">+ Add</button>
+      <div class="section-head">
+        <div class="section-title">📋 Tasks</div>
+        <button onclick="showAddTaskModal()" style="background:${rc()};border:none;border-radius:8px;padding:7px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer">+ Add</button>
       </div>
       <div id="taskList">${renderTaskList()}</div>
     </div>
@@ -988,7 +1023,7 @@ function renderTaskList(){
         <div class="task-info">Due ${t.due} · ${t.priority}</div>
       </div>
       ${!t.done?`<button class="done-btn" style="background:${rc()}18;color:${rc()};border:1px solid ${rc()}33" onclick="markDone(${t.id})">✓</button>`:`<span style="color:#16a34a;font-size:12px">✓</span>`}
-      <button onclick="deleteTask(${t.id})" style="background:none;border:none;color:var(--text);cursor:pointer;font-size:14px;padding:4px;touch-action:manipulation">🗑</button>
+      <button onclick="deleteTask(${t.id})" style="background:none;border:none;color:var(--text);cursor:pointer;font-size:14px;padding:4px">🗑</button>
     </div>`).join("");
 }
 function showAddTaskModal(){
@@ -1006,29 +1041,24 @@ function showAddTaskModal(){
   </div>`);
 }
 function addTask(){
-  const leadName=$("tln").value.trim(),task=$("tt").value.trim();
-  if(!leadName||!task){showToast("Fill required fields");return;}
+  const leadName=$("tln").value.trim(),task=$("tt").value.trim();if(!leadName||!task){showToast("Fill required fields");return;}
   tasks.push({id:uid(),leadName,task,due:$("td").value||"No date",priority:$("tp").value,done:false,today:$("td").value===new Date().toISOString().slice(0,10)});
   closeModal();renderPage("followups");showToast("Task added ✅");
 }
 function markDone(id){
   const t=tasks.find(x=>x.id===id);if(t)t.done=true;
-  const tl=$("taskList");if(tl)tl.innerHTML=renderTaskList();
-  showToast("Done ✅");
+  const tl=$("taskList");if(tl)tl.innerHTML=renderTaskList();showToast("Done ✅");
 }
-function deleteTask(id){
-  tasks=tasks.filter(t=>t.id!==id);
-  const tl=$("taskList");if(tl)tl.innerHTML=renderTaskList();
-}
+function deleteTask(id){tasks=tasks.filter(t=>t.id!==id);const tl=$("taskList");if(tl)tl.innerHTML=renderTaskList();}
 
-/* ═══ AUTOMATION ═══ */
+/* ══ AUTOMATION ══ */
 function pgAutomation(el){
   if(selectedRole!=="admin"){el.innerHTML=`<div class="page">${accessDenied("Automation")}</div>`;return;}
   el.innerHTML=`<div class="page">
     <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <div class="card-title" style="margin:0">⚡ Automation Rules</div>
-        <button onclick="showAddAutoModal()" style="background:${rc()};border:none;border-radius:8px;padding:7px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;touch-action:manipulation">+ Add</button>
+      <div class="section-head">
+        <div class="section-title">⚡ Automation Rules</div>
+        <button onclick="showAddAutoModal()" style="background:${rc()};border:none;border-radius:8px;padding:7px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer">+ Add</button>
       </div>
       <div id="autoList">${renderAutoList()}</div>
     </div>
@@ -1048,10 +1078,10 @@ function renderAutoList(){
           <span style="color:var(--text2);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.action}</span>
         </div>
       </div>
-      <div class="toggle" style="background:${a.on?rc():"rgba(0,0,0,.1)"}" onclick="toggleAuto(${a.id})">
+      <div class="toggle" style="background:${a.on?rc():"rgba(127,127,127,.2)"}" onclick="toggleAuto(${a.id})">
         <div class="toggle-knob" style="left:${a.on?"22px":"3px"}"></div>
       </div>
-      <button onclick="deleteAuto(${a.id})" style="background:none;border:none;color:var(--text);cursor:pointer;font-size:14px;padding:4px;margin-left:6px;touch-action:manipulation">🗑</button>
+      <button onclick="deleteAuto(${a.id})" style="background:none;border:none;color:var(--text);cursor:pointer;font-size:14px;padding:4px;margin-left:6px">🗑</button>
     </div>`).join("");
 }
 function showAddAutoModal(){
@@ -1066,44 +1096,33 @@ function showAddAutoModal(){
     </div>
   </div>`);
 }
-function addAuto(){
-  autos.push({id:uid(),trigger:$("at").value,action:$("aa").value,on:true});
-  closeModal();renderPage("automation");showToast("Rule added ✅");
-}
-function toggleAuto(id){
-  const a=autos.find(x=>x.id===id);if(a)a.on=!a.on;
-  const al=$("autoList");if(al)al.innerHTML=renderAutoList();
-}
-function deleteAuto(id){
-  autos=autos.filter(a=>a.id!==id);
-  const al=$("autoList");if(al)al.innerHTML=renderAutoList();
-}
+function addAuto(){autos.push({id:uid(),trigger:$("at").value,action:$("aa").value,on:true});closeModal();renderPage("automation");showToast("Rule added ✅");}
+function toggleAuto(id){const a=autos.find(x=>x.id===id);if(a)a.on=!a.on;const al=$("autoList");if(al)al.innerHTML=renderAutoList();}
+function deleteAuto(id){autos=autos.filter(a=>a.id!==id);const al=$("autoList");if(al)al.innerHTML=renderAutoList();}
 
-/* ═══ CAMPAIGNS ═══ */
+/* ══ CAMPAIGNS ══ */
 function pgCampaigns(el){
   if(selectedRole!=="admin"){el.innerHTML=`<div class="page">${accessDenied("Campaigns")}</div>`;return;}
   const totalSpend=campaigns.reduce((s,c)=>s+c.spend,0);
-  const totalLeadsC=campaigns.reduce((s,c)=>s+c.leads,0);
   const totalRev=campaigns.reduce((s,c)=>s+c.revenue,0);
-  const avgROAS=totalSpend?((totalRev/totalSpend)).toFixed(1)+"x":"—";
   el.innerHTML=`<div class="page">
     <div class="campaign-stat-grid">
       <div class="camp-stat"><div class="camp-stat-icon">📤</div><div class="camp-stat-val">₹${totalSpend.toLocaleString("en-IN")||"0"}</div><div class="camp-stat-key">Spend</div></div>
-      <div class="camp-stat"><div class="camp-stat-icon">👥</div><div class="camp-stat-val">${totalLeadsC||"0"}</div><div class="camp-stat-key">Leads</div></div>
+      <div class="camp-stat"><div class="camp-stat-icon">👥</div><div class="camp-stat-val">${campaigns.reduce((s,c)=>s+c.leads,0)||"0"}</div><div class="camp-stat-key">Leads</div></div>
       <div class="camp-stat"><div class="camp-stat-icon">💰</div><div class="camp-stat-val">₹${totalRev.toLocaleString("en-IN")||"0"}</div><div class="camp-stat-key">Revenue</div></div>
-      <div class="camp-stat"><div class="camp-stat-icon">📈</div><div class="camp-stat-val">${avgROAS}</div><div class="camp-stat-key">ROAS</div></div>
+      <div class="camp-stat"><div class="camp-stat-icon">📈</div><div class="camp-stat-val">${totalSpend?(totalRev/totalSpend).toFixed(1)+"x":"—"}</div><div class="camp-stat-key">ROAS</div></div>
     </div>
     <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <div class="card-title" style="margin:0">📊 Campaigns</div>
-        <button onclick="showAddCampaignModal()" style="background:${rc()};border:none;border-radius:8px;padding:7px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;touch-action:manipulation">+ Add</button>
+      <div class="section-head">
+        <div class="section-title">📊 Campaigns</div>
+        <button onclick="showAddCampaignModal()" style="background:${rc()};border:none;border-radius:8px;padding:7px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer">+ Add</button>
       </div>
       ${campaigns.length?campaigns.map(c=>`
         <div class="camp-row">
           <div style="flex:1;min-width:0"><div class="camp-name">${c.name}</div><div class="camp-sub">${c.leads} leads · ${c.status}</div></div>
           <div class="camp-metric"><div class="camp-metric-val">₹${c.spend.toLocaleString("en-IN")}</div><div class="camp-metric-key">Spend</div></div>
           <div class="camp-metric"><div class="camp-metric-val" style="color:#16a34a">${c.spend?(c.revenue/c.spend).toFixed(1)+"x":"—"}</div><div class="camp-metric-key">ROAS</div></div>
-          <button onclick="deleteCampaign(${c.id})" style="background:none;border:none;color:var(--text);cursor:pointer;font-size:14px;touch-action:manipulation">🗑</button>
+          <button onclick="deleteCampaign(${c.id})" style="background:none;border:none;color:var(--text);cursor:pointer;font-size:14px">🗑</button>
         </div>`).join(""):`<div style="text-align:center;padding:28px;color:var(--text)"><div style="font-size:32px;margin-bottom:8px">📊</div><p>No campaigns yet</p></div>`}
     </div>
   </div>`;
@@ -1113,7 +1132,6 @@ function showAddCampaignModal(){
     <div class="modal-handle"></div>
     <div class="modal-title">➕ Add Campaign</div>
     <div class="form-row"><label>NAME *</label><input id="cn" placeholder="e.g. Diwali Sale 2026"/></div>
-    <div class="form-row"><label>UTM / TAG</label><input id="cu" placeholder="e.g. diwali_sale_ig"/></div>
     <div class="form-row"><label>AD SPEND (₹)</label><input id="cs" type="number" placeholder="0"/></div>
     <div class="form-row"><label>LEADS</label><input id="cl" type="number" placeholder="0"/></div>
     <div class="form-row"><label>REVENUE (₹)</label><input id="cr" type="number" placeholder="0"/></div>
@@ -1126,14 +1144,12 @@ function showAddCampaignModal(){
 }
 function addCampaign(){
   const name=$("cn").value.trim();if(!name){showToast("Name required");return;}
-  campaigns.push({id:uid(),name,utm:$("cu").value,spend:parseInt($("cs").value)||0,leads:parseInt($("cl").value)||0,revenue:parseInt($("cr").value)||0,status:$("cst").value});
+  campaigns.push({id:uid(),name,spend:parseInt($("cs").value)||0,leads:parseInt($("cl").value)||0,revenue:parseInt($("cr").value)||0,status:$("cst").value});
   closeModal();renderPage("campaigns");showToast("Campaign added ✅");
 }
-function deleteCampaign(id){
-  campaigns=campaigns.filter(c=>c.id!==id);renderPage("campaigns");showToast("Campaign removed");
-}
+function deleteCampaign(id){campaigns=campaigns.filter(c=>c.id!==id);renderPage("campaigns");}
 
-/* ═══ TEMPLATES ═══ */
+/* ══ TEMPLATES ══ */
 function pgTemplates(el){
   el.innerHTML=`<div class="tpl-grid">
     <div class="tpl-add" onclick="showAddTemplateModal()">
@@ -1168,13 +1184,142 @@ function showAddTemplateModal(){
   </div>`);
 }
 function addTemplate(){
-  const title=$("ttl").value.trim(),content=$("tcn").value.trim();
-  if(!title||!content){showToast("Fill all fields");return;}
+  const title=$("ttl").value.trim(),content=$("tcn").value.trim();if(!title||!content){showToast("Fill all fields");return;}
   templates.push({id:uid(),title,type:$("tty").value,content,uses:0});
   closeModal();renderPage("templates");showToast("Template saved ✅");
 }
-function deleteTemplate(id){
-  templates=templates.filter(t=>t.id!==id);renderPage("templates");showToast("Deleted");
+function deleteTemplate(id){templates=templates.filter(t=>t.id!==id);renderPage("templates");}
+
+/* ══ SETTINGS / USER MANAGEMENT (Admin only) ══ */
+function pgSettings(el){
+  if(selectedRole!=="admin"){el.innerHTML=`<div class="page">${accessDenied("User Management")}</div>`;return;}
+  const roleColors={admin:"#7c3aed",manager:"#0ea5e9",agent:"#16a34a"};
+  el.innerHTML=`<div class="page">
+    <div class="card" style="margin-bottom:12px">
+      <div class="section-head">
+        <div class="section-title">👥 Platform Users</div>
+        <button onclick="showCreateUserModal()" style="background:${rc()};border:none;border-radius:8px;padding:7px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer">+ Create User</button>
+      </div>
+      <p style="color:var(--text);font-size:11px;margin-bottom:12px">Create Firebase accounts for managers and agents. They can then log in with the assigned credentials.</p>
+      <div id="userList">${renderUserList(roleColors)}</div>
+    </div>
+    <div class="card">
+      <div class="section-title" style="margin-bottom:12px">⚙️ App Settings</div>
+      <div class="settings-row">
+        <div><div class="settings-row-label">${darkMode?"☀️ Light Mode":"🌙 Dark Mode"}</div><div class="settings-row-sub">Toggle app theme</div></div>
+        <button onclick="toggleTheme();renderPage('settings')" style="background:${rc()};border:none;border-radius:8px;padding:7px 14px;color:#fff;font-size:12px;font-weight:700;cursor:pointer">${darkMode?"Light":"Dark"}</button>
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-row-label">🔑 Your Role</div><div class="settings-row-sub">${currentUser.email}</div></div>
+        ${pill(ROLES[selectedRole].label,rc())}
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-row-label">🏢 Organisation</div><div class="settings-row-sub">HomeGym™</div></div>
+        <span style="color:var(--text);font-size:12px">v3.0</span>
+      </div>
+    </div>
+  </div>`;
+}
+function renderUserList(rc2){
+  if(!managedUsers.length)return`<div style="text-align:center;padding:20px;color:var(--text)"><p>No users found. Loading from Firebase...</p></div>`;
+  const roleColors={admin:"#7c3aed",manager:"#0ea5e9",agent:"#16a34a"};
+  return managedUsers.map(u=>`
+    <div class="user-row">
+      ${av(initials(u.name||u.email||"?"),34,`${roleColors[u.role]||"#666"},${roleColors[u.role]||"#444"}88`)}
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:13px;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${u.name||"No name"}</div>
+        <div style="color:var(--text);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${u.email||u.uid}</div>
+      </div>
+      <span class="user-role-badge" style="background:${roleColors[u.role]||"#666"}18;color:${roleColors[u.role]||"#666"};border:1px solid ${roleColors[u.role]||"#666"}33">${ROLES[u.role]?.label||u.role}</span>
+      ${u.uid!==currentUser.uid?`<button onclick="showEditUserModal('${u.uid}')" style="background:none;border:none;color:var(--text);cursor:pointer;font-size:14px;padding:4px;margin-left:4px">✏️</button>`:"<span style='width:26px'></span>"}
+    </div>`).join("");
+}
+function showCreateUserModal(){
+  showModal(`<div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">➕ Create New User</div>
+    <div style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:9px;padding:10px 12px;margin-bottom:14px;font-size:12px;color:#3b82f6">
+      ℹ️ This creates a Firebase account. Share the email & password with the user.
+    </div>
+    <div class="form-row"><label>FULL NAME *</label><input id="un" placeholder="e.g. Arjun Nair"/></div>
+    <div class="form-row"><label>EMAIL *</label><input id="ue" type="email" placeholder="arjun@homegym.in"/></div>
+    <div class="form-row"><label>PASSWORD *</label><input id="upw" type="text" placeholder="Min 6 characters" autocomplete="new-password"/></div>
+    <div class="form-row"><label>ROLE</label>
+      <select id="ur">
+        <option value="manager">Manager</option>
+        <option value="agent">Sales Agent</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" style="background:${rc()}" id="createUserBtn" onclick="createUser()">Create Account</button>
+    </div>
+  </div>`);
+}
+async function createUser(){
+  const name=$("un").value.trim(),email=$("ue").value.trim(),pw=$("upw").value,role=$("ur").value;
+  if(!name||!email||!pw){showToast("Fill all required fields");return;}
+  if(pw.length<6){showToast("Password must be 6+ characters");return;}
+  const btn=$("createUserBtn");btn.innerHTML=`<span class="spinner"></span>Creating…`;btn.disabled=true;
+  try{
+    // Create secondary app to avoid signing out current admin
+    let secApp;
+    try{secApp=firebase.app("secondary");}catch(e){secApp=firebase.initializeApp(firebaseConfig,"secondary");}
+    const secAuth=secApp.auth();
+    const cred=await secAuth.createUserWithEmailAndPassword(email,pw);
+    await db.collection("users").doc(cred.user.uid).set({name,email,role,createdBy:currentUser.uid,createdAt:new Date().toISOString()});
+    await secAuth.signOut();
+    closeModal();
+    showToast(`✅ Account created for ${name}`,4000);
+    await loadManagedUsers();
+    renderPage("settings");
+  } catch(e){
+    const msgs={"auth/email-already-in-use":"Email already exists.","auth/invalid-email":"Invalid email.","auth/weak-password":"Password too weak."};
+    showToast("❌ "+(msgs[e.code]||e.message));
+    btn.innerHTML="Create Account";btn.disabled=false;
+  }
+}
+function showEditUserModal(uid2){
+  const u=managedUsers.find(x=>x.uid===uid2);if(!u)return;
+  const roleColors={admin:"#7c3aed",manager:"#0ea5e9",agent:"#16a34a"};
+  showModal(`<div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">✏️ Edit User — ${u.name||u.email}</div>
+    <div class="form-row"><label>FULL NAME</label><input id="eun" value="${u.name||""}"/></div>
+    <div class="form-row"><label>ROLE</label>
+      <select id="eur">
+        <option value="admin"${u.role==="admin"?" selected":""}>Admin / CSO</option>
+        <option value="manager"${u.role==="manager"?" selected":""}>Manager</option>
+        <option value="agent"${u.role==="agent"?" selected":""}>Sales Agent</option>
+      </select>
+    </div>
+    <div class="form-row"><label>NEW PASSWORD <span style="color:var(--text);font-weight:400">(leave blank to keep)</span></label><input id="eupw" type="text" placeholder="Enter new password to change"/></div>
+    <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:9px;padding:10px 12px;margin-bottom:14px;font-size:12px;color:#f59e0b">
+      ⚠️ Password changes require the user to log in again with the new password.
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" style="background:${rc()}" id="editUserBtn" onclick="editUser('${uid2}')">Save Changes</button>
+    </div>
+  </div>`);
+}
+async function editUser(uid2){
+  const name=$("eun").value.trim(),role=$("eur").value,newPw=$("eupw").value;
+  const btn=$("editUserBtn");btn.innerHTML=`<span class="spinner"></span>Saving…`;btn.disabled=true;
+  try{
+    const update={name,role};
+    await db.collection("users").doc(uid2).update(update);
+    if(newPw&&newPw.length>=6){
+      // Password reset via Firebase Admin requires server-side; show info
+      showToast("ℹ️ Profile updated. Password reset requires Firebase Admin SDK on server.",5000);
+    } else {
+      showToast("✅ User updated");
+    }
+    await loadManagedUsers();closeModal();renderPage("settings");
+  } catch(e){
+    showToast("❌ Update failed: "+e.message);
+    btn.innerHTML="Save Changes";btn.disabled=false;
+  }
 }
 </script>
 </body>
